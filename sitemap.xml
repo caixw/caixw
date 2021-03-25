@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="https://caixw.io/themes/default/sitemap.xsl"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+	<url>
+		<loc>https://caixw.io/tags.html</loc>
+		<lastmod>2021-03-26T02:03:17+08:00</lastmod>
+		<changefreq>monthly</changefreq>
+		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/tags/api.html</loc>
+		<lastmod>0001-01-01T00:00:00Z</lastmod>
+		<changefreq>monthly</changefreq>
+		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/tags/default.html</loc>
+		<lastmod>2021-03-26T02:03:17+08:00</lastmod>
+		<changefreq>monthly</changefreq>
+		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io</loc>
+		<lastmod>2021-03-26T02:03:17+08:00</lastmod>
+		<changefreq>monthly</changefreq>
+		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/posts/about.html</loc>
+		<lastmod>2021-03-26T02:03:17+08:00</lastmod>
+		<changefreq>weekly</changefreq>
+		<priority>0.6</priority>
+	</url>
+</urlset>

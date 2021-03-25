@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+	<title>Atom</title>
+	<subtitle>subtitle</subtitle>
+	<id>https://caixw.io</id>
+	<updated>2021-03-26T02:03:17+08:00</updated>
+	<link href="https://caixw.io"></link>
+	<link href="https://caixw.io/atom.xml" rel="self"></link>
+	<entry>
+		<title>关于</title>
+		<id>https://caixw.io/posts/about.html</id>
+		<updated>2021-03-26T02:03:17+08:00</updated>
+		<link href="https://caixw.io/posts/about.html" type="application/xml"></link>
+		<summary type="text/html"></summary>
+	</entry>
+</feed>
