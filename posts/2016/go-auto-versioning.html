@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="cmn-Hans">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Go 的版本自动化 | 一斤瓜子铺</title><link rel="canonical" href="https://caixw.io/posts/2016/go-auto-versioning.html" /><link rel="icon" type="image/svg&#43;xml" href="/favicon.svg" />
+        <link rel=”mask-icon” href=”/favicon.svg” color=”#000000” /><link rel="alternate" type="application/rss+xml" title="RSS" href="https://caixw.io/rss.xml" /><link rel="alternate" type="application/atom+xml" title="Atom" href="https://caixw.io/atom.xml" /><meta name="keywords" content="Go,semver,版本号,自动化" /><link rel="next" href="https://caixw.io/posts/2016/jwt-intro.html" />
+
+        <link rel="stylesheet" type="text/css" href="https://caixw.io/themes/default/style.css" /><script type="application/ld+json">
+        {"@context":"https://schema.org/","@type":"Blog","name":"Go 的版本自动化","author":[{"@type":"Person","name":"caixw","url":"https://caixw.io"}],"dateCreated":"2016-11-29T22:31:42+08:00","dateModified":"2016-12-04T23:53:31+08:00","license":"https://creativecommons.org/licenses/by/4.0/deed.zh","keywords":"Go,semver,版本号,自动化","inLanguage":"cmn-Hans"}
+        </script></head>
+
+    <body>
+
+    <main id="main">
+
+<article class="post">
+<h1>Go 的版本自动化</h1>
+<div class="meta">
+    <span class="item">
+        <span class="value">作者:</span>
+            <a class="value" href="https://caixw.io">caixw</a>
+            </span>
+
+    <div class="item">
+        <span class="value">标签:</span><a class="value" href="https://caixw.io/tags/go.html">Go</a><a class="value" href="https://caixw.io/tags/version.html">version</a><a class="value" href="https://caixw.io/tags/semver.html">semver</a></div>
+
+    <div class="item" title="修改时间:2016-12-04T23:53:31&#43;08:00&#10;添加时间:2016-11-29T22:31:42&#43;08:00">
+        <span class="value">修改时间:</span>
+        <time class="value">2016-12-04</time>
+    </div>
+</div>
+<article>
+<p>一般情况下，我会在发布程序时把编译的时期附在版本号里，按照 <a href="https://semver.org">semver</a> 的规则，一个版本号会是这样子：<code>0.1.2+20161129</code>，前三个字符相对来说改动比较少，但是最后的日期一天一变，如果采用手动改变代码中常的方式，就比较得麻烦。所以我会使用 shell 和 <code>go build</code> 命令的 <code>ldflags</code> 参数相结合，在每次编译时，自动更新这个个变量。</p>
+<p>下面是一段简单的代码，用来作为示例，除了编译日期之外，还指定了一个 commit hash，用于记录最后的提交 ID：</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e">// Copyright 2016 by caixw, All rights reserved.
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#75715e">// Use of this source code is governed by a MIT
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#75715e">// license that can be found in the LICENSE file.
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#75715e"></span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span style="color:#f92672">import</span>(
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>    <span style="color:#e6db74">&#34;flag&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">mainVersion</span> = <span style="color:#e6db74">&#34;1.2.3&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span style="color:#66d9ef">var</span> (
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>    <span style="color:#a6e22e">buildDate</span> <span style="color:#66d9ef">string</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>    <span style="color:#a6e22e">commitHash</span> <span style="color:#66d9ef">string</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>    <span style="color:#a6e22e">v</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">flag</span>.<span style="color:#a6e22e">Bool</span>(<span style="color:#e6db74">&#34;v&#34;</span>, <span style="color:#66d9ef">false</span>, <span style="color:#e6db74">&#34;显示版本号&#34;</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>    <span style="color:#a6e22e">flag</span>.<span style="color:#a6e22e">Parse</span>();
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">v</span> {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>        <span style="color:#a6e22e">version</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">mainVersion</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>        <span style="color:#66d9ef">if</span> len(<span style="color:#a6e22e">buildDate</span>) &gt; <span style="color:#ae81ff">0</span>{
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>            <span style="color:#a6e22e">version</span> <span style="color:#f92672">+=</span> (<span style="color:#e6db74">&#34;+&#34;</span><span style="color:#f92672">+</span><span style="color:#a6e22e">buildDate</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>        }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>        <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;version:&#34;</span>, <span style="color:#a6e22e">version</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>        <span style="color:#66d9ef">if</span> len(<span style="color:#a6e22e">commitHash</span>) &gt; <span style="color:#ae81ff">0</span>{
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span>            <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">&#34;git commit hash:&#34;</span>, <span style="color:#a6e22e">commitHash</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span>        }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span>        <span style="color:#66d9ef">return</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span>    }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35</span>    <span style="color:#75715e">// TODO
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36</span><span style="color:#75715e"></span>}
+</pre><p>下面是相对应的一个简单 shell 脚本，用于编译代码：</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#75715e"># 获取两个参数变量，等号两端不要有空格</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>buildDate<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>date -u <span style="color:#e6db74">&#39;+%Y%m%d&#39;</span><span style="color:#66d9ef">)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>hash<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>git rev-parse HEAD<span style="color:#66d9ef">)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>go build  -ldflags <span style="color:#e6db74">&#34;-X main.buildDate=</span><span style="color:#e6db74">${</span>buildDate<span style="color:#e6db74">}</span><span style="color:#e6db74"> -X main.commitHash=</span><span style="color:#e6db74">${</span>hash<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</pre><p>执行 <code>./main</code>，将会输出类似以下内容：</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>version:1.2.3+20161129
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>git commit hash: 8b3632a2451edcd175939de6581315b9dde0fbd7
+</pre><p>关于 ldflags 参数：</p>
+<ul>
+<li>不能修改常量，只能是变量；</li>
+<li>变量可以小写；</li>
+<li>若不是 main 包，则需要指定全路径：<code>go build -ldflags=&quot;-X github.com/caixw/gobuild/vars.xxx=$(date -u '+%Y%m%d')&quot;</code>；</li>
+<li>可以同时指定多个，采用 <code>&quot;-X importpath.name=xxx -X importpath.name=XXX&quot;</code> 的形式。</li>
+</ul>
+
+</article>
+</article>
+
+<div class="pages-nav">
+                
+                <span class="next">
+                        <a rel="next" href="https://caixw.io/posts/2016/jwt-intro.html" aria-label="后一页">JSON Web Token 的简单介绍&#160;&#187;</a>
+                    </span>
+            </div>
+
+        </main> 
+
+        <footer id="footer">
+            <div class="line">
+                <a class="item" href="https://caixw.io">首页</a>
+                <a class="item" href="https://caixw.io/tags.html">标签</a>
+                <a class="item" href="https://caixw.io/archive.html">存档</a>
+                <a class="item" href="https://caixw.io/rss.xml">RSS</a>
+                <a class="item" href="https://caixw.io/atom.xml">Atom</a>
+                <a class="item" href="https://caixw.io/sitemap.xml">Sitemap</a>
+            </div>
+
+            <div class="line">
+                <span class="item">&#169; 2016-2021 by
+                    <a href="https://caixw.io" type="text/html">caixw</a>
+                </span>
+                <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
+                <span class="item">
+                    由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
+                    <time title="2021-03-26T18:25:18Z">2021-03-26</time>
+                </span>
+            </div>
+        </footer>
+    </body>
+</html>

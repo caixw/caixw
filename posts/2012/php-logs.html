@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html lang="cmn-Hans">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>一个简单的日志记录函数 | 一斤瓜子铺</title><link rel="canonical" href="https://caixw.io/posts/2012/php-logs.html" /><link rel="icon" type="image/svg&#43;xml" href="/favicon.svg" />
+        <link rel=”mask-icon” href=”/favicon.svg” color=”#000000” /><link rel="alternate" type="application/rss+xml" title="RSS" href="https://caixw.io/rss.xml" /><link rel="alternate" type="application/atom+xml" title="Atom" href="https://caixw.io/atom.xml" /><meta name="keywords" content="PHP, 代码片段, snippet, 日志" /><link rel="next" href="https://caixw.io/posts/2012/jquery-plugin.html" /><link rel="prev" href="https://caixw.io/posts/2012/goto-top.html" />
+
+        <link rel="stylesheet" type="text/css" href="https://caixw.io/themes/default/style.css" /><script type="application/ld+json">
+        {"@context":"https://schema.org/","@type":"Blog","name":"一个简单的日志记录函数","author":[{"@type":"Person","name":"caixw","url":"https://caixw.io"}],"dateCreated":"2012-11-30T01:30:14+08:00","dateModified":"2012-11-30T01:31:05+08:00","license":"https://creativecommons.org/licenses/by/4.0/deed.zh","keywords":"PHP, 代码片段, snippet, 日志","inLanguage":"cmn-Hans"}
+        </script></head>
+
+    <body>
+
+    <main id="main">
+
+<article class="post">
+<h1>一个简单的日志记录函数</h1>
+<div class="meta">
+    <span class="item">
+        <span class="value">作者:</span>
+            <a class="value" href="https://caixw.io">caixw</a>
+            </span>
+
+    <div class="item">
+        <span class="value">标签:</span><a class="value" href="https://caixw.io/tags/php.html">PHP</a><a class="value" href="https://caixw.io/tags/snippet.html">代码片段</a></div>
+
+    <div class="item" title="修改时间:2012-11-30T01:31:05&#43;08:00&#10;添加时间:2012-11-30T01:30:14&#43;08:00">
+        <span class="value">修改时间:</span>
+        <time class="value">2012-11-30</time>
+    </div>
+</div>
+<article>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#e6db74">/**
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#e6db74">* 记录一条日志，会以以下三种方式依次尝试写日志。
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#e6db74">* - 向当前参数指定的文件写入日志。
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#e6db74">* - 尝试向 php.ini 中指定的 error_log 写内容。
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#e6db74">* - 向系统日志写内容，还是失败的话则返回 false。
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#e6db74">*
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span style="color:#e6db74">* 不用每次调用时都指定 logFile 和 dateFormat 参数
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span style="color:#e6db74">* 系统会自动记住上次指定的内容。
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span style="color:#e6db74">*
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span style="color:#e6db74">* PHP5.0 之后请确保已经设置好时区，否则可能会抛出一个错误。
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span style="color:#e6db74">* example:
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span style="color:#e6db74">* @code php
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span style="color:#e6db74">* // 第一次调用，初始化日志，并写入第一条信息。
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span style="color:#e6db74">* logs(&#39;init...&#39;, LOG_INFO, &#39;/usr/log.txt&#39;, &#39;y-m-d&#39;);
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span style="color:#e6db74">* // 写日志
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span style="color:#e6db74">* logs(&#39;log msg&#39;, LOG_INFO);
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span style="color:#e6db74">* @endcode
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span style="color:#e6db74">*
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span style="color:#e6db74">* @param string $message 日志内容
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span style="color:#e6db74">* @param int $type 日志类型，参照 syslog 函数的参数
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span style="color:#e6db74">* @param string $logFile 日志文件
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span style="color:#e6db74">* @param string $dateFormat 日志的时间格式
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span style="color:#e6db74">* @return bool  是否成功写入
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span style="color:#e6db74">* @staticvar array $types 参数 $type 对应的描述信息。
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span style="color:#e6db74">* @staticvar string $file 保存 $logFile 参数最后次传递的内容。
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span style="color:#e6db74">* @staticvar string $format 保存 $dateFormat 参数最后传递的内容。
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span><span style="color:#e6db74">* @link https://caixw.io/posts/2012/php-logs.html
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span><span style="color:#e6db74">*/</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">logs</span>($message, $type, $logFile <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>, $dateFormat <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span>    <span style="color:#66d9ef">static</span> $types <span style="color:#f92672">=</span> <span style="color:#66d9ef">array</span>(
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span>        <span style="color:#a6e22e">LOG_EMERG</span>   <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;EMERG&#39;</span>,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span>        <span style="color:#a6e22e">LOG_ALERT</span>   <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;ALERT&#39;</span>,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span>        <span style="color:#a6e22e">LOG_CRIT</span>    <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;CRITICAL&#39;</span>,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span>        <span style="color:#a6e22e">LOG_ERR</span>     <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;ERROR&#39;</span>,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35</span>        <span style="color:#a6e22e">LOG_WARNING</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;WARNING&#39;</span>,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36</span>        <span style="color:#75715e">// windows下，以下这三个值是一样的
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">LOG_NOTICE</span>  <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;NOTICE&#39;</span>,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38</span>        <span style="color:#a6e22e">LOG_DEBUG</span>   <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;DEBUG&#39;</span>,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39</span>        <span style="color:#a6e22e">LOG_INFO</span>    <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;INFO&#39;</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40</span>    <span style="color:#66d9ef">static</span> $file <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41</span>    <span style="color:#66d9ef">static</span> $format <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;Y-m-d H:i:s&#39;</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43</span>    <span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span><span style="color:#a6e22e">is_null</span>($logFile)){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44</span>        $file <span style="color:#f92672">=</span> $logFile;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45</span>    }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46</span>    <span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span><span style="color:#a6e22e">is_null</span>($dateFormat)){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47</span>        $format <span style="color:#f92672">=</span> $dateFormat;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48</span>   }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50</span>    <span style="color:#75715e">/* 格式化消息 */</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51</span>    $type <span style="color:#f92672">=</span> <span style="color:#a6e22e">isset</span>($types[$type]) <span style="color:#f92672">?</span> $type <span style="color:#f92672">:</span> <span style="color:#a6e22e">LOG_INFO</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52</span>    $msg <span style="color:#f92672">=</span> <span style="color:#a6e22e">date</span>($format) <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39; [&#39;</span> <span style="color:#f92672">.</span> $types[$type] <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;] &#39;</span> <span style="color:#f92672">.</span> $message <span style="color:#f92672">.</span> <span style="color:#a6e22e">PHP_EOL</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">53</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">54</span>    <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">error_log</span>($msg, <span style="color:#ae81ff">3</span>, $file)){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">55</span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">56</span>    }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">57</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">58</span>    <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">error_log</span>($msg, <span style="color:#ae81ff">0</span>)){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">59</span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">60</span>    }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">61</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">62</span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">syslog</span>($type, $message);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">63</span>}
+</pre>
+</article>
+</article>
+
+<div class="pages-nav">
+                <span class="prev">
+                        <a rel="prev" href="https://caixw.io/posts/2012/goto-top.html" aria-label="前一页">&#171;&#160;为网页添加一个回到顶部按钮</a>
+                    </span>
+                <span class="next">
+                        <a rel="next" href="https://caixw.io/posts/2012/jquery-plugin.html" aria-label="后一页">jQuery 插件开发简要介绍&#160;&#187;</a>
+                    </span>
+            </div>
+
+        </main> 
+
+        <footer id="footer">
+            <div class="line">
+                <a class="item" href="https://caixw.io">首页</a>
+                <a class="item" href="https://caixw.io/tags.html">标签</a>
+                <a class="item" href="https://caixw.io/archive.html">存档</a>
+                <a class="item" href="https://caixw.io/rss.xml">RSS</a>
+                <a class="item" href="https://caixw.io/atom.xml">Atom</a>
+                <a class="item" href="https://caixw.io/sitemap.xml">Sitemap</a>
+            </div>
+
+            <div class="line">
+                <span class="item">&#169; 2016-2021 by
+                    <a href="https://caixw.io" type="text/html">caixw</a>
+                </span>
+                <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
+                <span class="item">
+                    由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
+                    <time title="2021-03-26T18:25:18Z">2021-03-26</time>
+                </span>
+            </div>
+        </footer>
+    </body>
+</html>
