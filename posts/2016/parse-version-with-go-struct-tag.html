@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+<html lang="cmn-Hans">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>使用 Go 的 struct tag 来解析版本号字符串 | 一斤瓜子铺</title><link rel="canonical" href="https://caixw.io/posts/2016/parse-version-with-go-struct-tag.html" /><link rel="icon" type="image/svg&#43;xml" href="/favicon.svg" />
+        <link rel=”mask-icon” href=”/favicon.svg” color=”#000000” /><link rel="alternate" type="application/rss+xml" title="RSS" href="https://caixw.io/rss.xml" /><link rel="alternate" type="application/atom+xml" title="Atom" href="https://caixw.io/atom.xml" /><meta name="keywords" content="Go,version,struct tag,版本号,semver" /><link rel="next" href="https://caixw.io/posts/2016/jwt-intro.html" /><link rel="prev" href="https://caixw.io/posts/2016/go-auto-versioning.html" />
+
+        <link rel="stylesheet" type="text/css" href="https://caixw.io/themes/default/style.css" /><script type="application/ld+json">
+        {"@context":"https://schema.org/","@type":"Blog","name":"使用 Go 的 struct tag 来解析版本号字符串","author":[{"@type":"Person","name":"caixw","url":"https://caixw.io"}],"dateCreated":"2016-06-15T23:14:53+08:00","dateModified":"2017-07-15T14:19:16+08:00","license":"https://creativecommons.org/licenses/by/4.0/deed.zh","keywords":"Go,version,struct tag,版本号,semver","inLanguage":"cmn-Hans"}
+        </script></head>
+
+    <body>
+
+    <main id="main">
+
+<article class="post">
+<h1>使用 Go 的 struct tag 来解析版本号字符串</h1>
+<div class="meta">
+    <span class="item">
+        <span class="value">作者:</span>
+            <a class="value" href="https://caixw.io">caixw</a>
+            </span>
+
+    <div class="item">
+        <span class="value">标签:</span><a class="value" href="https://caixw.io/tags/go.html">Go</a><a class="value" href="https://caixw.io/tags/version.html">version</a><a class="value" href="https://caixw.io/tags/semver.html">semver</a></div>
+
+    <div class="item" title="修改时间:2017-07-15T14:19:16&#43;08:00&#10;添加时间:2016-06-15T23:14:53&#43;08:00">
+        <span class="value">修改时间:</span>
+        <time class="value">2017-07-15</time>
+    </div>
+</div>
+<article>
+<p>各类软件的版本号定义虽然都不尽相同，但是其基本原理基本上还是相通的：通过特写的字符对字符串进行分割。我们把这一规则稍作整理，放到 struct tag 中，告诉解析器如何解析，下面就以 semver 为例作个示范：</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">SemVersion</span> <span style="color:#66d9ef">struct</span> {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>    <span style="color:#a6e22e">Major</span>      <span style="color:#66d9ef">int</span>    <span style="color:#e6db74">`version:&#34;0,.1&#34;`</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>    <span style="color:#a6e22e">Minor</span>      <span style="color:#66d9ef">int</span>    <span style="color:#e6db74">`version:&#34;1,.2&#34;`</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>    <span style="color:#a6e22e">Patch</span>      <span style="color:#66d9ef">int</span>    <span style="color:#e6db74">`version:&#34;2,+4,-3&#34;`</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>    <span style="color:#a6e22e">PreRelease</span> <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`version:&#34;3,+4&#34;`</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span>    <span style="color:#a6e22e">Build</span>      <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`version:&#34;4&#34;`</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7</span>}
+</pre><p>按以下方式根据 struct tag 标注的顺序执行：</p>
+<ul>
+<li>其中 struct tag 中的第一段内容表示的是当前字段的一个编号，要求唯一且为数值，0 表示入口；</li>
+<li>后面的是解析规则，可以有多条，以逗号分隔，优先级等同；</li>
+<li>每一条规则的第一个字符为触发条件，之后的数字即为前面的编号，当解析器碰到该字符时，即结束当前字段的解析，跳转到其后面指定的编号字段。</li>
+</ul>
+<h2>如何实现</h2>
+<p>首先定义一个表示每个字段的结构：</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#66d9ef">type</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">field</span> {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>    <span style="color:#a6e22e">value</span>  <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Value</span> <span style="color:#75715e">// 指赂字段的值
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">routes</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">byte</span>]<span style="color:#66d9ef">int</span>  <span style="color:#75715e">// 解析的跳转规则
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span><span style="color:#75715e"></span>}
+</pre><p>然后将整个结构体解析到一个 <code>map</code> 中，其键名即为字段的编号：</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">getFields</span>(<span style="color:#a6e22e">obj</span> <span style="color:#66d9ef">interface</span>{}) (<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">int</span>]<span style="color:#f92672">*</span><span style="color:#a6e22e">field</span>, <span style="color:#66d9ef">error</span>) {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>    <span style="color:#a6e22e">v</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">ValueOf</span>(<span style="color:#a6e22e">obj</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>    <span style="color:#a6e22e">t</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">v</span>.<span style="color:#a6e22e">Type</span>()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>    <span style="color:#a6e22e">fields</span> <span style="color:#f92672">:=</span> make(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">int</span>]<span style="color:#f92672">*</span><span style="color:#a6e22e">field</span>, <span style="color:#a6e22e">v</span>.<span style="color:#a6e22e">NumField</span>())
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">lt</span>; <span style="color:#a6e22e">v</span>.<span style="color:#a6e22e">NumField</span>(); <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>        <span style="color:#a6e22e">tags</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">Split</span>(<span style="color:#a6e22e">t</span>.<span style="color:#a6e22e">Field</span>(<span style="color:#a6e22e">i</span>).<span style="color:#a6e22e">Tag</span>.<span style="color:#a6e22e">Get</span>(<span style="color:#e6db74">&#34;version&#34;</span>), <span style="color:#e6db74">&#34;,&#34;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>        <span style="color:#66d9ef">if</span> len(<span style="color:#a6e22e">tags</span>) <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">lt</span>; <span style="color:#ae81ff">1</span> {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#e6db74">&#34;缺少标签内容&#34;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>        }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>        <span style="color:#a6e22e">index</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">Atoi</span>(<span style="color:#a6e22e">tags</span>[<span style="color:#ae81ff">0</span>])
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">err</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>        }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">found</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">fields</span>[<span style="color:#a6e22e">index</span>]; <span style="color:#a6e22e">found</span> {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">errors</span>.<span style="color:#a6e22e">New</span>(<span style="color:#e6db74">&#34;重复的字段编号&#34;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>        }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>        <span style="color:#a6e22e">field</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">field</span>{<span style="color:#a6e22e">routes</span>: make(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">byte</span>]<span style="color:#66d9ef">int</span>, <span style="color:#ae81ff">2</span>)}
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>        <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">vv</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">tags</span>[<span style="color:#ae81ff">1</span>:] {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>            <span style="color:#a6e22e">n</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">Atoi</span>(<span style="color:#a6e22e">vv</span>[<span style="color:#ae81ff">1</span>:])
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>            <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>                <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">err</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>            }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>            <span style="color:#a6e22e">field</span>.<span style="color:#a6e22e">routes</span>[<span style="color:#a6e22e">vv</span>[<span style="color:#ae81ff">0</span>]] = <span style="color:#a6e22e">n</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>        }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span>        <span style="color:#a6e22e">field</span>.<span style="color:#a6e22e">value</span> = <span style="color:#a6e22e">v</span>.<span style="color:#a6e22e">Field</span>(<span style="color:#a6e22e">i</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span>        <span style="color:#a6e22e">fields</span>[<span style="color:#a6e22e">index</span>] = <span style="color:#a6e22e">field</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span>    }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fields</span>, <span style="color:#66d9ef">nil</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35</span>}
+</pre><p>然后通过一个函数将字符串解析到结构中：</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">Parse</span>(<span style="color:#a6e22e">obj</span> <span style="color:#66d9ef">interface</span>{}, <span style="color:#a6e22e">ver</span> <span style="color:#66d9ef">string</span>) {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>    <span style="color:#a6e22e">fields</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">getFields</span>(<span style="color:#a6e22e">obj</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>    <span style="color:#a6e22e">start</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>    <span style="color:#a6e22e">field</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">fields</span>[<span style="color:#ae81ff">0</span>]
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">lt</span>; len(<span style="color:#a6e22e">ver</span>)<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">nextIndex</span> <span style="color:#66d9ef">int</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>        <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">lt</span>; len(<span style="color:#a6e22e">ver</span>) { <span style="color:#75715e">// 未结束
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span style="color:#75715e"></span>            <span style="color:#a6e22e">index</span>, <span style="color:#a6e22e">found</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">field</span>.<span style="color:#a6e22e">routes</span>[<span style="color:#a6e22e">ver</span>[<span style="color:#a6e22e">i</span>]]
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>            <span style="color:#66d9ef">if</span> !<span style="color:#a6e22e">found</span> {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>                <span style="color:#66d9ef">continue</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>            }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>            <span style="color:#a6e22e">nextIndex</span> = <span style="color:#a6e22e">index</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>        }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>        <span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">field</span>.<span style="color:#a6e22e">value</span>.<span style="color:#a6e22e">Kind</span>() {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>        <span style="color:#66d9ef">case</span> <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Int</span>, <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Int8</span>, <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Int16</span>, <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Int32</span>, <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Int64</span>,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>             <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Uint</span>, <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Uint8</span>, <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Uint16</span>, <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Uint32</span>, <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">Uint64</span>:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>            <span style="color:#a6e22e">n</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">ParseInt</span>(<span style="color:#a6e22e">ver</span>[<span style="color:#a6e22e">start</span>:<span style="color:#a6e22e">i</span>], <span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">64</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>            <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>                panic(<span style="color:#a6e22e">err</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>            }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>            <span style="color:#a6e22e">field</span>.<span style="color:#a6e22e">value</span>.<span style="color:#a6e22e">SetInt</span>(<span style="color:#a6e22e">n</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>        <span style="color:#66d9ef">case</span> <span style="color:#a6e22e">reflect</span>.<span style="color:#a6e22e">String</span>:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>            <span style="color:#a6e22e">field</span>.<span style="color:#a6e22e">value</span>.<span style="color:#a6e22e">SetString</span>(<span style="color:#a6e22e">ver</span>[<span style="color:#a6e22e">start</span>:<span style="color:#a6e22e">i</span>])
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>        <span style="color:#66d9ef">default</span>:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>            panic(<span style="color:#e6db74">&#34;无效的类型&#34;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>        }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span>        <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> <span style="color:#75715e">// 过滤掉当前字符
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">start</span> = <span style="color:#a6e22e">i</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span>        <span style="color:#a6e22e">field</span> = <span style="color:#a6e22e">fields</span>[<span style="color:#a6e22e">nextIndex</span>] <span style="color:#75715e">// 下一个 field
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span><span style="color:#75715e"></span>    } <span style="color:#75715e">// end for
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span><span style="color:#75715e"></span>}
+</pre><p>之后我们只需要定义各类版本号的相关结构体，然后传给 <code>Parse</code> 就可以了：</p>
+<pre style="color:#f8f8f2;background-color:#272822"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e">// Major_Version_Number.Minor_Version_Number[.Revision_Number[.Build_Number]]
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">GNUVersion</span> <span style="color:#66d9ef">struct</span> {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>    <span style="color:#a6e22e">Major</span>    <span style="color:#66d9ef">int</span>    <span style="color:#e6db74">`version:&#34;0,.1&#34;`</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>    <span style="color:#a6e22e">Minor</span>    <span style="color:#66d9ef">int</span>    <span style="color:#e6db74">`version:&#34;1,.2&#34;`</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>    <span style="color:#a6e22e">Revision</span> <span style="color:#66d9ef">int</span>    <span style="color:#e6db74">`version:&#34;2, 3&#34;`</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>    <span style="color:#a6e22e">Build</span>    <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`version:&#34;3&#34;`</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>}
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span style="color:#a6e22e">gnu</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">GNUVersion</span>{}
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span style="color:#a6e22e">sem</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">SemVersion</span>{}
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span style="color:#a6e22e">Parse</span>(<span style="color:#a6e22e">gnu</span>, <span style="color:#e6db74">&#34;1.2.0 build-1124&#34;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span style="color:#a6e22e">Parse</span>(<span style="color:#a6e22e">sem</span>, <span style="color:#e6db74">&#34;1.2.0+20160615&#34;</span>)
+</pre><p>查看完整的实现：<a href="https://github.com/issue9/version">https://github.com/issue9/version</a></p>
+
+</article>
+</article>
+
+<div class="pages-nav">
+                <span class="prev">
+                        <a rel="prev" href="https://caixw.io/posts/2016/go-auto-versioning.html" aria-label="前一页">&#171;&#160;Go 的版本自动化</a>
+                    </span>
+                <span class="next">
+                        <a rel="next" href="https://caixw.io/posts/2016/jwt-intro.html" aria-label="后一页">JSON Web Token 的简单介绍&#160;&#187;</a>
+                    </span>
+            </div>
+
+        </main> 
+
+        <footer id="footer">
+            <div class="line">
+                <a class="item" href="https://caixw.io">首页</a>
+                <a class="item" href="https://caixw.io/tags.html">标签</a>
+                <a class="item" href="https://caixw.io/archive.html">存档</a>
+                <a class="item" href="https://caixw.io/rss.xml">RSS</a>
+                <a class="item" href="https://caixw.io/atom.xml">Atom</a>
+                <a class="item" href="https://caixw.io/sitemap.xml">Sitemap</a>
+            </div>
+
+            <div class="line">
+                <span class="item">&#169; 2016-2021 by
+                    <a href="https://caixw.io" type="text/html">caixw</a>
+                </span>
+                <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
+                <span class="item">
+                    由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
+                    <time title="2021-03-26T19:32:25Z">2021-03-26</time>
+                </span>
+            </div>
+        </footer>
+    </body>
+</html>

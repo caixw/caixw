@@ -14,10 +14,24 @@
 		<summary type="text/html"></summary>
 	</entry>
 	<entry>
+		<title>使用 Go 的 struct tag 来解析版本号字符串</title>
+		<id>https://caixw.io/posts/2016/parse-version-with-go-struct-tag.html</id>
+		<updated>2017-07-15T14:19:16+08:00</updated>
+		<link href="https://caixw.io/posts/2016/parse-version-with-go-struct-tag.html" type="application/xml"></link>
+		<summary type="text/html"></summary>
+	</entry>
+	<entry>
 		<title>JSON Web Token 的简单介绍</title>
 		<id>https://caixw.io/posts/2016/jwt-intro.html</id>
 		<updated>2017-07-08T11:50:33+08:00</updated>
 		<link href="https://caixw.io/posts/2016/jwt-intro.html" type="application/xml"></link>
+		<summary type="text/html"></summary>
+	</entry>
+	<entry>
+		<title>RESTful API 设计实践</title>
+		<id>https://caixw.io/posts/2016/restful-api-guide.html</id>
+		<updated>2017-07-29T21:36:45+08:00</updated>
+		<link href="https://caixw.io/posts/2016/restful-api-guide.html" type="application/xml"></link>
 		<summary type="text/html"></summary>
 	</entry>
 	<entry>
