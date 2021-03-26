@@ -8,8 +8,20 @@
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://caixw.io/tags/api.html</loc>
-		<lastmod>0001-01-01T00:00:00Z</lastmod>
+		<loc>https://caixw.io/tags/spl.html</loc>
+		<lastmod>2010-07-28T03:36:05+08:00</lastmod>
+		<changefreq>monthly</changefreq>
+		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/tags/php.html</loc>
+		<lastmod>2010-07-28T03:36:05+08:00</lastmod>
+		<changefreq>monthly</changefreq>
+		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/tags/iterator.html</loc>
+		<lastmod>2010-07-28T03:36:05+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>
@@ -20,10 +32,22 @@
 		<priority>0.5</priority>
 	</url>
 	<url>
+		<loc>https://caixw.io/tags/api.html</loc>
+		<lastmod>0001-01-01T00:00:00Z</lastmod>
+		<changefreq>monthly</changefreq>
+		<priority>0.5</priority>
+	</url>
+	<url>
 		<loc>https://caixw.io</loc>
 		<lastmod>2021-03-26T02:03:17+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/posts/2010/spl-iterator.html</loc>
+		<lastmod>2010-07-28T03:36:05+08:00</lastmod>
+		<changefreq>weekly</changefreq>
+		<priority>0.6</priority>
 	</url>
 	<url>
 		<loc>https://caixw.io/posts/about.html</loc>

@@ -7,6 +7,13 @@
 	<link href="https://caixw.io"></link>
 	<link href="https://caixw.io/atom.xml" rel="self"></link>
 	<entry>
+		<title>SPL 中的迭代器</title>
+		<id>https://caixw.io/posts/2010/spl-iterator.html</id>
+		<updated>2010-07-28T03:36:05+08:00</updated>
+		<link href="https://caixw.io/posts/2010/spl-iterator.html" type="application/xml"></link>
+		<summary type="text/html"></summary>
+	</entry>
+	<entry>
 		<title>关于</title>
 		<id>https://caixw.io/posts/about.html</id>
 		<updated>2021-03-26T02:03:17+08:00</updated>
