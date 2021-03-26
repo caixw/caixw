@@ -14,8 +14,26 @@
 		<priority>0.5</priority>
 	</url>
 	<url>
+		<loc>https://caixw.io/tags/plugin.html</loc>
+		<lastmod>2012-12-17T03:19:15+08:00</lastmod>
+		<changefreq>monthly</changefreq>
+		<priority>0.5</priority>
+	</url>
+	<url>
 		<loc>https://caixw.io/tags/php.html</loc>
 		<lastmod>2010-07-28T03:36:05+08:00</lastmod>
+		<changefreq>monthly</changefreq>
+		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/tags/jquery.html</loc>
+		<lastmod>2012-12-17T03:19:15+08:00</lastmod>
+		<changefreq>monthly</changefreq>
+		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/tags/javascript.html</loc>
+		<lastmod>2012-12-17T03:19:15+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>
@@ -42,6 +60,18 @@
 		<lastmod>2021-03-26T02:03:17+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/posts/2012/jquery-plugin.html</loc>
+		<lastmod>2012-12-17T03:19:15+08:00</lastmod>
+		<changefreq>weekly</changefreq>
+		<priority>0.6</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/posts/2010/javascript-prototype.html</loc>
+		<lastmod>2010-08-15T04:37:27+08:00</lastmod>
+		<changefreq>weekly</changefreq>
+		<priority>0.6</priority>
 	</url>
 	<url>
 		<loc>https://caixw.io/posts/2010/spl-iterator.html</loc>

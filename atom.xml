@@ -7,6 +7,20 @@
 	<link href="https://caixw.io"></link>
 	<link href="https://caixw.io/atom.xml" rel="self"></link>
 	<entry>
+		<title>jQuery 插件开发简要介绍</title>
+		<id>https://caixw.io/posts/2012/jquery-plugin.html</id>
+		<updated>2012-12-17T03:19:15+08:00</updated>
+		<link href="https://caixw.io/posts/2012/jquery-plugin.html" type="application/xml"></link>
+		<summary type="text/html"></summary>
+	</entry>
+	<entry>
+		<title>JavaScript prototype 介绍</title>
+		<id>https://caixw.io/posts/2010/javascript-prototype.html</id>
+		<updated>2010-08-15T04:37:27+08:00</updated>
+		<link href="https://caixw.io/posts/2010/javascript-prototype.html" type="application/xml"></link>
+		<summary type="text/html"></summary>
+	</entry>
+	<entry>
 		<title>SPL 中的迭代器</title>
 		<id>https://caixw.io/posts/2010/spl-iterator.html</id>
 		<updated>2010-07-28T03:36:05+08:00</updated>

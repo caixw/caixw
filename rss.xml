@@ -7,6 +7,18 @@
 		<pubDate>06 Mar 16 00:00 +0800</pubDate>
 		<lastBuildDate>26 Mar 21 02:03 +0800</lastBuildDate>
 		<item>
+			<title>jQuery 插件开发简要介绍</title>
+			<link>https://caixw.io/posts/2012/jquery-plugin.html</link>
+			<description></description>
+			<pubDate>27 Nov 12 02:39 +0800</pubDate>
+		</item>
+		<item>
+			<title>JavaScript prototype 介绍</title>
+			<link>https://caixw.io/posts/2010/javascript-prototype.html</link>
+			<description></description>
+			<pubDate>15 Aug 10 04:37 +0800</pubDate>
+		</item>
+		<item>
 			<title>SPL 中的迭代器</title>
 			<link>https://caixw.io/posts/2010/spl-iterator.html</link>
 			<description></description>
