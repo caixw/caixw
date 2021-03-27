@@ -2,6 +2,6 @@
 
 User-agent: *
 Disallow: /themes/
-Disallow: /
+Allow: /
 
 Sitemap: https://caixw.io/sitemap.xml
