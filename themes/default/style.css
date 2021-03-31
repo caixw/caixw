@@ -27,6 +27,7 @@
     }
 }
 
+
 /*********************** reset */
 
 body {
@@ -147,4 +148,33 @@ ul.tags li:last-child {
 }
 #footer .line .item:last-child {
     margin-right: 0;
+}
+
+/*********** print *****************/
+
+@media print {
+    :root {
+        --background: #fff;
+        --primary: #000;
+        --secondary: #222;
+        --accent: #444;
+    }
+
+    a::after {
+        content: "(" attr(href) ")"; /* 所有链接后显示链接地址 */
+    }
+
+    .pages-nav, #footer {
+        display: none;
+    }
+
+    h1 {
+        page-break-before: always; /* 之前强制分页 */
+    }
+
+    h1, h2, h3, h4, h5, h6,
+    thead, tfoot, tr, th, td,
+    li {
+        page-break-inside: avoid; /* 禁止分页 */
+    }
 }

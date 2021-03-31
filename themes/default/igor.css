@@ -1,0 +1,37 @@
+/* Background */ .hl-chroma { background-color: #ffffff }
+/* LineTableTD */ .hl-chroma .hl-lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
+/* LineTable */ .hl-chroma .hl-lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
+/* LineHighlight */ .hl-chroma .hl-hl { display: block; width: 100%;background-color: #e5e5e5 }
+/* LineNumbersTable */ .hl-chroma .hl-lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .hl-chroma .hl-ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Keyword */ .hl-chroma .hl-k { color: #0000ff }
+/* KeywordConstant */ .hl-chroma .hl-kc { color: #0000ff }
+/* KeywordDeclaration */ .hl-chroma .hl-kd { color: #0000ff }
+/* KeywordNamespace */ .hl-chroma .hl-kn { color: #0000ff }
+/* KeywordPseudo */ .hl-chroma .hl-kp { color: #0000ff }
+/* KeywordReserved */ .hl-chroma .hl-kr { color: #0000ff }
+/* KeywordType */ .hl-chroma .hl-kt { color: #0000ff }
+/* NameClass */ .hl-chroma .hl-nc { color: #007575 }
+/* NameDecorator */ .hl-chroma .hl-nd { color: #cc00a3 }
+/* NameFunction */ .hl-chroma .hl-nf { color: #c34e00 }
+/* LiteralString */ .hl-chroma .hl-s { color: #009c00 }
+/* LiteralStringAffix */ .hl-chroma .hl-sa { color: #009c00 }
+/* LiteralStringBacktick */ .hl-chroma .hl-sb { color: #009c00 }
+/* LiteralStringChar */ .hl-chroma .hl-sc { color: #009c00 }
+/* LiteralStringDelimiter */ .hl-chroma .hl-dl { color: #009c00 }
+/* LiteralStringDoc */ .hl-chroma .hl-sd { color: #009c00 }
+/* LiteralStringDouble */ .hl-chroma .hl-s2 { color: #009c00 }
+/* LiteralStringEscape */ .hl-chroma .hl-se { color: #009c00 }
+/* LiteralStringHeredoc */ .hl-chroma .hl-sh { color: #009c00 }
+/* LiteralStringInterpol */ .hl-chroma .hl-si { color: #009c00 }
+/* LiteralStringOther */ .hl-chroma .hl-sx { color: #009c00 }
+/* LiteralStringRegex */ .hl-chroma .hl-sr { color: #009c00 }
+/* LiteralStringSingle */ .hl-chroma .hl-s1 { color: #009c00 }
+/* LiteralStringSymbol */ .hl-chroma .hl-ss { color: #009c00 }
+/* Comment */ .hl-chroma .hl-c { color: #ff0000; font-style: italic }
+/* CommentHashbang */ .hl-chroma .hl-ch { color: #ff0000; font-style: italic }
+/* CommentMultiline */ .hl-chroma .hl-cm { color: #ff0000; font-style: italic }
+/* CommentSingle */ .hl-chroma .hl-c1 { color: #ff0000; font-style: italic }
+/* CommentSpecial */ .hl-chroma .hl-cs { color: #ff0000; font-style: italic }
+/* CommentPreproc */ .hl-chroma .hl-cp { color: #ff0000; font-style: italic }
+/* CommentPreprocFile */ .hl-chroma .hl-cpf { color: #ff0000; font-style: italic }
