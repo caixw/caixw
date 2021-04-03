@@ -7,7 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>为网页添加一个回到顶部按钮 | 一斤瓜子铺</title><link rel="canonical" href="https://caixw.io/posts/2012/goto-top.html" /><link rel="icon" type="image/svg&#43;xml" href="/favicon.svg" />
         <link rel=”mask-icon” href=”/favicon.svg” color=”#000000” /><link rel="alternate" type="application/rss+xml" title="RSS" href="https://caixw.io/rss.xml" /><link rel="alternate" type="application/atom+xml" title="Atom" href="https://caixw.io/atom.xml" /><meta name="keywords" content="javascript, 代码片段, snippet, goto-top" /><link rel="next" href="https://caixw.io/posts/2012/php-logs.html" /><link rel="prev" href="https://caixw.io/posts/2016/restful-api-guide.html" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: dark)" href="https://caixw.io/themes/default/solarized-dark256.css" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: light)" href="https://caixw.io/themes/default/solarized-light.css" /><link rel="stylesheet" type="text/css" media="print" href="https://caixw.io/themes/default/igor.css" /><link rel="stylesheet" type="text/css" href="https://caixw.io/themes/default/style.css" /><script type="application/ld+json">
-        {"@context":"https://schema.org/","@type":"BlogPosting","headline":"为网页添加一个回到顶部按钮","author":[{"@type":"Person","name":"caixw","url":"https://caixw.io"}],"dateCreated":"2012-12-11T15:08:00+08:00","dateModified":"2012-12-11T15:08:00+08:00","license":"https://creativecommons.org/licenses/by/4.0/deed.zh","keywords":"javascript, 代码片段, snippet, goto-top","inLanguage":"cmn-Hans"}
+        {"@context":"https://schema.org/","@type":"BlogPosting","headline":"为网页添加一个回到顶部按钮","author":[{"@type":"Person","name":"caixw","url":"https://caixw.io"}],"dateCreated":"2012-12-11T15:08:00+08:00","dateModified":"2021-04-02T21:05:00+08:00","license":"https://creativecommons.org/licenses/by/4.0/deed.zh","keywords":"javascript, 代码片段, snippet, goto-top","inLanguage":"cmn-Hans"}
         </script></head>
 
     <body>
@@ -25,12 +25,12 @@
     <div class="item">
         <span class="value">标签:</span><a class="value" href="https://caixw.io/tags/javascript.html">JavaScript</a><a class="value" href="https://caixw.io/tags/snippet.html">代码片段</a></div>
 
-    <div class="item" title="修改时间:2012-12-11T15:08:00&#43;08:00&#10;添加时间:2012-12-11T15:08:00&#43;08:00">
+    <div class="item" title="修改时间:2021-04-02T21:05:00&#43;08:00&#10;添加时间:2012-12-11T15:08:00&#43;08:00">
         <span class="value">修改时间:</span>
-        <time class="value">2012-12-11</time>
+        <time class="value">2021-04-02</time>
     </div>
 </div>
-<article>
+<article id="content">
 <pre class="hl-chroma"><span class="hl-ln"> 1</span> <span class="hl-o">*</span> <span class="hl-nx">在页面上产生个</span> <span class="hl-nx">gotop</span> <span class="hl-nx">按钮</span><span class="hl-err">。</span>
 <span class="hl-ln"> 2</span> <span class="hl-o">*</span> <span class="hl-nx">用纯粹的</span> <span class="hl-nx">JS</span> <span class="hl-nx">实现</span><span class="hl-err">，</span><span class="hl-nx">无须额外的</span> <span class="hl-nx">CSS</span> <span class="hl-nx">和</span> <span class="hl-nx">HTML</span> <span class="hl-nx">支持</span><span class="hl-err">。</span>
 <span class="hl-ln"> 3</span> <span class="hl-o">*</span>
@@ -97,7 +97,7 @@
 </span><span class="hl-ln">64</span><span class="hl-c1"></span>        <span class="hl-kd">var</span> <span class="hl-nx">h</span> <span class="hl-o">=</span> <span class="hl-nb">document</span><span class="hl-p">.</span><span class="hl-nx">body</span><span class="hl-p">.</span><span class="hl-nx">scrollTop</span> <span class="hl-o">+</span> <span class="hl-nb">document</span><span class="hl-p">.</span><span class="hl-nx">documentElement</span><span class="hl-p">.</span><span class="hl-nx">scrollTop</span><span class="hl-p">;</span> <span class="hl-c1">// 当前位置 
 </span><span class="hl-ln">65</span><span class="hl-c1"></span>        <span class="hl-kd">var</span> <span class="hl-nx">t</span> <span class="hl-o">=</span> <span class="hl-nb">window</span><span class="hl-p">.</span><span class="hl-nx">setInterval</span><span class="hl-p">(</span><span class="hl-kd">function</span><span class="hl-p">()</span> <span class="hl-p">{</span> 
 <span class="hl-ln">66</span>            <span class="hl-nb">window</span><span class="hl-p">.</span><span class="hl-nx">scrollTo</span><span class="hl-p">(</span><span class="hl-mi">0</span><span class="hl-p">,</span><span class="hl-nx">h</span> <span class="hl-o">-=</span> <span class="hl-mi">100</span><span class="hl-p">);</span> <span class="hl-c1">// 每次上移 100 像素 
-</span><span class="hl-ln">67</span><span class="hl-c1"></span>            <span class="hl-k">if</span><span class="hl-p">(</span><span class="hl-nx">h</span> <span class="hl-o">&lt;&gt;=</span> <span class="hl-mi">0</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span><span class="hl-ln">67</span><span class="hl-c1"></span>            <span class="hl-k">if</span><span class="hl-p">(</span><span class="hl-nx">h</span> <span class="hl-o">&lt;=</span> <span class="hl-mi">0</span><span class="hl-p">)</span> <span class="hl-p">{</span>
 <span class="hl-ln">68</span>                <span class="hl-nb">window</span><span class="hl-p">.</span><span class="hl-nx">clearInterval</span><span class="hl-p">(</span><span class="hl-nx">t</span><span class="hl-p">);</span>
 <span class="hl-ln">69</span>            <span class="hl-p">}</span>
 <span class="hl-ln">70</span>        <span class="hl-p">},</span> <span class="hl-mi">5</span><span class="hl-p">);</span>
@@ -112,6 +112,17 @@
 </pre>
 </article>
 </article>
+
+
+<nav id="toc-nav">
+    <div id="toc-button" class="button">
+        <i class="css-icon icon-menu"></i>
+        <ul id="toc"></ul>
+    </div>
+
+    <span id="goto-top" class="button"><a href="#" class="css-icon icon-arrow-up"></a></span>
+</nav>
+<script src="https://caixw.io/themes/default/nav.js"></script>
 
 <div class="pages-nav">
                 <span class="prev">
@@ -141,7 +152,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2021-03-31T17:58:39Z">2021-03-31</time>
+                    <time title="2021-04-03T14:46:04Z">2021-04-03</time>
                 </span>
             </div>
         </footer>

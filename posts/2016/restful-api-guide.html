@@ -30,7 +30,7 @@
         <time class="value">2017-07-29</time>
     </div>
 </div>
-<article>
+<article id="content">
 <p>RESTful API 为网络应用程序设计提供了一套统一、合理的风格。它只是一种风格，而不是标准，所以也就没有一套统一的标准去规范化这些设计，本文从实践的角度出发，讨论 RESTful API 设计上的一些细节，探讨如何设计出一套好用、合理、精炼的 API。</p>
 <h2 id="heading">版本</h2>
 <p>按照 RESTful API 的风格，不同版本的 API 应该是同一种资源的不同表现形式，所以将版本号放在报头，是最符合学术界对 RESTful API 的的定义，但是实际操作情况下，将版本号放在报头不直观，而且操作起来也不方便，反而不如直接放在 URL 来得直接。所以现在两种方式都很常见，各人可以按照自己的喜好来挑一种方式来实现。</p>
@@ -188,6 +188,17 @@
 </article>
 </article>
 
+
+<nav id="toc-nav">
+    <div id="toc-button" class="button">
+        <i class="css-icon icon-menu"></i>
+        <ul id="toc"></ul>
+    </div>
+
+    <span id="goto-top" class="button"><a href="#" class="css-icon icon-arrow-up"></a></span>
+</nav>
+<script src="https://caixw.io/themes/default/nav.js"></script>
+
 <div class="pages-nav">
                 <span class="prev">
                         <a rel="prev" href="https://caixw.io/posts/2016/jwt-intro.html" aria-label="前一页">&#171;&#160;JSON Web Token 的简单介绍</a>
@@ -216,7 +227,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2021-03-31T17:58:39Z">2021-03-31</time>
+                    <time title="2021-04-03T14:46:04Z">2021-04-03</time>
                 </span>
             </div>
         </footer>

@@ -30,7 +30,7 @@
         <time class="value">2017-07-08</time>
     </div>
 </div>
-<article>
+<article id="content">
 <p>JSON Web Token 是一种基于 Token 的认证授权机制，本文对其实现原理做个简单的介绍。若要查看详细的相关信息，可以访问 <a href="https://jwt.io/">https://jwt.io/</a>，该网站还有各类语言实现的库，当然你也可以直接阅读其官方的<a href="https://self-issued.info/docs/draft-ietf-oauth-json-web-token.html">标准文档</a>。</p>
 <h2 id="heading">结构</h2>
 <p>一个 JWT 由三段 base64 统码的字符串通过点号(.)组合而成，看起来像这个样子：<code>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYWl4dyIsInN1YiI6InRlc3Qgand0IiwiZXhwIjoxNDYyNDU5MzUxLCJ1aWQiOjEwMjQsInR5cGUiOjF9.y2TytagRDbHI-uQrsMqae2FD5OxqAAFbKp-8rYB2k0I</code>，其中前两段是两个 JSON 结构体的 base64 编码，第三段为对前两段编码的再次编码，起到验证的作用，大致算法可以理解成以下样子：<code>token := base64(header) + base64(payload) + base64(signature)</code>。</p>
@@ -155,6 +155,17 @@
 </article>
 </article>
 
+
+<nav id="toc-nav">
+    <div id="toc-button" class="button">
+        <i class="css-icon icon-menu"></i>
+        <ul id="toc"></ul>
+    </div>
+
+    <span id="goto-top" class="button"><a href="#" class="css-icon icon-arrow-up"></a></span>
+</nav>
+<script src="https://caixw.io/themes/default/nav.js"></script>
+
 <div class="pages-nav">
                 <span class="prev">
                         <a rel="prev" href="https://caixw.io/posts/2016/parse-version-with-go-struct-tag.html" aria-label="前一页">&#171;&#160;使用 Go 的 struct tag 来解析版本号字符串</a>
@@ -183,7 +194,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2021-03-31T17:58:39Z">2021-03-31</time>
+                    <time title="2021-04-03T14:46:04Z">2021-04-03</time>
                 </span>
             </div>
         </footer>

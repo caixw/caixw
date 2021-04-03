@@ -30,7 +30,7 @@
         <time class="value">2016-12-04</time>
     </div>
 </div>
-<article>
+<article id="content">
 <p>一般情况下，我会在发布程序时把编译的时期附在版本号里，按照 <a href="https://semver.org">semver</a> 的规则，一个版本号会是这样子：<code>0.1.2+20161129</code>，前三个字符相对来说改动比较少，但是最后的日期一天一变，如果采用手动改变代码中常的方式，就比较得麻烦。所以我会使用 shell 和 <code>go build</code> 命令的 <code>ldflags</code> 参数相结合，在每次编译时，自动更新这个个变量。</p>
 <p>下面是一段简单的代码，用来作为示例，除了编译日期之外，还指定了一个 commit hash，用于记录最后的提交 ID：</p>
 <pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-c1">// Copyright 2016 by caixw, All rights reserved.
@@ -89,6 +89,17 @@
 </article>
 </article>
 
+
+<nav id="toc-nav">
+    <div id="toc-button" class="button">
+        <i class="css-icon icon-menu"></i>
+        <ul id="toc"></ul>
+    </div>
+
+    <span id="goto-top" class="button"><a href="#" class="css-icon icon-arrow-up"></a></span>
+</nav>
+<script src="https://caixw.io/themes/default/nav.js"></script>
+
 <div class="pages-nav">
                 
                 <span class="next">
@@ -115,7 +126,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2021-03-31T17:58:39Z">2021-03-31</time>
+                    <time title="2021-04-03T14:46:04Z">2021-04-03</time>
                 </span>
             </div>
         </footer>
