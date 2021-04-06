@@ -45,7 +45,7 @@
 <li>后面的是解析规则，可以有多条，以逗号分隔，优先级等同；</li>
 <li>每一条规则的第一个字符为触发条件，之后的数字即为前面的编号，当解析器碰到该字符时，即结束当前字段的解析，跳转到其后面指定的编号字段。</li>
 </ul>
-<h2 id="heading">如何实现</h2>
+<h2 id="ru-he-shi-xian">如何实现</h2>
 <p>首先定义一个表示每个字段的结构：</p>
 <pre class="hl-chroma"><span class="hl-ln">1</span><span class="hl-kd">type</span> <span class="hl-kd">struct</span> <span class="hl-nx">field</span> <span class="hl-p">{</span>
 <span class="hl-ln">2</span>    <span class="hl-nx">value</span>  <span class="hl-nx">reflect</span><span class="hl-p">.</span><span class="hl-nx">Value</span> <span class="hl-c1">// 指赂字段的值
@@ -138,39 +138,19 @@
 </pre><p>查看完整的实现：<a href="https://github.com/issue9/version">https://github.com/issue9/version</a></p>
 
 </article>
-</article>
-
-
-<nav id="toc-nav">
-    <div id="toc-button" class="button">
-        <i class="css-icon icon-menu"></i>
-        <ul id="toc"></ul>
-    </div>
-
-    <span id="goto-top" class="button"><a href="#" class="css-icon icon-arrow-up"></a></span>
-</nav>
-<script src="https://caixw.io/themes/default/nav.js"></script>
-
-<div class="pages-nav">
+</article><div class="pages-nav">
                 <span class="prev">
-                        <a rel="prev" href="https://caixw.io/posts/2016/go-auto-versioning.html" aria-label="前一页">&#171;&#160;Go 的版本自动化</a>
+                        <a rel="prev" href="https://caixw.io/posts/2016/go-auto-versioning.html" aria-label="前一页"><span aria-hidden>&#171;&#160;</span>Go 的版本自动化</a>
                     </span>
                 <span class="next">
-                        <a rel="next" href="https://caixw.io/posts/2016/jwt-intro.html" aria-label="后一页">JSON Web Token 的简单介绍&#160;&#187;</a>
+                        <a rel="next" href="https://caixw.io/posts/2016/jwt-intro.html" aria-label="后一页">JSON Web Token 的简单介绍<span aria-hidden>&#160;&#187;</span></a>
                     </span>
             </div>
 
         </main> 
 
         <footer id="footer">
-            <div class="line">
-                <a class="item" href="https://caixw.io">首页</a>
-                <a class="item" href="https://caixw.io/tags.html">标签</a>
-                <a class="item" href="https://caixw.io/archive.html">存档</a>
-                <a class="item" href="https://caixw.io/rss.xml">RSS</a>
-                <a class="item" href="https://caixw.io/atom.xml">Atom</a>
-                <a class="item" href="https://caixw.io/sitemap.xml">Sitemap</a>
-            </div>
+            <div class="line" role="menu"><a role="menuitem" class="item" href="/">首页</a><a role="menuitem" class="item" href="/tags.html">标签</a><a role="menuitem" class="item" href="/archive.html">存档</a><a role="menuitem" class="item" href="/posts/about.html">关于</a><a role="menuitem" class="item" href="/rss.xml">RSS</a><a role="menuitem" class="item" href="/atom.xml">Atom</a><a role="menuitem" class="item" href="/sitemap.xml">Sitemap</a></div>
 
             <div class="line">
                 <span class="item">&#169; 2016-2021 by
@@ -179,9 +159,12 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2021-04-03T14:58:14Z">2021-04-03</time>
+                    <time title="2021-04-06T15:41:38Z">2021-04-06</time>
                 </span>
             </div>
         </footer>
+
+        <span role="button" id="goto-top" class="nav-button"><a href="#" class="css-icon icon-arrow-up"></a></span>
+        <script src="https://caixw.io/themes/default/nav.js"></script>
     </body>
 </html>

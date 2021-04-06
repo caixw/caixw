@@ -35,7 +35,7 @@
 <pre class="hl-chroma"><span class="hl-ln">1</span><span class="hl-nx">jQuery</span><span class="hl-p">.</span><span class="hl-nx">fun</span><span class="hl-p">();</span>    <span class="hl-c1">// 类级别的插件。
 </span><span class="hl-ln">2</span><span class="hl-c1"></span><span class="hl-nx">$</span><span class="hl-p">.</span><span class="hl-nx">fun</span><span class="hl-p">();</span>         <span class="hl-c1">// 类级别的，$相当于jQuery的简写方式。
 </span><span class="hl-ln">3</span><span class="hl-c1"></span><span class="hl-nx">$</span><span class="hl-p">(</span><span class="hl-s1">&#39;#foo&#39;</span><span class="hl-p">).</span><span class="hl-nx">fun</span><span class="hl-p">();</span> <span class="hl-c1">// 对象级别的。
-</span></pre><h2 id="heading">类级别的插件开发</h2>
+</span></pre><h2 id="lei-ji-bie-de-cha-jian-kai-fa">类级别的插件开发</h2>
 <p>官方推荐的写法是 <code>jQuery.extend(object)</code>：</p>
 <pre class="hl-chroma"><span class="hl-ln">1</span><span class="hl-nx">jQuery</span><span class="hl-p">.</span><span class="hl-nx">extend</span><span class="hl-p">({</span>
 <span class="hl-ln">2</span>    <span class="hl-nx">fun1</span><span class="hl-o">:</span><span class="hl-kd">function</span><span class="hl-p">(){</span><span class="hl-nx">alert</span><span class="hl-p">(</span><span class="hl-s1">&#39;fun1&#39;</span><span class="hl-p">);},</span>
@@ -56,7 +56,7 @@
 <span class="hl-ln">5</span>    <span class="hl-p">});</span>
 <span class="hl-ln">6</span><span class="hl-p">})(</span><span class="hl-nx">jQuery</span><span class="hl-p">);</span>
 </pre><p>这种写法其实和第一种是一样的，只不过把其中的 jQuery 变量抽象出来成为一个匿名函数的形参 <code>$</code>，再通过传递 jQuery 变量给这个匿名函数。</p>
-<h2 id="heading-1">对象级别的插件开发</h2>
+<h2 id="dui-xiang-ji-bie-de-cha-jian-kai-fa">对象级别的插件开发</h2>
 <p>对象级别的插件定义，也分为三种：</p>
 <pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-cm">/* 方法1 */</span>
 <span class="hl-ln"> 2</span><span class="hl-nx">jQuery</span><span class="hl-p">.</span><span class="hl-nx">fn</span><span class="hl-p">.</span><span class="hl-nx">extend</span><span class="hl-p">({</span>
@@ -79,7 +79,7 @@
 <span class="hl-ln">19</span>    <span class="hl-p">});</span>
 <span class="hl-ln">20</span><span class="hl-p">})(</span><span class="hl-nx">jQuery</span><span class="hl-p">);</span>
 </pre><p>看了这三段代码，细心的朋友可能发现了，这与前面的类级别的插件定义是一样的，只不过所有 <code>jQuery.</code> 后面多了个 <code>fn</code>，而我们查看 jQuery 的源码不难发现：<code>jQuery.fn = jQuery.prototype</code>，熟悉的朋友肯定不会陌生，我们一般定义一个类对象的成员函数就是通过 prototype 来实现，而 jQuery 也是通过 prototype 来实现的。甚至于 <code>jQuery.extend</code> 与 <code>jQuery.fn.extend</code> 的实现也是一样的。</p>
-<h2 id="heading-2">命名空间</h2>
+<h2 id="ming-ming-kong-jian">命名空间</h2>
 <p>将自己写的插件封闭到一个自定义的命名空间中，有助于解决与其它人插件名称冲突问题，jQuery 也可以和 JS 一样使用使用对象创建命名空间：</p>
 <pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-cm">/* jQuery.extend 方法，作用于类级别的插件 */</span>
 <span class="hl-ln"> 2</span><span class="hl-nx">jQuery</span><span class="hl-p">.</span><span class="hl-nx">extend</span><span class="hl-p">({</span>
@@ -98,7 +98,7 @@
 <span class="hl-ln">15</span>
 <span class="hl-ln">16</span><span class="hl-nx">$</span><span class="hl-p">.</span><span class="hl-nx">myNamespace</span><span class="hl-p">.</span><span class="hl-nx">fun1</span><span class="hl-p">();</span> <span class="hl-c1">// 正常调用命名空间下的函数。
 </span><span class="hl-ln">17</span><span class="hl-c1"></span><span class="hl-nx">$</span><span class="hl-p">(</span><span class="hl-s1">&#39;#test&#39;</span><span class="hl-p">).</span><span class="hl-nx">myNamespace</span><span class="hl-p">.</span><span class="hl-nx">fun1</span><span class="hl-p">();</span> <span class="hl-c1">// 调用对象级别的插件。
-</span></pre><h2 id="extend-"><code>extend</code> 函数</h2>
+</span></pre><h2 id="extend-han-shu"><code>extend</code> 函数</h2>
 <p>我们前面一直用 <code>extend</code> 函数进得插件的开发，其实 <code>extend</code> 的作用远不止于此，其原型有如下三种：</p>
 <pre class="hl-chroma"><span class="hl-ln">1</span><span class="hl-nx">extend</span><span class="hl-p">(</span><span class="hl-nx">dest</span><span class="hl-p">,</span> <span class="hl-nx">src1</span><span class="hl-p">,</span> <span class="hl-nx">src2</span><span class="hl-p">...</span> <span class="hl-nx">srcN</span><span class="hl-p">);</span>
 <span class="hl-ln">2</span><span class="hl-nx">extend</span><span class="hl-p">(</span><span class="hl-nx">bool</span><span class="hl-p">,</span> <span class="hl-nx">dest</span><span class="hl-p">,</span> <span class="hl-nx">src1</span><span class="hl-p">,</span> <span class="hl-nx">src2</span> <span class="hl-p">...</span> <span class="hl-nx">srcN</span><span class="hl-p">);</span>
@@ -114,7 +114,7 @@
 <span class="hl-ln">3</span><span class="hl-nx">$</span><span class="hl-p">.</span><span class="hl-nx">extend</span><span class="hl-p">(</span><span class="hl-kc">true</span><span class="hl-p">,</span> <span class="hl-nx">dest</span><span class="hl-p">,</span> <span class="hl-nx">src1</span><span class="hl-p">);</span> <span class="hl-c1">// 返回值为:{name:&#39;caixw&#39;,info:{email:&#39;webmaster@caixw.io&#39;,&#39;url&#39;:http://caixw.io}}
 </span><span class="hl-ln">4</span><span class="hl-c1"></span><span class="hl-nx">$</span><span class="hl-p">.</span><span class="hl-nx">extend</span><span class="hl-p">(</span><span class="hl-kc">false</span><span class="hl-p">,</span> <span class="hl-nx">dest</span><span class="hl-p">,</span> <span class="hl-nx">src1</span><span class="hl-p">);</span> <span class="hl-c1">// 返回值为：{name:&#39;caixw&#39;, info:{email:&#39;webmaster@caixw.io&#39;}}
 </span></pre><p>原型 3 只有一个参数，函数将会把参数对象的内容合并到 <code>extend</code> 调用对象中去，也就是我们开始介绍的插件定义方法用到的功能。</p>
-<h2 id="heading-3">带参数的插件</h2>
+<h2 id="dai-can-shu-de-cha-jian">带参数的插件</h2>
 <p>大部分插件都会暴露一些参数供使用自定义，以实现界面及行为的调整。假设我们定义了以下一个插件：</p>
 <pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-cm">/**
 </span><span class="hl-ln"> 2</span><span class="hl-cm"> * 漂亮的tooltip显示
@@ -164,7 +164,7 @@
 <span class="hl-ln">16</span>
 <span class="hl-ln">17</span><span class="hl-nx">$</span><span class="hl-p">.</span><span class="hl-nx">fn</span><span class="hl-p">.</span><span class="hl-nx">tooltip</span><span class="hl-p">.</span><span class="hl-nx">defaults</span><span class="hl-p">.</span><span class="hl-nx">foreColor</span> <span class="hl-o">=</span> <span class="hl-s1">&#39;green&#39;</span><span class="hl-p">;</span> <span class="hl-c1">// 所有背景都变绿了。
 </span><span class="hl-ln">18</span><span class="hl-c1"></span><span class="hl-nx">$</span><span class="hl-p">(</span><span class="hl-s1">&#39;#tooltip&#39;</span><span class="hl-p">).</span><span class="hl-nx">tooltip</span><span class="hl-p">({</span><span class="hl-nx">foreColor</span><span class="hl-o">:</span><span class="hl-s1">&#39;red&#39;</span><span class="hl-p">});</span> <span class="hl-c1">// 只有这个是红的
-</span></pre><h2 id="this-"><code>this</code> 指针</h2>
+</span></pre><h2 id="this-zhi-zhen"><code>this</code> 指针</h2>
 <p><del><code>jQuery</code> 并未对 <code>this</code> 作什么特殊处理，所以在 <code>this</code> 表示的是一个 HTML 元素对象，若要通过 <code>this</code> 取得 <code>jQuery</code> 对象，则需要使用 <code>$(this)</code>。</del></p>
 <p>谢谢 <a href="https://www.akasuna.com/">akasuna</a> 的指正。类级别的插件中使用 <code>this</code> 返回的是指向当前函数的指针；对象级别的插件中 <code>this</code> 是 <code>jQuery</code> 对象，若选择器指定的标签不存在，则 <code>jQuery</code> 对象的 <code>length</code> 为 0，否则为符合条件的标签个数。</p>
 <p>将一个 <code>jQuery</code> 对象传递给 <code>jQuery()</code> 函数，则会原样返回。之前也是因为这个原因，才自然而然地就认为 <code>this</code> 是个非 <code>jQuery</code> 对象。</p>
@@ -178,9 +178,9 @@
 <span class="hl-ln">7</span><span class="hl-p">});</span>
 </pre><p>此时，<code>myNamespace</code> 才是 <code>jQuery.fn</code> 即 <code>jQuery.prototype</code> 的一个属性，而 <code>myPlugin</code> 则是 <code>myNamespace</code> 的一个普通属性。</p>
 <p>对于这种方法，貌似也没有什么方法可解决，要么不用命名空间；要么将选择器当作一个参数传递给函数，但这样做，却和类级别的插件一样了。</p>
-<h2 id="heading-4">测试</h2>
+<h2 id="ce-shi">测试</h2>
 <p>这里有一个小软件：<a href="https://www.paulstovell.com/jquerypad/">jQueryPad</a>，可以用来测试 jQuery，对于一些小测试还是比较方便的。</p>
-<h2 id="heading-5">总结</h2>
+<h2 id="zong-jie">总结</h2>
 <p>若将 jQuery 当作一个普通的 JS 对象，则插件的定义很好理解，就如以下形式：</p>
 <pre class="hl-chroma"><span class="hl-ln">1</span><span class="hl-kd">var</span> <span class="hl-nx">jQuery</span> <span class="hl-o">=</span> <span class="hl-p">{};</span>
 <span class="hl-ln">2</span><span class="hl-nx">jQuery</span><span class="hl-p">.</span><span class="hl-nx">fun1</span> <span class="hl-o">=</span> <span class="hl-kd">function</span><span class="hl-p">(){};</span>   <span class="hl-c1">// 类级别的插件
@@ -190,39 +190,22 @@
 </span><span class="hl-ln">6</span><span class="hl-c1"></span><span class="hl-nx">jQuery</span><span class="hl-p">.</span><span class="hl-nx">prototype</span><span class="hl-p">.</span><span class="hl-nx">myNamespace</span><span class="hl-p">.</span><span class="hl-nx">fun2</span> <span class="hl-o">=</span> <span class="hl-kd">function</span><span class="hl-p">(){}</span> <span class="hl-c1">// 带命名空间，但 fun2 是作用在 myNamespace 上而不是 myNamespace.prototype 上。
 </span></pre>
 </article>
-</article>
-
-
-<nav id="toc-nav">
-    <div id="toc-button" class="button">
-        <i class="css-icon icon-menu"></i>
-        <ul id="toc"></ul>
-    </div>
-
-    <span id="goto-top" class="button"><a href="#" class="css-icon icon-arrow-up"></a></span>
-</nav>
-<script src="https://caixw.io/themes/default/nav.js"></script>
-
-<div class="pages-nav">
+</article><nav id="toc-button" class="nav-button">
+    <i role="button" class="css-icon icon-menu"></i>
+    <ul id="toc" role="menu"><li role="menuitem" class="toc-h0"><a href="#lei-ji-bie-de-cha-jian-kai-fa">类级别的插件开发</a></li><li role="menuitem" class="toc-h0"><a href="#dui-xiang-ji-bie-de-cha-jian-kai-fa">对象级别的插件开发</a></li><li role="menuitem" class="toc-h0"><a href="#ming-ming-kong-jian">命名空间</a></li><li role="menuitem" class="toc-h0"><a href="#extend-han-shu">extend 函数</a></li><li role="menuitem" class="toc-h0"><a href="#dai-can-shu-de-cha-jian">带参数的插件</a></li><li role="menuitem" class="toc-h0"><a href="#this-zhi-zhen">this 指针</a></li><li role="menuitem" class="toc-h0"><a href="#ce-shi">测试</a></li><li role="menuitem" class="toc-h0"><a href="#zong-jie">总结</a></li></ul>
+</nav><div class="pages-nav">
                 <span class="prev">
-                        <a rel="prev" href="https://caixw.io/posts/2012/php-logs.html" aria-label="前一页">&#171;&#160;一个简单的日志记录函数</a>
+                        <a rel="prev" href="https://caixw.io/posts/2012/php-logs.html" aria-label="前一页"><span aria-hidden>&#171;&#160;</span>一个简单的日志记录函数</a>
                     </span>
                 <span class="next">
-                        <a rel="next" href="https://caixw.io/posts/2010/javascript-prototype.html" aria-label="后一页">JavaScript prototype 介绍&#160;&#187;</a>
+                        <a rel="next" href="https://caixw.io/posts/2010/javascript-prototype.html" aria-label="后一页">JavaScript prototype 介绍<span aria-hidden>&#160;&#187;</span></a>
                     </span>
             </div>
 
         </main> 
 
         <footer id="footer">
-            <div class="line">
-                <a class="item" href="https://caixw.io">首页</a>
-                <a class="item" href="https://caixw.io/tags.html">标签</a>
-                <a class="item" href="https://caixw.io/archive.html">存档</a>
-                <a class="item" href="https://caixw.io/rss.xml">RSS</a>
-                <a class="item" href="https://caixw.io/atom.xml">Atom</a>
-                <a class="item" href="https://caixw.io/sitemap.xml">Sitemap</a>
-            </div>
+            <div class="line" role="menu"><a role="menuitem" class="item" href="/">首页</a><a role="menuitem" class="item" href="/tags.html">标签</a><a role="menuitem" class="item" href="/archive.html">存档</a><a role="menuitem" class="item" href="/posts/about.html">关于</a><a role="menuitem" class="item" href="/rss.xml">RSS</a><a role="menuitem" class="item" href="/atom.xml">Atom</a><a role="menuitem" class="item" href="/sitemap.xml">Sitemap</a></div>
 
             <div class="line">
                 <span class="item">&#169; 2016-2021 by
@@ -231,9 +214,12 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2021-04-03T14:58:14Z">2021-04-03</time>
+                    <time title="2021-04-06T15:41:38Z">2021-04-06</time>
                 </span>
             </div>
         </footer>
+
+        <span role="button" id="goto-top" class="nav-button"><a href="#" class="css-icon icon-arrow-up"></a></span>
+        <script src="https://caixw.io/themes/default/nav.js"></script>
     </body>
 </html>

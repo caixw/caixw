@@ -32,7 +32,7 @@
 </div>
 <article id="content">
 <p>JSON Web Token 是一种基于 Token 的认证授权机制，本文对其实现原理做个简单的介绍。若要查看详细的相关信息，可以访问 <a href="https://jwt.io/">https://jwt.io/</a>，该网站还有各类语言实现的库，当然你也可以直接阅读其官方的<a href="https://self-issued.info/docs/draft-ietf-oauth-json-web-token.html">标准文档</a>。</p>
-<h2 id="heading">结构</h2>
+<h2 id="jie-gou">结构</h2>
 <p>一个 JWT 由三段 base64 统码的字符串通过点号(.)组合而成，看起来像这个样子：<code>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYWl4dyIsInN1YiI6InRlc3Qgand0IiwiZXhwIjoxNDYyNDU5MzUxLCJ1aWQiOjEwMjQsInR5cGUiOjF9.y2TytagRDbHI-uQrsMqae2FD5OxqAAFbKp-8rYB2k0I</code>，其中前两段是两个 JSON 结构体的 base64 编码，第三段为对前两段编码的再次编码，起到验证的作用，大致算法可以理解成以下样子：<code>token := base64(header) + base64(payload) + base64(signature)</code>。</p>
 <h3 id="header">header</h3>
 <p>Header 为一个 JSON 结构，定义了 JWT 使用的 Token 类型和加密方法，经过 base64 编码后组成 JWT 的第一部分。其结构如下：</p>
@@ -41,7 +41,7 @@
 <span class="hl-ln">3</span>    <span class="hl-nt">&#34;alg&#34;</span><span class="hl-p">:</span><span class="hl-s2">&#34;HS256&#34;</span>
 <span class="hl-ln">4</span><span class="hl-p">}</span>
 </pre><p>对其进行 base64 编码之后，得到以下字符串:<code>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9</code>。</p>
-<h3 id="payloadclaims">Payload(Claims)</h3>
+<h3 id="payload-claims">Payload(Claims)</h3>
 <p>Payload 是 JWT 的核心部分，包含了描述 JWT 的重要信息。也是一个 JSON 数据，字段可以根据用户的需求自定义，只要保证字段名唯一就行。当然官方也定义了一些可能会经常用到的内容，所有这些字段都是可选的，Payload 的值是没有加密的，所以不要在里面包含一些敏感信息。</p>
 <p>一些官方定义的字段：</p>
 <ul>
@@ -66,7 +66,7 @@
 </pre><p>计算之后会得到以下字符串：<code>y2TytagRDbHI-uQrsMqae2FD5OxqAAFbKp-8rYB2k0I</code>。</p>
 <p>之后将三段字符串用点号(.)进行拼接，就得到一个完整的 JWT 了：<code>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYWl4dyIsInN1YiI6InRlc3Qgand0IiwiZXhwIjoxNDYyNDU5MzUxLCJ1aWQiOjEwMjQsInR5cGUiOjF9.y2TytagRDbHI-uQrsMqae2FD5OxqAAFbKp-8rYB2k0I</code>。</p>
 <p>JWT 是 URL Safe 的，所以对进行 base64 编码的时候，应该使用 <code>base64.RawURLEncoding</code> 对其进行编码，而不是 <code>base64.RawStdEncoding</code>。</p>
-<h2 id="heading-1">简单的实现</h2>
+<h2 id="jian-dan-de-shi-xian">简单的实现</h2>
 <p>这是一个简单的 Go 实现版本，其它语言也大同小异。</p>
 <pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-c1">// Copyright 2016 by caixw, All rights reserved.
 </span><span class="hl-ln"> 2</span><span class="hl-c1">// Use of this source code is governed by a MIT
@@ -153,39 +153,22 @@
 <span class="hl-ln">83</span><span class="hl-p">}</span>
 </pre>
 </article>
-</article>
-
-
-<nav id="toc-nav">
-    <div id="toc-button" class="button">
-        <i class="css-icon icon-menu"></i>
-        <ul id="toc"></ul>
-    </div>
-
-    <span id="goto-top" class="button"><a href="#" class="css-icon icon-arrow-up"></a></span>
-</nav>
-<script src="https://caixw.io/themes/default/nav.js"></script>
-
-<div class="pages-nav">
+</article><nav id="toc-button" class="nav-button">
+    <i role="button" class="css-icon icon-menu"></i>
+    <ul id="toc" role="menu"><li role="menuitem" class="toc-h0"><a href="#jie-gou">结构</a></li><li role="menuitem" class="toc-h1"><a href="#header">header</a></li><li role="menuitem" class="toc-h1"><a href="#payload-claims">Payload(Claims)</a></li><li role="menuitem" class="toc-h1"><a href="#signature">Signature</a></li><li role="menuitem" class="toc-h0"><a href="#jian-dan-de-shi-xian">简单的实现</a></li></ul>
+</nav><div class="pages-nav">
                 <span class="prev">
-                        <a rel="prev" href="https://caixw.io/posts/2016/parse-version-with-go-struct-tag.html" aria-label="前一页">&#171;&#160;使用 Go 的 struct tag 来解析版本号字符串</a>
+                        <a rel="prev" href="https://caixw.io/posts/2016/parse-version-with-go-struct-tag.html" aria-label="前一页"><span aria-hidden>&#171;&#160;</span>使用 Go 的 struct tag 来解析版本号字符串</a>
                     </span>
                 <span class="next">
-                        <a rel="next" href="https://caixw.io/posts/2016/restful-api-guide.html" aria-label="后一页">RESTful API 设计实践&#160;&#187;</a>
+                        <a rel="next" href="https://caixw.io/posts/2016/restful-api-guide.html" aria-label="后一页">RESTful API 设计实践<span aria-hidden>&#160;&#187;</span></a>
                     </span>
             </div>
 
         </main> 
 
         <footer id="footer">
-            <div class="line">
-                <a class="item" href="https://caixw.io">首页</a>
-                <a class="item" href="https://caixw.io/tags.html">标签</a>
-                <a class="item" href="https://caixw.io/archive.html">存档</a>
-                <a class="item" href="https://caixw.io/rss.xml">RSS</a>
-                <a class="item" href="https://caixw.io/atom.xml">Atom</a>
-                <a class="item" href="https://caixw.io/sitemap.xml">Sitemap</a>
-            </div>
+            <div class="line" role="menu"><a role="menuitem" class="item" href="/">首页</a><a role="menuitem" class="item" href="/tags.html">标签</a><a role="menuitem" class="item" href="/archive.html">存档</a><a role="menuitem" class="item" href="/posts/about.html">关于</a><a role="menuitem" class="item" href="/rss.xml">RSS</a><a role="menuitem" class="item" href="/atom.xml">Atom</a><a role="menuitem" class="item" href="/sitemap.xml">Sitemap</a></div>
 
             <div class="line">
                 <span class="item">&#169; 2016-2021 by
@@ -194,9 +177,12 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2021-04-03T14:58:14Z">2021-04-03</time>
+                    <time title="2021-04-06T15:41:38Z">2021-04-06</time>
                 </span>
             </div>
         </footer>
+
+        <span role="button" id="goto-top" class="nav-button"><a href="#" class="css-icon icon-arrow-up"></a></span>
+        <script src="https://caixw.io/themes/default/nav.js"></script>
     </body>
 </html>
