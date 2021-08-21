@@ -3,7 +3,7 @@
 	<title>Atom</title>
 	<subtitle>subtitle</subtitle>
 	<id>https://caixw.io</id>
-	<updated>2021-04-02T21:05:00+08:00</updated>
+	<updated>2021-08-21T23:45:30+08:00</updated>
 	<link href="https://caixw.io"></link>
 	<link href="https://caixw.io/atom.xml" rel="self"></link>
 	<entry>
@@ -30,7 +30,7 @@
 	<entry>
 		<title>JSON Web Token 的简单介绍</title>
 		<id>https://caixw.io/posts/2016/jwt-intro.html</id>
-		<updated>2017-07-08T11:50:33+08:00</updated>
+		<updated>2021-08-21T23:45:30+08:00</updated>
 		<link href="https://caixw.io/posts/2016/jwt-intro.html" type="application/xml"></link>
 		<summary type="text/html"></summary>
 	</entry>
