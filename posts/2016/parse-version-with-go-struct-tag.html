@@ -32,7 +32,7 @@
 </div>
 <article id="content">
 <p>各类软件的版本号定义虽然都不尽相同，但是其基本原理基本上还是相通的：通过特写的字符对字符串进行分割。我们把这一规则稍作整理，放到 struct tag 中，告诉解析器如何解析，下面就以 semver 为例作个示范：</p>
-<pre class="hl-chroma"><span class="hl-ln">1</span><span class="hl-kd">type</span> <span class="hl-nx">SemVersion</span> <span class="hl-kd">struct</span> <span class="hl-p">{</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-kd">type</span> <span class="hl-nx">SemVersion</span> <span class="hl-kd">struct</span> <span class="hl-p">{</span>
 <span class="hl-ln">2</span>    <span class="hl-nx">Major</span>      <span class="hl-kt">int</span>    <span class="hl-s">`version:&#34;0,.1&#34;`</span>
 <span class="hl-ln">3</span>    <span class="hl-nx">Minor</span>      <span class="hl-kt">int</span>    <span class="hl-s">`version:&#34;1,.2&#34;`</span>
 <span class="hl-ln">4</span>    <span class="hl-nx">Patch</span>      <span class="hl-kt">int</span>    <span class="hl-s">`version:&#34;2,+4,-3&#34;`</span>
@@ -47,19 +47,19 @@
 </ul>
 <h2 id="ru-he-shi-xian">如何实现</h2>
 <p>首先定义一个表示每个字段的结构：</p>
-<pre class="hl-chroma"><span class="hl-ln">1</span><span class="hl-kd">type</span> <span class="hl-kd">struct</span> <span class="hl-nx">field</span> <span class="hl-p">{</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-kd">type</span> <span class="hl-kd">struct</span> <span class="hl-nx">field</span> <span class="hl-p">{</span>
 <span class="hl-ln">2</span>    <span class="hl-nx">value</span>  <span class="hl-nx">reflect</span><span class="hl-p">.</span><span class="hl-nx">Value</span> <span class="hl-c1">// 指赂字段的值
 </span><span class="hl-ln">3</span><span class="hl-c1"></span>    <span class="hl-nx">routes</span> <span class="hl-kd">map</span><span class="hl-p">[</span><span class="hl-kt">byte</span><span class="hl-p">]</span><span class="hl-kt">int</span>  <span class="hl-c1">// 解析的跳转规则
 </span><span class="hl-ln">4</span><span class="hl-c1"></span><span class="hl-p">}</span>
 </pre><p>然后将整个结构体解析到一个 <code>map</code> 中，其键名即为字段的编号：</p>
-<pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-kd">func</span> <span class="hl-nf">getFields</span><span class="hl-p">(</span><span class="hl-nx">obj</span> <span class="hl-kd">interface</span><span class="hl-p">{})</span> <span class="hl-p">(</span><span class="hl-kd">map</span><span class="hl-p">[</span><span class="hl-kt">int</span><span class="hl-p">]</span><span class="hl-o">*</span><span class="hl-nx">field</span><span class="hl-p">,</span> <span class="hl-kt">error</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-kd">func</span> <span class="hl-nf">getFields</span><span class="hl-p">(</span><span class="hl-nx">obj</span> <span class="hl-kd">interface</span><span class="hl-p">{})</span> <span class="hl-p">(</span><span class="hl-kd">map</span><span class="hl-p">[</span><span class="hl-kt">int</span><span class="hl-p">]</span><span class="hl-o">*</span><span class="hl-nx">field</span><span class="hl-p">,</span> <span class="hl-kt">error</span><span class="hl-p">)</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 2</span>    <span class="hl-nx">v</span> <span class="hl-o">:=</span> <span class="hl-nx">reflect</span><span class="hl-p">.</span><span class="hl-nf">ValueOf</span><span class="hl-p">(</span><span class="hl-nx">obj</span><span class="hl-p">)</span>
 <span class="hl-ln"> 3</span>    <span class="hl-nx">t</span> <span class="hl-o">:=</span> <span class="hl-nx">v</span><span class="hl-p">.</span><span class="hl-nf">Type</span><span class="hl-p">()</span>
 <span class="hl-ln"> 4</span>    <span class="hl-nx">fields</span> <span class="hl-o">:=</span> <span class="hl-nb">make</span><span class="hl-p">(</span><span class="hl-kd">map</span><span class="hl-p">[</span><span class="hl-kt">int</span><span class="hl-p">]</span><span class="hl-o">*</span><span class="hl-nx">field</span><span class="hl-p">,</span> <span class="hl-nx">v</span><span class="hl-p">.</span><span class="hl-nf">NumField</span><span class="hl-p">())</span>
 <span class="hl-ln"> 5</span>
-<span class="hl-ln"> 6</span>    <span class="hl-k">for</span> <span class="hl-nx">i</span> <span class="hl-o">:=</span> <span class="hl-mi">0</span><span class="hl-p">;</span> <span class="hl-nx">i</span> <span class="hl-o">&amp;</span><span class="hl-nx">lt</span><span class="hl-p">;</span> <span class="hl-nx">v</span><span class="hl-p">.</span><span class="hl-nf">NumField</span><span class="hl-p">();</span> <span class="hl-nx">i</span><span class="hl-o">++</span> <span class="hl-p">{</span>
+<span class="hl-ln"> 6</span>    <span class="hl-k">for</span> <span class="hl-nx">i</span> <span class="hl-o">:=</span> <span class="hl-mi">0</span><span class="hl-p">;</span> <span class="hl-nx">i</span> <span class="hl-p">&lt;</span> <span class="hl-nx">v</span><span class="hl-p">.</span><span class="hl-nf">NumField</span><span class="hl-p">();</span> <span class="hl-nx">i</span><span class="hl-o">++</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 7</span>        <span class="hl-nx">tags</span> <span class="hl-o">:=</span> <span class="hl-nx">strings</span><span class="hl-p">.</span><span class="hl-nf">Split</span><span class="hl-p">(</span><span class="hl-nx">t</span><span class="hl-p">.</span><span class="hl-nf">Field</span><span class="hl-p">(</span><span class="hl-nx">i</span><span class="hl-p">).</span><span class="hl-nx">Tag</span><span class="hl-p">.</span><span class="hl-nf">Get</span><span class="hl-p">(</span><span class="hl-s">&#34;version&#34;</span><span class="hl-p">),</span> <span class="hl-s">&#34;,&#34;</span><span class="hl-p">)</span>
-<span class="hl-ln"> 8</span>        <span class="hl-k">if</span> <span class="hl-nb">len</span><span class="hl-p">(</span><span class="hl-nx">tags</span><span class="hl-p">)</span> <span class="hl-o">&amp;</span><span class="hl-nx">lt</span><span class="hl-p">;</span> <span class="hl-mi">1</span> <span class="hl-p">{</span>
+<span class="hl-ln"> 8</span>        <span class="hl-k">if</span> <span class="hl-nb">len</span><span class="hl-p">(</span><span class="hl-nx">tags</span><span class="hl-p">)</span> <span class="hl-p">&lt;</span> <span class="hl-mi">1</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 9</span>            <span class="hl-k">return</span> <span class="hl-kc">nil</span><span class="hl-p">,</span> <span class="hl-nx">errors</span><span class="hl-p">.</span><span class="hl-nf">New</span><span class="hl-p">(</span><span class="hl-s">&#34;缺少标签内容&#34;</span><span class="hl-p">)</span>
 <span class="hl-ln">10</span>        <span class="hl-p">}</span>
 <span class="hl-ln">11</span>
@@ -88,14 +88,14 @@
 <span class="hl-ln">34</span>    <span class="hl-k">return</span> <span class="hl-nx">fields</span><span class="hl-p">,</span> <span class="hl-kc">nil</span>
 <span class="hl-ln">35</span><span class="hl-p">}</span>
 </pre><p>然后通过一个函数将字符串解析到结构中：</p>
-<pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-kd">func</span> <span class="hl-nf">Parse</span><span class="hl-p">(</span><span class="hl-nx">obj</span> <span class="hl-kd">interface</span><span class="hl-p">{},</span> <span class="hl-nx">ver</span> <span class="hl-kt">string</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-kd">func</span> <span class="hl-nf">Parse</span><span class="hl-p">(</span><span class="hl-nx">obj</span> <span class="hl-kd">interface</span><span class="hl-p">{},</span> <span class="hl-nx">ver</span> <span class="hl-kt">string</span><span class="hl-p">)</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 2</span>    <span class="hl-nx">fields</span><span class="hl-p">,</span> <span class="hl-nx">_</span> <span class="hl-o">:=</span> <span class="hl-nf">getFields</span><span class="hl-p">(</span><span class="hl-nx">obj</span><span class="hl-p">)</span>
 <span class="hl-ln"> 3</span>
 <span class="hl-ln"> 4</span>    <span class="hl-nx">start</span> <span class="hl-o">:=</span> <span class="hl-mi">0</span>
 <span class="hl-ln"> 5</span>    <span class="hl-nx">field</span> <span class="hl-o">:=</span> <span class="hl-nx">fields</span><span class="hl-p">[</span><span class="hl-mi">0</span><span class="hl-p">]</span>
-<span class="hl-ln"> 6</span>    <span class="hl-k">for</span> <span class="hl-nx">i</span> <span class="hl-o">:=</span> <span class="hl-mi">0</span><span class="hl-p">;</span> <span class="hl-nx">i</span> <span class="hl-o">&amp;</span><span class="hl-nx">lt</span><span class="hl-p">;</span> <span class="hl-nb">len</span><span class="hl-p">(</span><span class="hl-nx">ver</span><span class="hl-p">)</span><span class="hl-o">+</span><span class="hl-mi">1</span><span class="hl-p">;</span> <span class="hl-nx">i</span><span class="hl-o">++</span> <span class="hl-p">{</span>
+<span class="hl-ln"> 6</span>    <span class="hl-k">for</span> <span class="hl-nx">i</span> <span class="hl-o">:=</span> <span class="hl-mi">0</span><span class="hl-p">;</span> <span class="hl-nx">i</span> <span class="hl-p">&lt;</span> <span class="hl-nb">len</span><span class="hl-p">(</span><span class="hl-nx">ver</span><span class="hl-p">)</span><span class="hl-o">+</span><span class="hl-mi">1</span><span class="hl-p">;</span> <span class="hl-nx">i</span><span class="hl-o">++</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 7</span>        <span class="hl-kd">var</span> <span class="hl-nx">nextIndex</span> <span class="hl-kt">int</span>
-<span class="hl-ln"> 8</span>        <span class="hl-k">if</span> <span class="hl-nx">i</span> <span class="hl-o">&amp;</span><span class="hl-nx">lt</span><span class="hl-p">;</span> <span class="hl-nb">len</span><span class="hl-p">(</span><span class="hl-nx">ver</span><span class="hl-p">)</span> <span class="hl-p">{</span> <span class="hl-c1">// 未结束
+<span class="hl-ln"> 8</span>        <span class="hl-k">if</span> <span class="hl-nx">i</span> <span class="hl-p">&lt;</span> <span class="hl-nb">len</span><span class="hl-p">(</span><span class="hl-nx">ver</span><span class="hl-p">)</span> <span class="hl-p">{</span> <span class="hl-c1">// 未结束
 </span><span class="hl-ln"> 9</span><span class="hl-c1"></span>            <span class="hl-nx">index</span><span class="hl-p">,</span> <span class="hl-nx">found</span> <span class="hl-o">:=</span> <span class="hl-nx">field</span><span class="hl-p">.</span><span class="hl-nx">routes</span><span class="hl-p">[</span><span class="hl-nx">ver</span><span class="hl-p">[</span><span class="hl-nx">i</span><span class="hl-p">]]</span>
 <span class="hl-ln">10</span>            <span class="hl-k">if</span> <span class="hl-p">!</span><span class="hl-nx">found</span> <span class="hl-p">{</span>
 <span class="hl-ln">11</span>                <span class="hl-k">continue</span>
@@ -123,7 +123,7 @@
 </span><span class="hl-ln">33</span><span class="hl-c1"></span>    <span class="hl-p">}</span> <span class="hl-c1">// end for
 </span><span class="hl-ln">34</span><span class="hl-c1"></span><span class="hl-p">}</span>
 </pre><p>之后我们只需要定义各类版本号的相关结构体，然后传给 <code>Parse</code> 就可以了：</p>
-<pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-c1">// Major_Version_Number.Minor_Version_Number[.Revision_Number[.Build_Number]]
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-c1">// Major_Version_Number.Minor_Version_Number[.Revision_Number[.Build_Number]]
 </span><span class="hl-ln"> 2</span><span class="hl-c1"></span><span class="hl-kd">type</span> <span class="hl-nx">GNUVersion</span> <span class="hl-kd">struct</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 3</span>    <span class="hl-nx">Major</span>    <span class="hl-kt">int</span>    <span class="hl-s">`version:&#34;0,.1&#34;`</span>
 <span class="hl-ln"> 4</span>    <span class="hl-nx">Minor</span>    <span class="hl-kt">int</span>    <span class="hl-s">`version:&#34;1,.2&#34;`</span>
@@ -159,7 +159,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2021-08-21T17:19:28Z">2021-08-21</time>
+                    <time title="2021-08-22T17:09:56Z">2021-08-22</time>
                 </span>
             </div>
         </footer>

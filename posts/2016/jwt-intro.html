@@ -36,7 +36,7 @@
 <p>一个 JWT 由三段 base64 统码的字符串通过点号(.)组合而成，看起来像这个样子：<code>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYWl4dyIsInN1YiI6InRlc3Qgand0IiwiZXhwIjoxNDYyNDU5MzUxLCJ1aWQiOjEwMjQsInR5cGUiOjF9.y2TytagRDbHI-uQrsMqae2FD5OxqAAFbKp-8rYB2k0I</code>，其中前两段是两个 JSON 结构体的 base64 编码，第三段为对前两段编码的再次编码，起到验证的作用，大致算法可以理解成以下样子：<code>token := base64(header) + base64(payload) + base64(signature)</code>。</p>
 <h3 id="header">header</h3>
 <p>Header 为一个 JSON 结构，定义了 JWT 使用的 Token 类型和加密方法，经过 base64 编码后组成 JWT 的第一部分。其结构如下：</p>
-<pre class="hl-chroma"><span class="hl-ln">1</span><span class="hl-p">{</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-p">{</span>
 <span class="hl-ln">2</span>    <span class="hl-nt">&#34;typ&#34;</span><span class="hl-p">:</span><span class="hl-s2">&#34;JWT&#34;</span><span class="hl-p">,</span>
 <span class="hl-ln">3</span>    <span class="hl-nt">&#34;alg&#34;</span><span class="hl-p">:</span><span class="hl-s2">&#34;HS256&#34;</span>
 <span class="hl-ln">4</span><span class="hl-p">}</span>
@@ -49,7 +49,7 @@
 <li>sub:主题；</li>
 <li>exp:过期时间。</li>
 </ul>
-<pre class="hl-chroma"><span class="hl-ln">1</span><span class="hl-p">{</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-p">{</span>
 <span class="hl-ln">2</span>    <span class="hl-nt">&#34;iss&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;caixw&#34;</span><span class="hl-p">,</span>
 <span class="hl-ln">3</span>    <span class="hl-nt">&#34;sub&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;test jwt&#34;</span><span class="hl-p">,</span>
 <span class="hl-ln">4</span>    <span class="hl-nt">&#34;exp&#34;</span><span class="hl-p">:</span> <span class="hl-mi">1462459351</span><span class="hl-p">,</span>
@@ -59,7 +59,7 @@
 </pre><p>编码之后，会得到：<code>eyJpc3MiOiJjYWl4dyIsInN1YiI6InRlc3Qgand0IiwiZXhwIjoxNDYyNDU5MzUxLCJ1aWQiOjEwMjQsInR5cGUiOjF9</code>。</p>
 <h3 id="signature">Signature</h3>
 <p>Signature 是对前两段编码的一个签名验证，用于验证 Token 是否有效果，是否被篡改过等。其大致的算法为：将前两段编码通过点号(.)拼接起来，然后对其进行一次 base64 编码。</p>
-<pre class="hl-chroma"><span class="hl-ln">1</span><span class="hl-nx">header</span> <span class="hl-o">:=</span> <span class="hl-nf">base64</span><span class="hl-p">(</span><span class="hl-nx">headerJSON</span><span class="hl-p">)</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-nx">header</span> <span class="hl-o">:=</span> <span class="hl-nf">base64</span><span class="hl-p">(</span><span class="hl-nx">headerJSON</span><span class="hl-p">)</span>
 <span class="hl-ln">2</span><span class="hl-nx">payload</span> <span class="hl-o">:=</span> <span class="hl-nf">base64</span><span class="hl-p">(</span><span class="hl-nx">payloadJSON</span><span class="hl-p">)</span>
 <span class="hl-ln">3</span><span class="hl-nx">content</span> <span class="hl-o">:=</span> <span class="hl-nx">header</span> <span class="hl-o">+</span> <span class="hl-s">&#34;.&#34;</span> <span class="hl-o">+</span> <span class="hl-nx">payload</span>
 <span class="hl-ln">4</span><span class="hl-nx">signature</span> <span class="hl-o">:=</span> <span class="hl-nf">base64</span><span class="hl-p">(</span><span class="hl-nx">content</span><span class="hl-p">)</span>
@@ -68,7 +68,7 @@
 <p>JWT 是 URL Safe 的，所以对进行 base64 编码的时候，应该使用 <code>base64.RawURLEncoding</code> 对其进行编码，而不是 <code>base64.RawStdEncoding</code>。</p>
 <h2 id="jian-dan-de-shi-xian">简单的实现</h2>
 <p>这是一个简单的 Go 实现版本，其它语言也大同小异。</p>
-<pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-c1">// Copyright 2016 by caixw, All rights reserved.
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-c1">// Copyright 2016 by caixw, All rights reserved.
 </span><span class="hl-ln"> 2</span><span class="hl-c1">// Use of this source code is governed by a MIT
 </span><span class="hl-ln"> 3</span><span class="hl-c1">// license that can be found in the LICENSE file.
 </span><span class="hl-ln"> 4</span><span class="hl-c1"></span>
@@ -177,7 +177,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2021-08-21T17:19:28Z">2021-08-21</time>
+                    <time title="2021-08-22T17:09:56Z">2021-08-22</time>
                 </span>
             </div>
         </footer>

@@ -33,7 +33,7 @@
 <article id="content">
 <p>一般情况下，我会在发布程序时把编译的时期附在版本号里，按照 <a href="https://semver.org">semver</a> 的规则，一个版本号会是这样子：<code>0.1.2+20161129</code>，前三个字符相对来说改动比较少，但是最后的日期一天一变，如果采用手动改变代码中常的方式，就比较得麻烦。所以我会使用 shell 和 <code>go build</code> 命令的 <code>ldflags</code> 参数相结合，在每次编译时，自动更新这个个变量。</p>
 <p>下面是一段简单的代码，用来作为示例，除了编译日期之外，还指定了一个 commit hash，用于记录最后的提交 ID：</p>
-<pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-c1">// Copyright 2016 by caixw, All rights reserved.
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-c1">// Copyright 2016 by caixw, All rights reserved.
 </span><span class="hl-ln"> 2</span><span class="hl-c1">// Use of this source code is governed by a MIT
 </span><span class="hl-ln"> 3</span><span class="hl-c1">// license that can be found in the LICENSE file.
 </span><span class="hl-ln"> 4</span><span class="hl-c1"></span>
@@ -70,13 +70,13 @@
 <span class="hl-ln">35</span>    <span class="hl-c1">// TODO
 </span><span class="hl-ln">36</span><span class="hl-c1"></span><span class="hl-p">}</span>
 </pre><p>下面是相对应的一个简单 shell 脚本，用于编译代码：</p>
-<pre class="hl-chroma"><span class="hl-ln">1</span><span class="hl-c1"># 获取两个参数变量，等号两端不要有空格</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-c1"># 获取两个参数变量，等号两端不要有空格</span>
 <span class="hl-ln">2</span><span class="hl-nv">buildDate</span><span class="hl-o">=</span><span class="hl-k">$(</span>date -u <span class="hl-s1">&#39;+%Y%m%d&#39;</span><span class="hl-k">)</span>
 <span class="hl-ln">3</span><span class="hl-nv">hash</span><span class="hl-o">=</span><span class="hl-k">$(</span>git rev-parse HEAD<span class="hl-k">)</span>
 <span class="hl-ln">4</span>
 <span class="hl-ln">5</span>go build  -ldflags <span class="hl-s2">&#34;-X main.buildDate=</span><span class="hl-si">${</span><span class="hl-nv">buildDate</span><span class="hl-si">}</span><span class="hl-s2"> -X main.commitHash=</span><span class="hl-si">${</span><span class="hl-nv">hash</span><span class="hl-si">}</span><span class="hl-s2">&#34;</span>
 </pre><p>执行 <code>./main</code>，将会输出类似以下内容：</p>
-<pre class="hl-chroma"><span class="hl-ln">1</span>version:1.2.3+20161129
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span>version:1.2.3+20161129
 <span class="hl-ln">2</span>git commit hash: 8b3632a2451edcd175939de6581315b9dde0fbd7
 </pre><p>关于 ldflags 参数：</p>
 <ul>
@@ -106,7 +106,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2021-08-21T17:19:28Z">2021-08-21</time>
+                    <time title="2021-08-22T17:09:56Z">2021-08-22</time>
                 </span>
             </div>
         </footer>

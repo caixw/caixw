@@ -34,7 +34,7 @@
 <p>迭代器这种设计模式很常见，也很实用。最著名的要算是 C++ 中 STL 的实现了。它提供了一个统一的接口，使用访问者在不知道类对象内部数据结构的情况下遍历其内部数据。PHP5 中提供了对这种设计模式的内置支持，其实所谓的内置支持就是可以使用 <code>foreach</code> 语言结构来访问实现迭代器接口的类。</p>
 <h2 id="ge-jian-dan-de-zi-ding-yi-die-dai-qi">一个简单的自定义迭代器</h2>
 <p>首先看一下下面这三段代码：</p>
-<pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-nv">$array</span> <span class="hl-o">=</span> <span class="hl-k">array</span><span class="hl-p">(</span><span class="hl-s1">&#39;a&#39;</span><span class="hl-p">,</span> <span class="hl-s1">&#39;b&#39;</span><span class="hl-p">,</span> <span class="hl-s1">&#39;c&#39;</span><span class="hl-p">);</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-nv">$array</span> <span class="hl-o">=</span> <span class="hl-k">array</span><span class="hl-p">(</span><span class="hl-s1">&#39;a&#39;</span><span class="hl-p">,</span> <span class="hl-s1">&#39;b&#39;</span><span class="hl-p">,</span> <span class="hl-s1">&#39;c&#39;</span><span class="hl-p">);</span>
 <span class="hl-ln"> 2</span><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-nv">$a</span> <span class="hl-o">=</span> <span class="hl-nx">next</span><span class="hl-p">(</span><span class="hl-nv">$array</span><span class="hl-p">))</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 3</span>    <span class="hl-c1">// do something
 </span><span class="hl-ln"> 4</span><span class="hl-c1"></span><span class="hl-p">}</span>
@@ -51,7 +51,7 @@
 </span><span class="hl-ln">15</span><span class="hl-c1"></span><span class="hl-p">}</span>
 </pre><p>以上这三段代码虽然操作的资源(resource)各不相同，但是其功能是一样的，都是遍历资源中的数据。但是这三段代码却用了三套不同的函数，这些函数拥有不同的参数，不同的行为，我们在使用之前必须要了解其用途，才能写出一段遍历某种资源(resource)的代码。</p>
 <p>迭代器设计模式就是在这种情况下产生：我们将其中的一些相同的操作抽象出来形成一个接口，不同的资源只要实现这一接口，就能以相同的方式遍历其中的数据。以下是一个简单迭代器接口的实现，在以 PHP5 之前，迭代器一般也是按照这种方式实现的。当然真实的代码中会比这更加复杂和健壮些。</p>
-<pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">interface</span> <span class="hl-nx">SimpleIterator</span> <span class="hl-p">{</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">interface</span> <span class="hl-nx">SimpleIterator</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 2</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">next</span><span class="hl-p">();</span>
 <span class="hl-ln"> 3</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">current</span><span class="hl-p">();</span>
 <span class="hl-ln"> 4</span><span class="hl-p">}</span>
@@ -136,7 +136,7 @@
 <span class="hl-ln">83</span><span class="hl-p">}</span>
 </pre><h2 id="spl-zhong-de-iterator-jie-kou">SPL 中的 iterator 接口</h2>
 <p>上面这种自定义实现的迭代器接口有一个缺点，就是不能用于 <code>foreach</code> 语句。而 SPL 中提供的迭代器却实现了对 <code>foreach</code> 的支持。</p>
-<pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">interface</span> <span class="hl-nx">Iterator</span> <span class="hl-k">extends</span> <span class="hl-nx">Traversable</span> <span class="hl-p">{</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">interface</span> <span class="hl-nx">Iterator</span> <span class="hl-k">extends</span> <span class="hl-nx">Traversable</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 2</span>   <span class="hl-c1">// 将迭代器的指针移向第一个元素。类似于数组操作函数reset()。
 </span><span class="hl-ln"> 3</span><span class="hl-c1"></span>   <span class="hl-k">function</span> <span class="hl-nf">rewind</span><span class="hl-p">();</span>
 <span class="hl-ln"> 4</span>
@@ -153,7 +153,7 @@
 </span><span class="hl-ln">15</span><span class="hl-c1"></span>   <span class="hl-k">function</span> <span class="hl-nf">valid</span><span class="hl-p">();</span>
 <span class="hl-ln">16</span><span class="hl-p">}</span>
 </pre><p>这就是 SPL 的迭代器接口，<code>Traversable</code> 是 Zend 引擎的内置接口，它才是真正让类能用于 <code>foreach</code> 语句的接口，但是在 PHP 中并不能直接实现 <code>Traversable</code>。只能间接地通过 <code>Iterator</code> 或 <code>IteratorAggregate</code> 接口实现。下面我们通过两个简单的例子看看如何实现 <code>Iterator</code> 接口的，虽然有点多余，但有时候代码住住比文字更能说明问题。</p>
-<pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">ArrayIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">ArrayIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 2</span>    <span class="hl-k">private</span> <span class="hl-nv">$_data</span><span class="hl-p">;</span>
 <span class="hl-ln"> 3</span>    <span class="hl-k">private</span> <span class="hl-nv">$_valid</span><span class="hl-p">;</span>
 <span class="hl-ln"> 4</span>
@@ -224,13 +224,13 @@
 <span class="hl-ln">69</span>    <span class="hl-nv">$dirIter</span><span class="hl-o">-&gt;</span><span class="hl-na">next</span><span class="hl-p">();</span>
 <span class="hl-ln">70</span><span class="hl-p">}</span>
 </pre><p>上面这段代码将会输出：</p>
-<pre class="hl-chroma"><span class="hl-ln">1</span>.<span class="hl-o">====</span>&gt;.
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span>.<span class="hl-o">====</span>&gt;.
 <span class="hl-ln">2</span>..<span class="hl-o">====</span>&gt;..
 <span class="hl-ln">3</span><span class="hl-nv">dir1</span><span class="hl-o">====</span>&gt;dir1
 <span class="hl-ln">4</span><span class="hl-nv">dir2</span><span class="hl-o">====</span>&gt;dir2
 <span class="hl-ln">5</span>file2.txt<span class="hl-o">====</span>&gt;file2.txt
 </pre><p>相对于 <code>while</code> 语句，<code>foreach</code> 语句隐藏了各函数的调用情况，使人不甚了解其具体调用情况，但是我们只要稍微写点代码就能对其调用情况了如指掌：</p>
-<pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">TestIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">TestIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 2</span>    <span class="hl-k">private</span> <span class="hl-nv">$_count</span> <span class="hl-o">=</span> <span class="hl-mi">1</span><span class="hl-p">;</span>
 <span class="hl-ln"> 3</span>
 <span class="hl-ln"> 4</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">rewind</span><span class="hl-p">()</span> <span class="hl-p">{</span>
@@ -270,7 +270,7 @@
 </ul>
 <h2 id="di-gui-die-dai-qi-recursiveiterator">递归迭代器(RecursiveIterator)</h2>
 <p>这也是一种很常见的迭代器，SPL 中也为其定义了一个接口：</p>
-<pre class="hl-chroma"><span class="hl-ln">1</span><span class="hl-k">interface</span> <span class="hl-nx">RecursiveIterator</span> <span class="hl-k">extends</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-k">interface</span> <span class="hl-nx">RecursiveIterator</span> <span class="hl-k">extends</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
 <span class="hl-ln">2</span>    <span class="hl-c1">// 是否存在子元素
 </span><span class="hl-ln">3</span><span class="hl-c1"></span>    <span class="hl-k">function</span> <span class="hl-nf">hasChildren</span><span class="hl-p">();</span>
 <span class="hl-ln">4</span>
@@ -278,7 +278,7 @@
 </span><span class="hl-ln">6</span><span class="hl-c1"></span>    <span class="hl-k">function</span> <span class="hl-nf">getChildren</span><span class="hl-p">();</span>
 <span class="hl-ln">7</span><span class="hl-p">}</span>
 </pre><p>我们依旧以上面的 <code>DirIterator</code> 类为例，实现一个递归的迭代器。因为 <code>RecursiveIterator</code> 也是从 <code>Iterator</code> 继承而来的，所以我们的递归类也不用从头开始写，只须从 <code>DirIterator</code> 继承再实现 <code>RecursiveIterator</code> 接口的两个特有函数即可：</p>
-<pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">RecursiveDirIterator</span> <span class="hl-k">extends</span> <span class="hl-nx">DirIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">RecursiveIterator</span> <span class="hl-p">{</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">RecursiveDirIterator</span> <span class="hl-k">extends</span> <span class="hl-nx">DirIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">RecursiveIterator</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 2</span>    <span class="hl-k">private</span> <span class="hl-nv">$_path</span><span class="hl-p">;</span>
 <span class="hl-ln"> 3</span>
 <span class="hl-ln"> 4</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__construct</span><span class="hl-p">(</span><span class="hl-nv">$path</span><span class="hl-p">)</span> <span class="hl-p">{</span>
@@ -303,12 +303,12 @@
 <span class="hl-ln">23</span><span class="hl-p">}</span>
 </pre><h2 id="iteratoraggregate-jie-kou"><code>IteratorAggregate</code> 接口</h2>
 <p><code>IteratorAggregate</code> 是除 <code>Iterator</code> 之外另一个从 <code>Traversable</code> 接口中继承而来的。其接口也很简单，只有一个函数。就是返回一个迭代器实例：</p>
-<pre class="hl-chroma"><span class="hl-ln">1</span><span class="hl-k">interface</span> <span class="hl-nx">IteratorAggregate</span> <span class="hl-k">extends</span> <span class="hl-nx">Traversable</span> <span class="hl-p">{</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-k">interface</span> <span class="hl-nx">IteratorAggregate</span> <span class="hl-k">extends</span> <span class="hl-nx">Traversable</span> <span class="hl-p">{</span>
 <span class="hl-ln">2</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">getIterator</span><span class="hl-p">();</span>
 <span class="hl-ln">3</span><span class="hl-p">}</span>
 </pre><p>该接口的功能也是让实现者拥有迭代器的功能。初看之下，貌似没什么特别的，我们完全可以用 <code>Iterator</code> 接口来替代。事实上也是如此。之所以提供该类只不过是让我们少写点代码和减少类与类之间的耦合度。</p>
 <p>我们依旧以 <code>DirIterator</code> 为例。假设有一个类 A 包含了一个私有成员 <code>DirIterator</code>，而类 A 本身又要实现 <code>DirIterator</code> 的迭代器功能。按照我们之前的作法，会让类A实现 <code>Iterator</code> 接口，然后在各接口函数重写一次 <code>DirIterator</code> 的内容。但是这样做，若是后期将 <code>DirIterator</code> 更改为 <code>RecursiveDirIterator</code>，则同时需要更改类 A 的接口，以符合要求。而用 <code>IteratorAggregate</code> 则不会出现这种情况。</p>
-<pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">A</span> <span class="hl-k">implements</span> <span class="hl-nx">IteratorAggregate</span> <span class="hl-p">{</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">A</span> <span class="hl-k">implements</span> <span class="hl-nx">IteratorAggregate</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 2</span>    <span class="hl-k">private</span> <span class="hl-nv">$_dirIter</span><span class="hl-p">;</span>
 <span class="hl-ln"> 3</span>
 <span class="hl-ln"> 4</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__construct</span><span class="hl-p">()</span> <span class="hl-p">{</span>
@@ -332,13 +332,13 @@
 <span class="hl-ln">22</span>    <span class="hl-c1">// do something
 </span><span class="hl-ln">23</span><span class="hl-c1"></span><span class="hl-p">}</span>
 </pre><h2 id="outeriterator">OuterIterator</h2>
-<pre class="hl-chroma"><span class="hl-ln">1</span><span class="hl-k">interface</span> <span class="hl-nx">OuterIterator</span> <span class="hl-k">extends</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-k">interface</span> <span class="hl-nx">OuterIterator</span> <span class="hl-k">extends</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
 <span class="hl-ln">2</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">getInnerIterator</span><span class="hl-p">();</span>
 <span class="hl-ln">3</span><span class="hl-p">}</span>
 </pre><p><code>OuterIterator</code> 相当于我们前一节讲的类 A 的另一种实现。它实现者可以包含一个或多个迭代器成员，即可以通过<code>getInnerIterator()</code> 接口函数获取内部的迭代器，也可以直接通过类本身实现的 <code>Iterator</code> 接口遍历内部的迭代器数据。这在 SPL 是一个非常重要的接口，SPL 中很多内置的迭代器实现了这个接口。</p>
 <h2 id="filteriterator">FilterIterator</h2>
 <p><code>FilterIterator</code> 这是一个抽象类，它实现了 <code>OuterIterator</code> 接口。它包装一个已有的迭代器类，通过抽象方法 <code>accept()</code> 过滤掉不需要的内容，形成一个新的迭代器。我们还是用上面的 <code>DirIterator</code> 作一个例子，定义一个只返回所有以 'a' 开头的目录名的迭代器：</p>
-<pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">ADirIterator</span> <span class="hl-k">extends</span> <span class="hl-nx">FilterIterator</span> <span class="hl-p">{</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">ADirIterator</span> <span class="hl-k">extends</span> <span class="hl-nx">FilterIterator</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 2</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">accept</span><span class="hl-p">()</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 3</span>        <span class="hl-k">return</span> <span class="hl-mi">0</span> <span class="hl-o">===</span> <span class="hl-nx">strpos</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">current</span><span class="hl-p">(),</span> <span class="hl-s1">&#39;a&#39;</span><span class="hl-p">);</span>
 <span class="hl-ln"> 4</span>    <span class="hl-p">}</span>
@@ -355,7 +355,7 @@
 <li><code>getPosition()</code>：当前迭代器的位置；</li>
 <li><code>seek($pos)</code>：直接跳到某个位置的元素。</li>
 </ul>
-<pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-nv">$data</span> <span class="hl-o">=</span> <span class="hl-k">array</span><span class="hl-p">(</span><span class="hl-s1">&#39;a&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;d&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;c&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;f&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;g&#39;</span><span class="hl-p">);</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-nv">$data</span> <span class="hl-o">=</span> <span class="hl-k">array</span><span class="hl-p">(</span><span class="hl-s1">&#39;a&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;d&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;c&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;f&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;g&#39;</span><span class="hl-p">);</span>
 <span class="hl-ln"> 2</span><span class="hl-nv">$offset</span> <span class="hl-o">=</span> <span class="hl-mi">2</span><span class="hl-p">;</span>
 <span class="hl-ln"> 3</span><span class="hl-nv">$count</span> <span class="hl-o">=</span> <span class="hl-mi">3</span><span class="hl-p">;</span>
 <span class="hl-ln"> 4</span>
@@ -371,7 +371,7 @@
 <span class="hl-ln">14</span><span class="hl-p">}</span>
 </pre><h2 id="bian-li-dui-xiang-shu-xing">遍历对象属性</h2>
 <p>当我们对一个没有实现 iterator 接口的对象使用 <code>foreach</code> 时，它会依次访问对象的公共属性，这是一个非常棒的机制：</p>
-<pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">Test</span> <span class="hl-p">{</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">Test</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 2</span>    <span class="hl-k">public</span> <span class="hl-nv">$p1</span> <span class="hl-o">=</span> <span class="hl-mi">1</span><span class="hl-p">;</span>
 <span class="hl-ln"> 3</span>    <span class="hl-k">public</span> <span class="hl-nv">$p2</span> <span class="hl-o">=</span> <span class="hl-mi">2</span><span class="hl-p">;</span>
 <span class="hl-ln"> 4</span>
@@ -387,7 +387,7 @@
 <span class="hl-ln">14</span>    <span class="hl-k">echo</span> <span class="hl-nv">$property</span><span class="hl-p">,</span><span class="hl-s1">&#39;====&gt;&#39;</span><span class="hl-p">,</span><span class="hl-nv">$value</span><span class="hl-p">,</span><span class="hl-s1">&#39;&lt;br /&gt;&#39;</span><span class="hl-p">;</span>
 <span class="hl-ln">15</span><span class="hl-p">}</span>
 </pre><p>上例中会显示出 <code>$p1,$p2</code> 的属性。而 <code>$p3,$p4,$p5,$p6</code> 则因为访问权限问题无法列出。若想要列出被保护的成员，只需将 <code>foreach</code> 移到类内即可：</p>
-<pre class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">Test</span> <span class="hl-p">{</span>
+<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">Test</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 2</span>    <span class="hl-k">public</span> <span class="hl-nv">$p1</span> <span class="hl-o">=</span> <span class="hl-mi">1</span><span class="hl-p">;</span>
 <span class="hl-ln"> 3</span>    <span class="hl-k">public</span> <span class="hl-nv">$p2</span> <span class="hl-o">=</span> <span class="hl-mi">2</span><span class="hl-p">;</span>
 <span class="hl-ln"> 4</span>    <span class="hl-k">protected</span> <span class="hl-nv">$p3</span> <span class="hl-o">=</span> <span class="hl-mi">3</span><span class="hl-p">;</span>
@@ -442,7 +442,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2021-08-21T17:19:28Z">2021-08-21</time>
+                    <time title="2021-08-22T17:09:56Z">2021-08-22</time>
                 </span>
             </div>
         </footer>
