@@ -5,7 +5,13 @@
 		<link>https://caixw.io</link>
 		<description>subtitle</description>
 		<pubDate>06 Mar 16 00:00 +0800</pubDate>
-		<lastBuildDate>21 Aug 21 23:45 +0800</lastBuildDate>
+		<lastBuildDate>23 Aug 21 04:31 +0800</lastBuildDate>
+		<item>
+			<title>Go 官方的多版本管理</title>
+			<link>https://caixw.io/posts/2021/go-dl.html</link>
+			<description></description>
+			<pubDate>23 Aug 21 04:31 +0800</pubDate>
+		</item>
 		<item>
 			<title>关于</title>
 			<link>https://caixw.io/posts/about.html</link>

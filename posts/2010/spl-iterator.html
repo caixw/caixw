@@ -5,7 +5,7 @@
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>SPL 中的迭代器 | 一斤瓜子铺</title><link rel="canonical" href="https://caixw.io/posts/2010/spl-iterator.html" /><link rel="icon" type="image/svg&#43;xml" href="/favicon.svg" />
+        <title>SPL 中的迭代器 | 一斤瓜子铺</title><link rel="canonical" href="https://caixw.io/posts/2010/spl-iterator.html" /><link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel=”mask-icon” href=”/favicon.svg” color=”#000000” /><link rel="alternate" type="application/rss+xml" title="RSS" href="https://caixw.io/rss.xml" /><link rel="alternate" type="application/atom+xml" title="Atom" href="https://caixw.io/atom.xml" /><meta name="keywords" content="PHP, SPL, Standard PHP Library, 迭代器, foreach" /><link rel="next" href="https://caixw.io/posts/about.html" /><link rel="prev" href="https://caixw.io/posts/2010/javascript-prototype.html" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: dark)" href="https://caixw.io/themes/default/solarized-dark256.css" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: light)" href="https://caixw.io/themes/default/solarized-light.css" /><link rel="stylesheet" type="text/css" media="print" href="https://caixw.io/themes/default/igor.css" /><link rel="stylesheet" type="text/css" href="https://caixw.io/themes/default/style.css" /><script type="application/ld+json">
         {"@context":"https://schema.org/","@type":"BlogPosting","headline":"SPL 中的迭代器","author":[{"@type":"Person","name":"caixw","url":"https://caixw.io"}],"dateCreated":"2010-07-28T03:36:05+08:00","dateModified":"2010-07-28T03:36:05+08:00","license":"https://creativecommons.org/licenses/by/4.0/deed.zh","keywords":"PHP, SPL, Standard PHP Library, 迭代器, foreach","inLanguage":"cmn-Hans"}
         </script></head>
@@ -32,7 +32,7 @@
 </div>
 <article id="content">
 <p>迭代器这种设计模式很常见，也很实用。最著名的要算是 C++ 中 STL 的实现了。它提供了一个统一的接口，使用访问者在不知道类对象内部数据结构的情况下遍历其内部数据。PHP5 中提供了对这种设计模式的内置支持，其实所谓的内置支持就是可以使用 <code>foreach</code> 语言结构来访问实现迭代器接口的类。</p>
-<h2 id="ge-jian-dan-de-zi-ding-yi-die-dai-qi">一个简单的自定义迭代器</h2>
+<h2 id="ge-jian-dan-de-zi-ding-yi-die-dai-qi-iterator-implement">一个简单的自定义迭代器{iterator-implement}</h2>
 <p>首先看一下下面这三段代码：</p>
 <pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-nv">$array</span> <span class="hl-o">=</span> <span class="hl-k">array</span><span class="hl-p">(</span><span class="hl-s1">&#39;a&#39;</span><span class="hl-p">,</span> <span class="hl-s1">&#39;b&#39;</span><span class="hl-p">,</span> <span class="hl-s1">&#39;c&#39;</span><span class="hl-p">);</span>
 <span class="hl-ln"> 2</span><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-nv">$a</span> <span class="hl-o">=</span> <span class="hl-nx">next</span><span class="hl-p">(</span><span class="hl-nv">$array</span><span class="hl-p">))</span> <span class="hl-p">{</span>
@@ -134,7 +134,7 @@
 <span class="hl-ln">81</span><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-nv">$fileIter</span><span class="hl-o">-&gt;</span><span class="hl-na">next</span><span class="hl-p">())</span> <span class="hl-p">{</span>
 <span class="hl-ln">82</span>    <span class="hl-k">echo</span> <span class="hl-nv">$fileIter</span><span class="hl-o">-&gt;</span><span class="hl-na">current</span><span class="hl-p">();</span>
 <span class="hl-ln">83</span><span class="hl-p">}</span>
-</pre><h2 id="spl-zhong-de-iterator-jie-kou">SPL 中的 iterator 接口</h2>
+</pre><h2 id="spl-iterator">SPL 中的 iterator 接口</h2>
 <p>上面这种自定义实现的迭代器接口有一个缺点，就是不能用于 <code>foreach</code> 语句。而 SPL 中提供的迭代器却实现了对 <code>foreach</code> 的支持。</p>
 <pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">interface</span> <span class="hl-nx">Iterator</span> <span class="hl-k">extends</span> <span class="hl-nx">Traversable</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 2</span>   <span class="hl-c1">// 将迭代器的指针移向第一个元素。类似于数组操作函数reset()。
@@ -268,7 +268,7 @@
 <li>然后调用 <code>key()</code>和 <code>current()</code> 将值赋给 <code>$key</code> 和 <code>$dir</code>；</li>
 <li>之后执行循环体，然后调用 <code>next()</code> 进入下一轮循环。</li>
 </ul>
-<h2 id="di-gui-die-dai-qi-recursiveiterator">递归迭代器(RecursiveIterator)</h2>
+<h2 id="recursive-iterator">递归迭代器(RecursiveIterator)</h2>
 <p>这也是一种很常见的迭代器，SPL 中也为其定义了一个接口：</p>
 <pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-k">interface</span> <span class="hl-nx">RecursiveIterator</span> <span class="hl-k">extends</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
 <span class="hl-ln">2</span>    <span class="hl-c1">// 是否存在子元素
@@ -301,7 +301,7 @@
 <span class="hl-ln">21</span><span class="hl-k">foreach</span><span class="hl-p">(</span><span class="hl-nv">$rdi</span> <span class="hl-k">as</span> <span class="hl-nv">$k</span><span class="hl-o">=&gt;</span><span class="hl-nv">$v</span><span class="hl-p">)</span> <span class="hl-p">{</span>
 <span class="hl-ln">22</span>    <span class="hl-k">echo</span> <span class="hl-nv">$k</span><span class="hl-p">,</span> <span class="hl-s1">&#39;===&gt;&#39;</span><span class="hl-p">,</span> <span class="hl-nv">$v</span><span class="hl-p">,</span> <span class="hl-s1">&#39; &#39;</span><span class="hl-p">;</span>
 <span class="hl-ln">23</span><span class="hl-p">}</span>
-</pre><h2 id="iteratoraggregate-jie-kou"><code>IteratorAggregate</code> 接口</h2>
+</pre><h2 id="iterator-aggregate"><code>IteratorAggregate</code> 接口</h2>
 <p><code>IteratorAggregate</code> 是除 <code>Iterator</code> 之外另一个从 <code>Traversable</code> 接口中继承而来的。其接口也很简单，只有一个函数。就是返回一个迭代器实例：</p>
 <pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-k">interface</span> <span class="hl-nx">IteratorAggregate</span> <span class="hl-k">extends</span> <span class="hl-nx">Traversable</span> <span class="hl-p">{</span>
 <span class="hl-ln">2</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">getIterator</span><span class="hl-p">();</span>
@@ -331,12 +331,12 @@
 </span><span class="hl-ln">21</span><span class="hl-c1"></span><span class="hl-k">foreach</span><span class="hl-p">(</span><span class="hl-nv">$a</span> <span class="hl-k">as</span> <span class="hl-nv">$v</span><span class="hl-p">)</span> <span class="hl-p">{</span>
 <span class="hl-ln">22</span>    <span class="hl-c1">// do something
 </span><span class="hl-ln">23</span><span class="hl-c1"></span><span class="hl-p">}</span>
-</pre><h2 id="outeriterator">OuterIterator</h2>
+</pre><h2 id="outer-iterator">OuterIterator</h2>
 <pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-k">interface</span> <span class="hl-nx">OuterIterator</span> <span class="hl-k">extends</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
 <span class="hl-ln">2</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">getInnerIterator</span><span class="hl-p">();</span>
 <span class="hl-ln">3</span><span class="hl-p">}</span>
 </pre><p><code>OuterIterator</code> 相当于我们前一节讲的类 A 的另一种实现。它实现者可以包含一个或多个迭代器成员，即可以通过<code>getInnerIterator()</code> 接口函数获取内部的迭代器，也可以直接通过类本身实现的 <code>Iterator</code> 接口遍历内部的迭代器数据。这在 SPL 是一个非常重要的接口，SPL 中很多内置的迭代器实现了这个接口。</p>
-<h2 id="filteriterator">FilterIterator</h2>
+<h2 id="filteriterator-filter-iterator">FilterIterator{filter-iterator}</h2>
 <p><code>FilterIterator</code> 这是一个抽象类，它实现了 <code>OuterIterator</code> 接口。它包装一个已有的迭代器类，通过抽象方法 <code>accept()</code> 过滤掉不需要的内容，形成一个新的迭代器。我们还是用上面的 <code>DirIterator</code> 作一个例子，定义一个只返回所有以 'a' 开头的目录名的迭代器：</p>
 <pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">ADirIterator</span> <span class="hl-k">extends</span> <span class="hl-nx">FilterIterator</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 2</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">accept</span><span class="hl-p">()</span> <span class="hl-p">{</span>
@@ -349,7 +349,7 @@
 <span class="hl-ln"> 9</span><span class="hl-k">foreach</span><span class="hl-p">(</span><span class="hl-nv">$adirIter</span> <span class="hl-k">as</span> <span class="hl-nv">$dir</span><span class="hl-p">)</span> <span class="hl-p">{</span>
 <span class="hl-ln">10</span>    <span class="hl-c1">// TODO
 </span><span class="hl-ln">11</span><span class="hl-c1"></span><span class="hl-p">}</span>
-</pre><h2 id="limititerator">LimitIterator</h2>
+</pre><h2 id="limit-iterator">LimitIterator</h2>
 <p>这也是一个实现 <code>OuterIterator</code> 的类。它有点类似于 SQL 中的 <code>LIMIT</code> 语句。它通过包装一个已有迭代器，然后截取其中某一段数据形成一个新的迭代器。它同时还提供了两个函数：</p>
 <ul>
 <li><code>getPosition()</code>：当前迭代器的位置；</li>
@@ -369,7 +369,7 @@
 <span class="hl-ln">12</span><span class="hl-p">}</span><span class="hl-k">catch</span><span class="hl-p">(</span><span class="hl-nx">exception</span> <span class="hl-nv">$e</span><span class="hl-p">)</span> <span class="hl-p">{</span>
 <span class="hl-ln">13</span>    <span class="hl-k">echo</span> <span class="hl-nv">$e</span><span class="hl-o">-&gt;</span><span class="hl-na">getMessage</span><span class="hl-p">();</span>
 <span class="hl-ln">14</span><span class="hl-p">}</span>
-</pre><h2 id="bian-li-dui-xiang-shu-xing">遍历对象属性</h2>
+</pre><h2 id="foreach">遍历对象属性</h2>
 <p>当我们对一个没有实现 iterator 接口的对象使用 <code>foreach</code> 时，它会依次访问对象的公共属性，这是一个非常棒的机制：</p>
 <pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">Test</span> <span class="hl-p">{</span>
 <span class="hl-ln"> 2</span>    <span class="hl-k">public</span> <span class="hl-nv">$p1</span> <span class="hl-o">=</span> <span class="hl-mi">1</span><span class="hl-p">;</span>
@@ -401,7 +401,7 @@
 <span class="hl-ln">12</span>        <span class="hl-p">}</span>
 <span class="hl-ln">13</span>    <span class="hl-p">}</span>
 <span class="hl-ln">14</span><span class="hl-p">}</span>
-</pre><h2 id="spl-zhong-xie-yi-shi-xian-de-die-dai-qi-lei">SPL 中一些已实现的迭代器类</h2>
+</pre><h2 id="spl-implemented-iterator">SPL 中一些已实现的迭代器类</h2>
 <p>在 SPL 中已经定义了一非常有用的迭代器类，我们可以直接拿来用：</p>
 <ul>
 <li>DirectoryIterator: 和我们上面实现的 <code>DirIterator</code> 类大同小异。但是功能更全；</li>
@@ -413,14 +413,14 @@
 <li>AppendIterator：它实现了对一系统迭代器的包装，并且可以在运行过程中添加新的迭代器；</li>
 <li>SplFileObject：文件操作类，可以按行的方式遍历文件内容。同时还能获取文件的大小及其它详细信息。</li>
 </ul>
-<h2 id="can-kao">参考</h2>
+<h2 id="reference">参考</h2>
 <p><a href="http://articles.sitepoint.com/article/php5-standard-library">Introducing PHP 5's Standard Library</a></p>
 <p><a href="http://ramikayyali.com/archives/2005/02/25/iterators">Iterators in PHP5</a></p>
 
 </article>
 </article><nav id="toc-button" class="nav-button">
     <i role="button" aria-label="TOC" class="css-icon icon-menu"></i>
-    <ul id="toc" role="menu"><li role="menuitem" class="toc-h0"><a href="#ge-jian-dan-de-zi-ding-yi-die-dai-qi">一个简单的自定义迭代器</a></li><li role="menuitem" class="toc-h0"><a href="#spl-zhong-de-iterator-jie-kou">SPL 中的 iterator 接口</a></li><li role="menuitem" class="toc-h0"><a href="#di-gui-die-dai-qi-recursiveiterator">递归迭代器(RecursiveIterator)</a></li><li role="menuitem" class="toc-h0"><a href="#iteratoraggregate-jie-kou">IteratorAggregate 接口</a></li><li role="menuitem" class="toc-h0"><a href="#outeriterator">OuterIterator</a></li><li role="menuitem" class="toc-h0"><a href="#filteriterator">FilterIterator</a></li><li role="menuitem" class="toc-h0"><a href="#limititerator">LimitIterator</a></li><li role="menuitem" class="toc-h0"><a href="#bian-li-dui-xiang-shu-xing">遍历对象属性</a></li><li role="menuitem" class="toc-h0"><a href="#spl-zhong-xie-yi-shi-xian-de-die-dai-qi-lei">SPL 中一些已实现的迭代器类</a></li><li role="menuitem" class="toc-h0"><a href="#can-kao">参考</a></li></ul>
+    <ul id="toc" role="menu"><li role="menuitem" class="toc-h0"><a href="#ge-jian-dan-de-zi-ding-yi-die-dai-qi-iterator-implement">一个简单的自定义迭代器{iterator-implement}</a></li><li role="menuitem" class="toc-h0"><a href="#spl-iterator">SPL 中的 iterator 接口</a></li><li role="menuitem" class="toc-h0"><a href="#recursive-iterator">递归迭代器(RecursiveIterator)</a></li><li role="menuitem" class="toc-h0"><a href="#iterator-aggregate">IteratorAggregate 接口</a></li><li role="menuitem" class="toc-h0"><a href="#outer-iterator">OuterIterator</a></li><li role="menuitem" class="toc-h0"><a href="#filteriterator-filter-iterator">FilterIterator{filter-iterator}</a></li><li role="menuitem" class="toc-h0"><a href="#limit-iterator">LimitIterator</a></li><li role="menuitem" class="toc-h0"><a href="#foreach">遍历对象属性</a></li><li role="menuitem" class="toc-h0"><a href="#spl-implemented-iterator">SPL 中一些已实现的迭代器类</a></li><li role="menuitem" class="toc-h0"><a href="#reference">参考</a></li></ul>
 </nav><div class="pages-nav">
                 <span class="prev">
                         <a rel="prev" href="https://caixw.io/posts/2010/javascript-prototype.html" aria-label="前一页"><span aria-hidden="true">&#171;&#160;</span>JavaScript prototype 介绍</a>
@@ -442,7 +442,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2021-08-22T17:09:56Z">2021-08-22</time>
+                    <time title="2021-11-29T08:07:07Z">2021-11-29</time>
                 </span>
             </div>
         </footer>

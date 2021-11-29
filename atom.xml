@@ -3,9 +3,16 @@
 	<title>Atom</title>
 	<subtitle>subtitle</subtitle>
 	<id>https://caixw.io</id>
-	<updated>2021-08-21T23:45:30+08:00</updated>
+	<updated>2021-08-23T04:31:42+08:00</updated>
 	<link href="https://caixw.io"></link>
 	<link href="https://caixw.io/atom.xml" rel="self"></link>
+	<entry>
+		<title>Go 官方的多版本管理</title>
+		<id>https://caixw.io/posts/2021/go-dl.html</id>
+		<updated>2021-08-23T04:31:42+08:00</updated>
+		<link href="https://caixw.io/posts/2021/go-dl.html" type="application/xml"></link>
+		<summary type="text/html"></summary>
+	</entry>
 	<entry>
 		<title>关于</title>
 		<id>https://caixw.io/posts/about.html</id>

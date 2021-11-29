@@ -5,8 +5,8 @@
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Go 的版本自动化 | 一斤瓜子铺</title><link rel="canonical" href="https://caixw.io/posts/2016/go-auto-versioning.html" /><link rel="icon" type="image/svg&#43;xml" href="/favicon.svg" />
-        <link rel=”mask-icon” href=”/favicon.svg” color=”#000000” /><link rel="alternate" type="application/rss+xml" title="RSS" href="https://caixw.io/rss.xml" /><link rel="alternate" type="application/atom+xml" title="Atom" href="https://caixw.io/atom.xml" /><meta name="keywords" content="Go,semver,版本号,自动化" /><link rel="next" href="https://caixw.io/posts/2016/parse-version-with-go-struct-tag.html" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: dark)" href="https://caixw.io/themes/default/solarized-dark256.css" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: light)" href="https://caixw.io/themes/default/solarized-light.css" /><link rel="stylesheet" type="text/css" media="print" href="https://caixw.io/themes/default/igor.css" /><link rel="stylesheet" type="text/css" href="https://caixw.io/themes/default/style.css" /><script type="application/ld+json">
+        <title>Go 的版本自动化 | 一斤瓜子铺</title><link rel="canonical" href="https://caixw.io/posts/2016/go-auto-versioning.html" /><link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel=”mask-icon” href=”/favicon.svg” color=”#000000” /><link rel="alternate" type="application/rss+xml" title="RSS" href="https://caixw.io/rss.xml" /><link rel="alternate" type="application/atom+xml" title="Atom" href="https://caixw.io/atom.xml" /><meta name="keywords" content="Go,semver,版本号,自动化" /><link rel="next" href="https://caixw.io/posts/2016/parse-version-with-go-struct-tag.html" /><link rel="prev" href="https://caixw.io/posts/2021/go-dl.html" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: dark)" href="https://caixw.io/themes/default/solarized-dark256.css" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: light)" href="https://caixw.io/themes/default/solarized-light.css" /><link rel="stylesheet" type="text/css" media="print" href="https://caixw.io/themes/default/igor.css" /><link rel="stylesheet" type="text/css" href="https://caixw.io/themes/default/style.css" /><script type="application/ld+json">
         {"@context":"https://schema.org/","@type":"BlogPosting","headline":"Go 的版本自动化","author":[{"@type":"Person","name":"caixw","url":"https://caixw.io"}],"dateCreated":"2016-11-29T22:31:42+08:00","dateModified":"2016-12-04T23:53:31+08:00","license":"https://creativecommons.org/licenses/by/4.0/deed.zh","keywords":"Go,semver,版本号,自动化","inLanguage":"cmn-Hans"}
         </script></head>
 
@@ -39,29 +39,29 @@
 </span><span class="hl-ln"> 4</span><span class="hl-c1"></span>
 <span class="hl-ln"> 5</span><span class="hl-kn">package</span> <span class="hl-nx">main</span>
 <span class="hl-ln"> 6</span>
-<span class="hl-ln"> 7</span><span class="hl-kn">import</span><span class="hl-p">(</span>
+<span class="hl-ln"> 7</span><span class="hl-kn">import</span> <span class="hl-p">(</span>
 <span class="hl-ln"> 8</span>    <span class="hl-s">&#34;flag&#34;</span>
 <span class="hl-ln"> 9</span><span class="hl-p">)</span>
 <span class="hl-ln">10</span>
 <span class="hl-ln">11</span><span class="hl-kd">const</span> <span class="hl-nx">mainVersion</span> <span class="hl-p">=</span> <span class="hl-s">&#34;1.2.3&#34;</span>
 <span class="hl-ln">12</span>
 <span class="hl-ln">13</span><span class="hl-kd">var</span> <span class="hl-p">(</span>
-<span class="hl-ln">14</span>    <span class="hl-nx">buildDate</span> <span class="hl-kt">string</span>
+<span class="hl-ln">14</span>    <span class="hl-nx">buildDate</span>  <span class="hl-kt">string</span>
 <span class="hl-ln">15</span>    <span class="hl-nx">commitHash</span> <span class="hl-kt">string</span>
 <span class="hl-ln">16</span><span class="hl-p">)</span>
 <span class="hl-ln">17</span>
 <span class="hl-ln">18</span><span class="hl-kd">func</span> <span class="hl-nf">main</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">19</span>    <span class="hl-nx">v</span> <span class="hl-o">:=</span> <span class="hl-nx">flag</span><span class="hl-p">.</span><span class="hl-nf">Bool</span><span class="hl-p">(</span><span class="hl-s">&#34;v&#34;</span><span class="hl-p">,</span> <span class="hl-kc">false</span><span class="hl-p">,</span> <span class="hl-s">&#34;显示版本号&#34;</span><span class="hl-p">);</span>
-<span class="hl-ln">20</span>    <span class="hl-nx">flag</span><span class="hl-p">.</span><span class="hl-nf">Parse</span><span class="hl-p">();</span>
+<span class="hl-ln">19</span>    <span class="hl-nx">v</span> <span class="hl-o">:=</span> <span class="hl-nx">flag</span><span class="hl-p">.</span><span class="hl-nf">Bool</span><span class="hl-p">(</span><span class="hl-s">&#34;v&#34;</span><span class="hl-p">,</span> <span class="hl-kc">false</span><span class="hl-p">,</span> <span class="hl-s">&#34;显示版本号&#34;</span><span class="hl-p">)</span>
+<span class="hl-ln">20</span>    <span class="hl-nx">flag</span><span class="hl-p">.</span><span class="hl-nf">Parse</span><span class="hl-p">()</span>
 <span class="hl-ln">21</span>
 <span class="hl-ln">22</span>    <span class="hl-k">if</span> <span class="hl-o">*</span><span class="hl-nx">v</span> <span class="hl-p">{</span>
 <span class="hl-ln">23</span>        <span class="hl-nx">version</span> <span class="hl-o">:=</span> <span class="hl-nx">mainVersion</span>
-<span class="hl-ln">24</span>        <span class="hl-k">if</span> <span class="hl-nb">len</span><span class="hl-p">(</span><span class="hl-nx">buildDate</span><span class="hl-p">)</span> <span class="hl-p">&gt;</span> <span class="hl-mi">0</span><span class="hl-p">{</span>
-<span class="hl-ln">25</span>            <span class="hl-nx">version</span> <span class="hl-o">+=</span> <span class="hl-p">(</span><span class="hl-s">&#34;+&#34;</span><span class="hl-o">+</span><span class="hl-nx">buildDate</span><span class="hl-p">)</span>
+<span class="hl-ln">24</span>        <span class="hl-k">if</span> <span class="hl-nb">len</span><span class="hl-p">(</span><span class="hl-nx">buildDate</span><span class="hl-p">)</span> <span class="hl-p">&gt;</span> <span class="hl-mi">0</span> <span class="hl-p">{</span>
+<span class="hl-ln">25</span>            <span class="hl-nx">version</span> <span class="hl-o">+=</span> <span class="hl-s">&#34;+&#34;</span> <span class="hl-o">+</span> <span class="hl-nx">buildDate</span>
 <span class="hl-ln">26</span>        <span class="hl-p">}</span>
 <span class="hl-ln">27</span>        <span class="hl-nx">fmt</span><span class="hl-p">.</span><span class="hl-nf">Println</span><span class="hl-p">(</span><span class="hl-s">&#34;version:&#34;</span><span class="hl-p">,</span> <span class="hl-nx">version</span><span class="hl-p">)</span>
 <span class="hl-ln">28</span>
-<span class="hl-ln">29</span>        <span class="hl-k">if</span> <span class="hl-nb">len</span><span class="hl-p">(</span><span class="hl-nx">commitHash</span><span class="hl-p">)</span> <span class="hl-p">&gt;</span> <span class="hl-mi">0</span><span class="hl-p">{</span>
+<span class="hl-ln">29</span>        <span class="hl-k">if</span> <span class="hl-nb">len</span><span class="hl-p">(</span><span class="hl-nx">commitHash</span><span class="hl-p">)</span> <span class="hl-p">&gt;</span> <span class="hl-mi">0</span> <span class="hl-p">{</span>
 <span class="hl-ln">30</span>            <span class="hl-nx">fmt</span><span class="hl-p">.</span><span class="hl-nf">Println</span><span class="hl-p">(</span><span class="hl-s">&#34;git commit hash:&#34;</span><span class="hl-p">,</span> <span class="hl-nx">commitHash</span><span class="hl-p">)</span>
 <span class="hl-ln">31</span>        <span class="hl-p">}</span>
 <span class="hl-ln">32</span>        <span class="hl-k">return</span>
@@ -88,7 +88,9 @@
 
 </article>
 </article><div class="pages-nav">
-                
+                <span class="prev">
+                        <a rel="prev" href="https://caixw.io/posts/2021/go-dl.html" aria-label="前一页"><span aria-hidden="true">&#171;&#160;</span>Go 官方的多版本管理</a>
+                    </span>
                 <span class="next">
                         <a rel="next" href="https://caixw.io/posts/2016/parse-version-with-go-struct-tag.html" aria-label="后一页">使用 Go 的 struct tag 来解析版本号字符串<span aria-hidden="true">&#160;&#187;</span></a>
                     </span>
@@ -106,7 +108,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2021-08-22T17:09:56Z">2021-08-22</time>
+                    <time title="2021-11-29T08:07:07Z">2021-11-29</time>
                 </span>
             </div>
         </footer>

@@ -5,7 +5,7 @@
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>RESTful API 设计实践 | 一斤瓜子铺</title><link rel="canonical" href="https://caixw.io/posts/2016/restful-api-guide.html" /><link rel="icon" type="image/svg&#43;xml" href="/favicon.svg" />
+        <title>RESTful API 设计实践 | 一斤瓜子铺</title><link rel="canonical" href="https://caixw.io/posts/2016/restful-api-guide.html" /><link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel=”mask-icon” href=”/favicon.svg” color=”#000000” /><link rel="alternate" type="application/rss+xml" title="RSS" href="https://caixw.io/rss.xml" /><link rel="alternate" type="application/atom+xml" title="Atom" href="https://caixw.io/atom.xml" /><meta name="keywords" content="RESTful, API, HTTP, JSON, XML, HTTPS, Security, 安全, Accept, W3C, 幂等" /><link rel="next" href="https://caixw.io/posts/2012/goto-top.html" /><link rel="prev" href="https://caixw.io/posts/2016/jwt-intro.html" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: dark)" href="https://caixw.io/themes/default/solarized-dark256.css" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: light)" href="https://caixw.io/themes/default/solarized-light.css" /><link rel="stylesheet" type="text/css" media="print" href="https://caixw.io/themes/default/igor.css" /><link rel="stylesheet" type="text/css" href="https://caixw.io/themes/default/style.css" /><script type="application/ld+json">
         {"@context":"https://schema.org/","@type":"BlogPosting","headline":"RESTful API 设计实践","author":[{"@type":"Person","name":"caixw","url":"https://caixw.io"}],"dateCreated":"2016-03-23T22:23:20+08:00","dateModified":"2017-07-29T21:36:45+08:00","license":"https://creativecommons.org/licenses/by/4.0/deed.zh","keywords":"RESTful, API, HTTP, JSON, XML, HTTPS, Security, 安全, Accept, W3C, 幂等","inLanguage":"cmn-Hans"}
         </script></head>
@@ -32,7 +32,7 @@
 </div>
 <article id="content">
 <p>RESTful API 为网络应用程序设计提供了一套统一、合理的风格。它只是一种风格，而不是标准，所以也就没有一套统一的标准去规范化这些设计，本文从实践的角度出发，讨论 RESTful API 设计上的一些细节，探讨如何设计出一套好用、合理、精炼的 API。</p>
-<h2 id="ban-ben">版本</h2>
+<h2 id="versioning">版本</h2>
 <p>按照 RESTful API 的风格，不同版本的 API 应该是同一种资源的不同表现形式，所以将版本号放在报头，是最符合学术界对 RESTful API 的的定义，但是实际操作情况下，将版本号放在报头不直观，而且操作起来也不方便，反而不如直接放在 URL 来得直接。所以现在两种方式都很常见，各人可以按照自己的喜好来挑一种方式来实现。</p>
 <p>个人倾向于直接放在报头中，客户在迁移版本时，会更加方便，基本上不用改任何内容，版本交叉使用也方便。</p>
 <p>将版本号放在 URL：</p>
@@ -45,7 +45,7 @@
 <li><code>Accept: application/json;version=1</code></li>
 <li><code>Accept: application/json;version=2</code></li>
 </ul>
-<h2 id="lu-jing">路径</h2>
+<h2 id="path">路径</h2>
 <p>在 RESTful 中一条 URL 表示的是一个独立的资源，是该资源的唯一标志。命名上应该具有自描述性，给人一种直觉上的关联，比如 <code>https://api.caixw.io/users/1</code> 让人一看就知道表示的是 ID 为 1 的用户。统一使用名词复数，会使 URL 看起来更加规整，而且对开发者和使用者来说，有个统一的规定，也更容易理解和实现。</p>
 <ul>
 <li><code>GET https://api.caixw.io/users</code> 表示用户列表；</li>
@@ -57,14 +57,14 @@
 <li><code>POST https://api.caixw.io/login</code> 登录；</li>
 <li><code>DELETE https://api.caixw.io/login</code> 注销。</li>
 </ul>
-<h2 id="guo-lu-can-shu">过滤参数</h2>
+<h2 id="query">过滤参数</h2>
 <p>使用 GET 获取数据时，当数据量过大时，并不是所有数据都是用户需要一次获取的，这时候在服务端对结果进行过滤、排序、分页、查询等功能再返回会是一个比较友好的操作。这些功能应该通过 URL 的查询参数实现。参数值应该尽量避免无意义的值，比如 <code>state=1</code> 从开发者的角度来说，或许可以省略好多的工作量，但是从使用者的角度来说，很难记住这个值 1 代表的是什么意思，当 state 有许多的不同的值时，结果会更加糟糕，所以给出一个确切的字符串来表示：<code>state=lock</code>，会是一个好习惯。</p>
 <ul>
 <li><code>GET https://api.caixw.io/users?state=lock</code> 只获取锁定状态的用户列表；</li>
 <li><code>GET https://api.caixw.io/users?state=lock&amp;size=20</code> 只获取锁定状态的用户列表，最多显示 20 条记录；</li>
 <li><code>GET https://api.caixw.io/users?sort=created,id</code> 按 created 和 id 字段排序；</li>
 </ul>
-<h2 id="qing-qiu-fang-fa">请求方法</h2>
+<h2 id="method">请求方法</h2>
 <p>RESTful 的核心思想就是将各个不同的 URL 理解成逻辑上的资源，针对资源做 CRUD 的操作。而这些 CRUD 的操作分别对应着不同的 HTTP 请求方法：</p>
 <table>
 <thead>
@@ -124,7 +124,7 @@
 <p><em>安全是指该操作是否会对服务器内容作出修改。</em></p>
 <p>当 PUT 所指的资源还不存在时，其功能上和 POST 是极为相似的，唯一的不同是 PUT 预先知道了资源的地址，所以多次操作时，均指向同一地址。而 POST 则会每次操作都添加一条新资源；当 PUT 所指的资源存在时，其功能与 PATCH 相似，都为修改资源内容，只不过 PUT 要求修改资源的所有数据，而 PATCH 只修改资源的部分数据。所以 PUT 在不同的情况下，分别可以扮演 POST 和 PATCH 两种角色。</p>
 <p>用户在分析一个 API 时，可能会用到 HEAD 和 OPTIONS 方法，但是现实中，很少有哪些应用是真正去实现这两个方法的，开发者可根据自身情况看是否需要提供该接口。在跨域操作中，浏览器在每访问一个 API 之前，会访问该 API 的 OPTIONS 方法，以确定服务器是否允许该 API 的访问，所以如果你的接口需要跨域，对 OPTIONS 请求方法的处理是必需的。</p>
-<h2 id="zhuang-tai-ma">状态码</h2>
+<h2 id="status">状态码</h2>
 <p>完整的状态码可参考 <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html">W3C 的相关文档</a>。这里列出几个常有的状态值：</p>
 <ul>
 <li>200：GET 服务器成功返回用户请求的数据；</li>
@@ -135,7 +135,7 @@
 <li>404：未的到该资源；</li>
 <li>500：服务端错误。</li>
 </ul>
-<h2 id="cuo-wu-chu-li">错误处理</h2>
+<h2 id="error-handling">错误处理</h2>
 <p>HTTP 状态码本身就是一套完善的错误描述机制，状态码相当于错误 ID，返回内容相当于错误内容描述。当然对于一个应用系统来，这些有点简单了，所以一般我们都会做一套符合自己需求的错误描述机制，市面上比较常见的方法就是返回一个固定的数据结构来描述具体的错误内容，比如：</p>
 <pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-p">{</span>
 <span class="hl-ln">2</span>    <span class="hl-nt">&#34;id&#34;</span><span class="hl-p">:</span> <span class="hl-mi">40101</span><span class="hl-p">,</span>
@@ -152,8 +152,8 @@
 <span class="hl-ln">8</span>    <span class="hl-p">}</span>
 <span class="hl-ln">9</span><span class="hl-p">}</span>
 </pre><p>关于错误代码，我们可以直接扩展 HTTP 状态码来达到目的。比如我们可以将 401 的状态码进行细化： 401001 表示用户不存在，401002 表示密码错误，401003 表示 token 过期等。</p>
-<h2 id="an-quan">安全</h2>
-<h3 id="shu-ju-an-quan">数据安全</h3>
+<h2 id="security">安全</h2>
+<h3 id="data-security">数据安全</h3>
 <p>我们一般都会用一个自增的 ID 作为资源的唯一 ID，但是如果把这一 ID 直接呈现给用户的话，就有可能不经意间泄露了你的业务信息。比如查看用户订单列表的接口：<code>/users/100/orders</code>，返回以下数据：</p>
 <pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-p">{</span>
 <span class="hl-ln">2</span>    <span class="hl-nt">&#34;count&#34;</span><span class="hl-p">:</span> <span class="hl-mi">2</span><span class="hl-p">,</span>
@@ -164,20 +164,20 @@
 <span class="hl-ln">7</span><span class="hl-p">}</span>
 </pre><p>用语根据当前的订单 ID 就可以获取平台的订单量；用户只要在月初和月末各下一单，还能获取到平台的订单月增长量。对于这类的敏感数据，要使用具有唯一性的随机数据，比如 UUID。</p>
 <p>上在的接口定义还有一个问题，即指定多余的用户 ID。100 为当前用户的 ID，有些聪明的人就会把 100 换成其它数据试试，这时候如果你的服务端没有做限定的话，无形就造成了用户数据的泄密。甚至是你做了限定，但是对该 ID 用户是否存在，返回了不同的状态提示，对方也可以根据这些试出用户数量。所以对于限定用户的一些接口，我们可以把其 ID 省去，由服务端根据登录的 token 作判断，接口可以改成：<code>/orders</code>。</p>
-<h3 id="fu-wu-qi-an-quan">服务器安全</h3>
+<h3 id="server-security">服务器安全</h3>
 <h4 id="https">HTTPS</h4>
 <p>全站启用 HTTPS 协议，不要在意那么点性能浪费，相对于安全，完全是值得的。</p>
 <h4 id="strict-transport-security">Strict-Transport-Security</h4>
 <p>HSTS 报头只对 HTTPS 启作用，一旦浏览器接收到这个报头，之后的一段时间之内（时间由 HSTS 报头指 的 max-age 指定）只会对服务器发送 HTTPS 请求，否则就会拒绝传输任何数据。</p>
 <p>格式为：<code>Strict-Transport-Security:max-age=17000604;includeSubDomains</code>，其中 <code>includeSubDomains</code> 是一个可选值，指定了表示同时作用于子域名；max-age 指定了时间段，单位为秒，超过该时间段将不再启作用，不过每次获取带有该报头的响应时，都会刷新超始时间。</p>
-<h4 id="xian-ding-fang-wen-pin-lu">限定访问频率</h4>
+<h4 id="rate-limit">限定访问频率</h4>
 <p>限定用户的访问频率，一般是全站所有的接口，在一段时间内，用户有个访问的上限，超过这个上限，我们可以拒绝请求，返回 429 状态码。可以通过令牌桶算法实现。总共包含以下三个报头：</p>
 <ul>
 <li>X-Rate-Limit-Limit: 同一个时间段所允许的请求的最大数目；</li>
 <li>X-Rate-Limit-Remaining: 在当前时间段内剩余的请求的数量；</li>
 <li>X-Rate-Limit-Reset: 为了得到最大请求数所等待的秒数。</li>
 </ul>
-<h2 id="qi-ta">其它</h2>
+<h2 id="other">其它</h2>
 <ul>
 <li>将 API 部署到专门的域名下，比如：<code>https://api.example.com</code>。当然如果接口够简单，且不会有扩展的可能，也可以直接放在主域名下：<code>https://example.com/api/</code>；</li>
 <li>使用 JSON 作为数据交换的格式。JSON 是比 XML 更加轻便的数据交互格式，若没有特殊原因，建议使用 JSON 作为数据交换格式，当然如果你有条件，也可两种格式都提供；</li>
@@ -188,7 +188,7 @@
 </article>
 </article><nav id="toc-button" class="nav-button">
     <i role="button" aria-label="TOC" class="css-icon icon-menu"></i>
-    <ul id="toc" role="menu"><li role="menuitem" class="toc-h0"><a href="#ban-ben">版本</a></li><li role="menuitem" class="toc-h0"><a href="#lu-jing">路径</a></li><li role="menuitem" class="toc-h0"><a href="#guo-lu-can-shu">过滤参数</a></li><li role="menuitem" class="toc-h0"><a href="#qing-qiu-fang-fa">请求方法</a></li><li role="menuitem" class="toc-h0"><a href="#zhuang-tai-ma">状态码</a></li><li role="menuitem" class="toc-h0"><a href="#cuo-wu-chu-li">错误处理</a></li><li role="menuitem" class="toc-h0"><a href="#an-quan">安全</a></li><li role="menuitem" class="toc-h1"><a href="#shu-ju-an-quan">数据安全</a></li><li role="menuitem" class="toc-h1"><a href="#fu-wu-qi-an-quan">服务器安全</a></li><li role="menuitem" class="toc-h2"><a href="#https">HTTPS</a></li><li role="menuitem" class="toc-h2"><a href="#strict-transport-security">Strict-Transport-Security</a></li><li role="menuitem" class="toc-h2"><a href="#xian-ding-fang-wen-pin-lu">限定访问频率</a></li><li role="menuitem" class="toc-h0"><a href="#qi-ta">其它</a></li></ul>
+    <ul id="toc" role="menu"><li role="menuitem" class="toc-h0"><a href="#versioning">版本</a></li><li role="menuitem" class="toc-h0"><a href="#path">路径</a></li><li role="menuitem" class="toc-h0"><a href="#query">过滤参数</a></li><li role="menuitem" class="toc-h0"><a href="#method">请求方法</a></li><li role="menuitem" class="toc-h0"><a href="#status">状态码</a></li><li role="menuitem" class="toc-h0"><a href="#error-handling">错误处理</a></li><li role="menuitem" class="toc-h0"><a href="#security">安全</a></li><li role="menuitem" class="toc-h1"><a href="#data-security">数据安全</a></li><li role="menuitem" class="toc-h1"><a href="#server-security">服务器安全</a></li><li role="menuitem" class="toc-h2"><a href="#https">HTTPS</a></li><li role="menuitem" class="toc-h2"><a href="#strict-transport-security">Strict-Transport-Security</a></li><li role="menuitem" class="toc-h2"><a href="#rate-limit">限定访问频率</a></li><li role="menuitem" class="toc-h0"><a href="#other">其它</a></li></ul>
 </nav><div class="pages-nav">
                 <span class="prev">
                         <a rel="prev" href="https://caixw.io/posts/2016/jwt-intro.html" aria-label="前一页"><span aria-hidden="true">&#171;&#160;</span>JSON Web Token 的简单介绍</a>
@@ -210,7 +210,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2021-08-22T17:09:56Z">2021-08-22</time>
+                    <time title="2021-11-29T08:07:07Z">2021-11-29</time>
                 </span>
             </div>
         </footer>

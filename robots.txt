@@ -1,4 +1,4 @@
-# 当前文件由 https://github.com/caixw/blogit 自动生成，请勿手动修改
+# 当前文件由 blogit 自动生成，请勿手动修改！
 
 User-agent: *
 Allow: /

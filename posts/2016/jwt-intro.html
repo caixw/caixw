@@ -5,7 +5,7 @@
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>JSON Web Token 的简单介绍 | 一斤瓜子铺</title><link rel="canonical" href="https://caixw.io/posts/2016/jwt-intro.html" /><link rel="icon" type="image/svg&#43;xml" href="/favicon.svg" />
+        <title>JSON Web Token 的简单介绍 | 一斤瓜子铺</title><link rel="canonical" href="https://caixw.io/posts/2016/jwt-intro.html" /><link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel=”mask-icon” href=”/favicon.svg” color=”#000000” /><link rel="alternate" type="application/rss+xml" title="RSS" href="https://caixw.io/rss.xml" /><link rel="alternate" type="application/atom+xml" title="Atom" href="https://caixw.io/atom.xml" /><meta name="keywords" content="JWT, JSON, Go, Base64, 编码, token, web, oauth" /><link rel="next" href="https://caixw.io/posts/2016/restful-api-guide.html" /><link rel="prev" href="https://caixw.io/posts/2016/parse-version-with-go-struct-tag.html" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: dark)" href="https://caixw.io/themes/default/solarized-dark256.css" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: light)" href="https://caixw.io/themes/default/solarized-light.css" /><link rel="stylesheet" type="text/css" media="print" href="https://caixw.io/themes/default/igor.css" /><link rel="stylesheet" type="text/css" href="https://caixw.io/themes/default/style.css" /><script type="application/ld+json">
         {"@context":"https://schema.org/","@type":"BlogPosting","headline":"JSON Web Token 的简单介绍","author":[{"@type":"Person","name":"caixw","url":"https://caixw.io"}],"dateCreated":"2016-04-24T03:35:19+08:00","dateModified":"2021-08-21T23:45:30+08:00","license":"https://creativecommons.org/licenses/by/4.0/deed.zh","keywords":"JWT, JSON, Go, Base64, 编码, token, web, oauth","inLanguage":"cmn-Hans"}
         </script></head>
@@ -32,7 +32,7 @@
 </div>
 <article id="content">
 <p>JSON Web Token 是一种基于 Token 的认证授权机制，本文对其实现原理做个简单的介绍。若要查看详细的相关信息，可以访问 <a href="https://jwt.io/">https://jwt.io/</a>，该网站还有各类语言实现的库，当然你也可以直接阅读其官方的<a href="https://self-issued.info/docs/draft-ietf-oauth-json-web-token.html">标准文档</a>。</p>
-<h2 id="jie-gou">结构</h2>
+<h2 id="struct">结构</h2>
 <p>一个 JWT 由三段 base64 统码的字符串通过点号(.)组合而成，看起来像这个样子：<code>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYWl4dyIsInN1YiI6InRlc3Qgand0IiwiZXhwIjoxNDYyNDU5MzUxLCJ1aWQiOjEwMjQsInR5cGUiOjF9.y2TytagRDbHI-uQrsMqae2FD5OxqAAFbKp-8rYB2k0I</code>，其中前两段是两个 JSON 结构体的 base64 编码，第三段为对前两段编码的再次编码，起到验证的作用，大致算法可以理解成以下样子：<code>token := base64(header) + base64(payload) + base64(signature)</code>。</p>
 <h3 id="header">header</h3>
 <p>Header 为一个 JSON 结构，定义了 JWT 使用的 Token 类型和加密方法，经过 base64 编码后组成 JWT 的第一部分。其结构如下：</p>
@@ -66,7 +66,7 @@
 </pre><p>计算之后会得到以下字符串：<code>y2TytagRDbHI-uQrsMqae2FD5OxqAAFbKp-8rYB2k0I</code>。</p>
 <p>之后将三段字符串用点号(.)进行拼接，就得到一个完整的 JWT 了：<code>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYWl4dyIsInN1YiI6InRlc3Qgand0IiwiZXhwIjoxNDYyNDU5MzUxLCJ1aWQiOjEwMjQsInR5cGUiOjF9.y2TytagRDbHI-uQrsMqae2FD5OxqAAFbKp-8rYB2k0I</code>。</p>
 <p>JWT 是 URL Safe 的，所以对进行 base64 编码的时候，应该使用 <code>base64.RawURLEncoding</code> 对其进行编码，而不是 <code>base64.RawStdEncoding</code>。</p>
-<h2 id="jian-dan-de-shi-xian">简单的实现</h2>
+<h2 id="impl">简单的实现</h2>
 <p>这是一个简单的 Go 实现版本，其它语言也大同小异。</p>
 <pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-c1">// Copyright 2016 by caixw, All rights reserved.
 </span><span class="hl-ln"> 2</span><span class="hl-c1">// Use of this source code is governed by a MIT
@@ -155,7 +155,7 @@
 </article>
 </article><nav id="toc-button" class="nav-button">
     <i role="button" aria-label="TOC" class="css-icon icon-menu"></i>
-    <ul id="toc" role="menu"><li role="menuitem" class="toc-h0"><a href="#jie-gou">结构</a></li><li role="menuitem" class="toc-h1"><a href="#header">header</a></li><li role="menuitem" class="toc-h1"><a href="#payload-claims">Payload(Claims)</a></li><li role="menuitem" class="toc-h1"><a href="#signature">Signature</a></li><li role="menuitem" class="toc-h0"><a href="#jian-dan-de-shi-xian">简单的实现</a></li></ul>
+    <ul id="toc" role="menu"><li role="menuitem" class="toc-h0"><a href="#struct">结构</a></li><li role="menuitem" class="toc-h1"><a href="#header">header</a></li><li role="menuitem" class="toc-h1"><a href="#payload-claims">Payload(Claims)</a></li><li role="menuitem" class="toc-h1"><a href="#signature">Signature</a></li><li role="menuitem" class="toc-h0"><a href="#impl">简单的实现</a></li></ul>
 </nav><div class="pages-nav">
                 <span class="prev">
                         <a rel="prev" href="https://caixw.io/posts/2016/parse-version-with-go-struct-tag.html" aria-label="前一页"><span aria-hidden="true">&#171;&#160;</span>使用 Go 的 struct tag 来解析版本号字符串</a>
@@ -177,7 +177,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2021-08-22T17:09:56Z">2021-08-22</time>
+                    <time title="2021-11-29T08:07:07Z">2021-11-29</time>
                 </span>
             </div>
         </footer>
