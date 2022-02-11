@@ -6,8 +6,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>利用 Go 的泛型实现自定义的路由 | 一斤瓜子铺</title><link rel="canonical" href="https://caixw.io/posts/2022/build-go-router-with-generics.html" /><link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel=”mask-icon” href=”/favicon.svg” color=”#000000” /><link rel="alternate" type="application/rss+xml" title="RSS" href="https://caixw.io/rss.xml" /><link rel="alternate" type="application/atom+xml" title="Atom" href="https://caixw.io/atom.xml" /><meta name="keywords" content="Go, 泛型, 类型参数, type params, generics, 路由, router, framework, 框架" /><link rel="next" href="https://caixw.io/posts/2021/go-dl.html" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: dark)" href="https://caixw.io/themes/default/solarized-dark256.css" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: light)" href="https://caixw.io/themes/default/solarized-light.css" /><link rel="stylesheet" type="text/css" media="print" href="https://caixw.io/themes/default/igor.css" /><link rel="stylesheet" type="text/css" href="https://caixw.io/themes/default/style.css" /><script type="application/ld+json">
-        {"@context":"https://schema.org/","@type":"BlogPosting","headline":"利用 Go 的泛型实现自定义的路由","author":[{"@type":"Person","name":"caixw","url":"https://caixw.io"}],"dateCreated":"2022-02-11T18:21:11+08:00","dateModified":"2022-02-11T18:21:11+08:00","license":"https://creativecommons.org/licenses/by/4.0/deed.zh","keywords":"Go, 泛型, 类型参数, type params, generics, 路由, router, framework, 框架","inLanguage":"cmn-Hans"}
+        <link rel=”mask-icon” href=”/favicon.svg” color=”#000000” /><link rel="alternate" type="application/rss+xml" title="RSS" href="https://caixw.io/rss.xml" /><link rel="alternate" type="application/atom+xml" title="Atom" href="https://caixw.io/atom.xml" /><meta name="keywords" content="Go, 泛型, 类型参数, type params, generics, 路由, router, framework, 框架, go1.18" /><link rel="next" href="https://caixw.io/posts/2021/go-dl.html" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: dark)" href="https://caixw.io/themes/default/solarized-dark256.css" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: light)" href="https://caixw.io/themes/default/solarized-light.css" /><link rel="stylesheet" type="text/css" media="print" href="https://caixw.io/themes/default/igor.css" /><link rel="stylesheet" type="text/css" href="https://caixw.io/themes/default/style.css" /><script type="application/ld+json">
+        {"@context":"https://schema.org/","@type":"BlogPosting","headline":"利用 Go 的泛型实现自定义的路由","author":[{"@type":"Person","name":"caixw","url":"https://caixw.io"}],"dateCreated":"2022-02-11T18:21:11+08:00","dateModified":"2022-02-11T18:21:11+08:00","license":"https://creativecommons.org/licenses/by/4.0/deed.zh","keywords":"Go, 泛型, 类型参数, type params, generics, 路由, router, framework, 框架, go1.18","inLanguage":"cmn-Hans"}
         </script></head>
 
     <body>
@@ -32,11 +32,11 @@
 </div>
 <article id="content">
 <p>Go 语言的路由库有很多，功能上都大同小异，最大的差异应该是路由函数的签名，官方采用了 <code>http.Handler</code> 接口，而大部分非官方路由都将 <code>http.ResponseWriter</code> 和 <code>http.Request</code> 合并成了一个对象。本文介绍的库 <a href="https://github.com/issue9/mux">https://github.com/issue9/mux</a> 利用 go1.18 对泛型的支持，实现了自定义该功能的需求，仅需要以下几步即可实现一个完善的自定义路由，可用于快速开发一个 web 框架。</p>
-<h2 id="ru-he-shi-yong">如何使用</h2>
+<h2 id="usage">如何使用</h2>
 <p>以实现一个兼容 <code>http.Handler</code> 接口的路由为例，仅需以下几个步骤即可。</p>
-<h3 id="ding-yi-lu-you-chu-li-lei-xing">定义路由处理类型</h3>
+<h3 id="usage_route_func">定义路由处理类型</h3>
 <p>可以是接口，也可以是函数，我们以 <code>http.Handler</code> 为例，那么该类型就是 <code>http.Handler</code> 接口，此步可以省略。</p>
-<h3 id="ding-yi-fan-xing-dui-ying-de-lei-xing">定义泛型对应的类型</h3>
+<h3 id="usage_types">定义泛型对应的类型</h3>
 <p>以 <code>http.Handler</code> 为参数实例化泛型类型：</p>
 <pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-kn">package</span> <span class="hl-nx">custom_router</span>
 <span class="hl-ln"> 2</span>
@@ -49,7 +49,7 @@
 <span class="hl-ln"> 9</span>    <span class="hl-nx">Options</span>        <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">OptionsOf</span><span class="hl-p">[</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
 <span class="hl-ln">10</span>    <span class="hl-nx">Middleware</span>     <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">MiddlewareOf</span><span class="hl-p">[</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
 <span class="hl-ln">11</span><span class="hl-p">)</span>
-</pre><h3 id="ding-yi-new-han-shu">定义 New 函数</h3>
+</pre><h3 id="usage_new">定义 New 函数</h3>
 <p>我们需要一个 <code>CallOf</code> 函数，用于将给定的参数转换成调用 <code>http.Handler</code> 的方法。其原型如下：</p>
 <pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-nx">CallOf</span><span class="hl-p">[</span><span class="hl-nx">T</span> <span class="hl-nx">any</span><span class="hl-p">]</span> <span class="hl-kd">func</span><span class="hl-p">(</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">ResponseWriter</span><span class="hl-p">,</span> <span class="hl-o">*</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Request</span><span class="hl-p">,</span> <span class="hl-nx">Params</span><span class="hl-p">,</span> <span class="hl-nx">T</span><span class="hl-p">)</span>
 </pre><p><code>New</code> 可以直接调用 <code>NewRouterOf</code> 方法，给出 <code>CallOf</code> 的实例化方法即可。</p>
@@ -64,7 +64,7 @@
 <span class="hl-ln"> 9</span><span class="hl-kd">func</span> <span class="hl-nf">New</span><span class="hl-p">(</span><span class="hl-nx">name</span> <span class="hl-kt">string</span><span class="hl-p">,</span> <span class="hl-nx">o</span> <span class="hl-o">*</span><span class="hl-nx">Options</span><span class="hl-p">)</span> <span class="hl-o">*</span><span class="hl-nx">Router</span> <span class="hl-p">{</span>
 <span class="hl-ln">10</span>    <span class="hl-k">return</span> <span class="hl-nx">NewRouterOf</span><span class="hl-p">[</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Handler</span><span class="hl-p">](</span><span class="hl-nx">name</span><span class="hl-p">,</span> <span class="hl-nx">call</span><span class="hl-p">,</span> <span class="hl-nx">o</span><span class="hl-p">)</span>
 <span class="hl-ln">11</span><span class="hl-p">}</span>
-</pre><h3 id="fu-zhu-han-shu">辅助函数</h3>
+</pre><h3 id="usage_helper">辅助函数</h3>
 <p>然后定义一些辅助函数，比如将参数写入到 <code>http.Request</code> 和从 <code>http.Request</code> 中获取参数。</p>
 <pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-kn">package</span> <span class="hl-nx">custom_router</span>
 <span class="hl-ln"> 2</span>
@@ -106,7 +106,7 @@
 <span class="hl-ln">6</span>        <span class="hl-c1">// TODO
 </span><span class="hl-ln">7</span><span class="hl-c1"></span>    <span class="hl-p">}))</span>
 <span class="hl-ln">8</span><span class="hl-p">}</span>
-</pre><h2 id="ge-geng-fu-za-de-li-zi">一个更复杂的例子</h2>
+</pre><h2 id="advance">一个更复杂的例子</h2>
 <p>下面定义了一个新路由，摒弃了官方的 <code>http.ResponseWriter</code> 和 <code>http.Request</code>，采用 <code>Context</code> 对象传递上下文所需的内容。所以我们自定义了一个 <code>Handler</code> 接口用以代替官方的 <code>http.Handler</code> 接口，其 <code>Handle</code> 方法的参数只接收 <code>Context</code> 对象。</p>
 <p>对于 <code>New</code> 方法也不再是直接传递 <code>*options</code> 对象，而是以可选的函数方法的形式传递。</p>
 <pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-kn">package</span> <span class="hl-nx">custom_router</span>
@@ -176,13 +176,13 @@
 <span class="hl-ln">6</span>        <span class="hl-c1">// TODO
 </span><span class="hl-ln">7</span><span class="hl-c1"></span>    <span class="hl-p">}))</span>
 <span class="hl-ln">8</span><span class="hl-p">}</span>
-</pre><h2 id="xing-neng">性能</h2>
+</pre><h2 id="perf">性能</h2>
 <p>有关性能可以参考 <a href="https://caixw.github.io/go-http-routers-testing/">https://caixw.github.io/go-http-routers-testing/</a> 提供了基于 <code>http.Handler</code> 的性能测试。</p>
 
 </article>
 </article><nav id="toc-button" class="nav-button">
     <i role="button" aria-label="TOC" class="css-icon icon-menu"></i>
-    <ul id="toc" role="menu"><li role="menuitem" class="toc-h0"><a href="#ru-he-shi-yong">如何使用</a></li><li role="menuitem" class="toc-h1"><a href="#ding-yi-lu-you-chu-li-lei-xing">定义路由处理类型</a></li><li role="menuitem" class="toc-h1"><a href="#ding-yi-fan-xing-dui-ying-de-lei-xing">定义泛型对应的类型</a></li><li role="menuitem" class="toc-h1"><a href="#ding-yi-new-han-shu">定义 New 函数</a></li><li role="menuitem" class="toc-h1"><a href="#fu-zhu-han-shu">辅助函数</a></li><li role="menuitem" class="toc-h0"><a href="#ge-geng-fu-za-de-li-zi">一个更复杂的例子</a></li><li role="menuitem" class="toc-h0"><a href="#xing-neng">性能</a></li></ul>
+    <ul id="toc" role="menu"><li role="menuitem" class="toc-h0"><a href="#usage">如何使用</a></li><li role="menuitem" class="toc-h1"><a href="#usage_route_func">定义路由处理类型</a></li><li role="menuitem" class="toc-h1"><a href="#usage_types">定义泛型对应的类型</a></li><li role="menuitem" class="toc-h1"><a href="#usage_new">定义 New 函数</a></li><li role="menuitem" class="toc-h1"><a href="#usage_helper">辅助函数</a></li><li role="menuitem" class="toc-h0"><a href="#advance">一个更复杂的例子</a></li><li role="menuitem" class="toc-h0"><a href="#perf">性能</a></li></ul>
 </nav><div class="pages-nav">
                 
                 <span class="next">
@@ -202,7 +202,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2022-02-11T04:57:21Z">2022-02-11</time>
+                    <time title="2022-02-11T05:03:18Z">2022-02-11</time>
                 </span>
             </div>
         </footer>
