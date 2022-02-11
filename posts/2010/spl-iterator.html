@@ -32,7 +32,7 @@
 </div>
 <article id="content">
 <p>迭代器这种设计模式很常见，也很实用。最著名的要算是 C++ 中 STL 的实现了。它提供了一个统一的接口，使用访问者在不知道类对象内部数据结构的情况下遍历其内部数据。PHP5 中提供了对这种设计模式的内置支持，其实所谓的内置支持就是可以使用 <code>foreach</code> 语言结构来访问实现迭代器接口的类。</p>
-<h2 id="ge-jian-dan-de-zi-ding-yi-die-dai-qi-iterator-implement">一个简单的自定义迭代器{iterator-implement}</h2>
+<h2 id="iterator-implement">一个简单的自定义迭代器</h2>
 <p>首先看一下下面这三段代码：</p>
 <pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-nv">$array</span> <span class="hl-o">=</span> <span class="hl-k">array</span><span class="hl-p">(</span><span class="hl-s1">&#39;a&#39;</span><span class="hl-p">,</span> <span class="hl-s1">&#39;b&#39;</span><span class="hl-p">,</span> <span class="hl-s1">&#39;c&#39;</span><span class="hl-p">);</span>
 <span class="hl-ln"> 2</span><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-nv">$a</span> <span class="hl-o">=</span> <span class="hl-nx">next</span><span class="hl-p">(</span><span class="hl-nv">$array</span><span class="hl-p">))</span> <span class="hl-p">{</span>
@@ -420,7 +420,7 @@
 </article>
 </article><nav id="toc-button" class="nav-button">
     <i role="button" aria-label="TOC" class="css-icon icon-menu"></i>
-    <ul id="toc" role="menu"><li role="menuitem" class="toc-h0"><a href="#ge-jian-dan-de-zi-ding-yi-die-dai-qi-iterator-implement">一个简单的自定义迭代器{iterator-implement}</a></li><li role="menuitem" class="toc-h0"><a href="#spl-iterator">SPL 中的 iterator 接口</a></li><li role="menuitem" class="toc-h0"><a href="#recursive-iterator">递归迭代器(RecursiveIterator)</a></li><li role="menuitem" class="toc-h0"><a href="#iterator-aggregate">IteratorAggregate 接口</a></li><li role="menuitem" class="toc-h0"><a href="#outer-iterator">OuterIterator</a></li><li role="menuitem" class="toc-h0"><a href="#filteriterator-filter-iterator">FilterIterator{filter-iterator}</a></li><li role="menuitem" class="toc-h0"><a href="#limit-iterator">LimitIterator</a></li><li role="menuitem" class="toc-h0"><a href="#foreach">遍历对象属性</a></li><li role="menuitem" class="toc-h0"><a href="#spl-implemented-iterator">SPL 中一些已实现的迭代器类</a></li><li role="menuitem" class="toc-h0"><a href="#reference">参考</a></li></ul>
+    <ul id="toc" role="menu"><li role="menuitem" class="toc-h0"><a href="#iterator-implement">一个简单的自定义迭代器</a></li><li role="menuitem" class="toc-h0"><a href="#spl-iterator">SPL 中的 iterator 接口</a></li><li role="menuitem" class="toc-h0"><a href="#recursive-iterator">递归迭代器(RecursiveIterator)</a></li><li role="menuitem" class="toc-h0"><a href="#iterator-aggregate">IteratorAggregate 接口</a></li><li role="menuitem" class="toc-h0"><a href="#outer-iterator">OuterIterator</a></li><li role="menuitem" class="toc-h0"><a href="#filteriterator-filter-iterator">FilterIterator{filter-iterator}</a></li><li role="menuitem" class="toc-h0"><a href="#limit-iterator">LimitIterator</a></li><li role="menuitem" class="toc-h0"><a href="#foreach">遍历对象属性</a></li><li role="menuitem" class="toc-h0"><a href="#spl-implemented-iterator">SPL 中一些已实现的迭代器类</a></li><li role="menuitem" class="toc-h0"><a href="#reference">参考</a></li></ul>
 </nav><div class="pages-nav">
                 <span class="prev">
                         <a rel="prev" href="https://caixw.io/posts/2010/javascript-prototype.html" aria-label="前一页"><span aria-hidden="true">&#171;&#160;</span>JavaScript prototype 介绍</a>
@@ -436,13 +436,13 @@
             <div class="line" role="menu"><a role="menuitem" class="item" href="/">首页</a><a role="menuitem" class="item" href="/tags.html">标签</a><a role="menuitem" class="item" href="/archive.html">存档</a><a role="menuitem" class="item" href="/posts/about.html">关于</a><a role="menuitem" class="item" href="/rss.xml">RSS</a><a role="menuitem" class="item" href="/atom.xml">Atom</a><a role="menuitem" class="item" href="/sitemap.xml">Sitemap</a></div>
 
             <div class="line">
-                <span class="item">&#169; 2016-2021 by
+                <span class="item">&#169; 2016-2022 by
                     <a href="https://caixw.io" type="text/html">caixw</a>
                 </span>
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2021-11-29T08:07:07Z">2021-11-29</time>
+                    <time title="2022-02-11T04:57:21Z">2022-02-11</time>
                 </span>
             </div>
         </footer>

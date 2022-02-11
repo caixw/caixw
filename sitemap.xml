@@ -3,7 +3,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
 		<loc>https://caixw.io/tags.html</loc>
-		<lastmod>2021-08-23T04:31:42+08:00</lastmod>
+		<lastmod>2022-02-11T18:21:11+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>
@@ -111,7 +111,19 @@
 	</url>
 	<url>
 		<loc>https://caixw.io/tags/go.html</loc>
-		<lastmod>2021-08-23T04:31:42+08:00</lastmod>
+		<lastmod>2022-02-11T18:21:11+08:00</lastmod>
+		<changefreq>monthly</changefreq>
+		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/tags/generics.html</loc>
+		<lastmod>2022-02-11T18:21:11+08:00</lastmod>
+		<changefreq>monthly</changefreq>
+		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/tags/framework.html</loc>
+		<lastmod>2022-02-11T18:21:11+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>
@@ -141,9 +153,15 @@
 	</url>
 	<url>
 		<loc>https://caixw.io</loc>
-		<lastmod>2021-08-23T04:31:42+08:00</lastmod>
+		<lastmod>2022-02-11T18:21:11+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/posts/2022/build-go-router-with-generics.html</loc>
+		<lastmod>2022-02-11T18:21:11+08:00</lastmod>
+		<changefreq>weekly</changefreq>
+		<priority>0.6</priority>
 	</url>
 	<url>
 		<loc>https://caixw.io/posts/2021/go-dl.html</loc>

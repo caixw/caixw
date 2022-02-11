@@ -2,8 +2,8 @@
 
 ### Hi there 👋
 
+- [利用 Go 的泛型实现自定义的路由](https://caixw.io/posts/2022/build-go-router-with-generics.html)
 - [Go 官方的多版本管理](https://caixw.io/posts/2021/go-dl.html)
 - [关于](https://caixw.io/posts/about.html)
-- [Go 的版本自动化](https://caixw.io/posts/2016/go-auto-versioning.html)
 
 ##### <https://caixw.io>
