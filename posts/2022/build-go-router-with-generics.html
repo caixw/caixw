@@ -5,9 +5,9 @@
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>利用 Go 的泛型实现自定义的路由 | 一斤瓜子铺</title><link rel="canonical" href="https://caixw.io/posts/2022/build-go-router-with-generics.html" /><link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <title>基于 Go 的泛型快速实现一个功能完备的路由 | 一斤瓜子铺</title><link rel="canonical" href="https://caixw.io/posts/2022/build-go-router-with-generics.html" /><link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel=”mask-icon” href=”/favicon.svg” color=”#000000” /><link rel="alternate" type="application/rss+xml" title="RSS" href="https://caixw.io/rss.xml" /><link rel="alternate" type="application/atom+xml" title="Atom" href="https://caixw.io/atom.xml" /><meta name="keywords" content="Go, 泛型, 类型参数, type params, generics, 路由, router, framework, 框架, go1.18" /><link rel="next" href="https://caixw.io/posts/2021/go-dl.html" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: dark)" href="https://caixw.io/themes/default/solarized-dark256.css" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: light)" href="https://caixw.io/themes/default/solarized-light.css" /><link rel="stylesheet" type="text/css" media="print" href="https://caixw.io/themes/default/igor.css" /><link rel="stylesheet" type="text/css" href="https://caixw.io/themes/default/style.css" /><script type="application/ld+json">
-        {"@context":"https://schema.org/","@type":"BlogPosting","headline":"利用 Go 的泛型实现自定义的路由","author":[{"@type":"Person","name":"caixw","url":"https://caixw.io"}],"dateCreated":"2022-02-11T18:21:11+08:00","dateModified":"2022-02-11T18:21:11+08:00","license":"https://creativecommons.org/licenses/by/4.0/deed.zh","keywords":"Go, 泛型, 类型参数, type params, generics, 路由, router, framework, 框架, go1.18","inLanguage":"cmn-Hans"}
+        {"@context":"https://schema.org/","@type":"BlogPosting","headline":"基于 Go 的泛型快速实现一个功能完备的路由","author":[{"@type":"Person","name":"caixw","url":"https://caixw.io"}],"dateCreated":"2022-02-11T18:21:11+08:00","dateModified":"2022-02-11T17:41:51+08:00","license":"https://creativecommons.org/licenses/by/4.0/deed.zh","keywords":"Go, 泛型, 类型参数, type params, generics, 路由, router, framework, 框架, go1.18","inLanguage":"cmn-Hans"}
         </script></head>
 
     <body>
@@ -15,7 +15,7 @@
     <main id="main">
 
 <article class="post">
-<h1>利用 Go 的泛型实现自定义的路由</h1>
+<h1>基于 Go 的泛型快速实现一个功能完备的路由</h1>
 <div class="meta">
     <span class="item">
         <span class="value">作者:</span>
@@ -25,13 +25,13 @@
     <div class="item">
         <span class="value">标签:</span><a class="value" href="https://caixw.io/tags/go.html">Go</a><a class="value" href="https://caixw.io/tags/generics.html">泛型</a><a class="value" href="https://caixw.io/tags/framework.html">框架</a></div>
 
-    <div class="item" title="修改时间:2022-02-11T18:21:11&#43;08:00&#10;添加时间:2022-02-11T18:21:11&#43;08:00">
+    <div class="item" title="修改时间:2022-02-11T17:41:51&#43;08:00&#10;添加时间:2022-02-11T18:21:11&#43;08:00">
         <span class="value">修改时间:</span>
         <time class="value">2022-02-11</time>
     </div>
 </div>
 <article id="content">
-<p>Go 语言的路由库有很多，功能上都大同小异，最大的差异应该是路由函数的签名，官方采用了 <code>http.Handler</code> 接口，而大部分非官方路由都将 <code>http.ResponseWriter</code> 和 <code>http.Request</code> 合并成了一个对象。本文介绍的库 <a href="https://github.com/issue9/mux">https://github.com/issue9/mux</a> 利用 go1.18 对泛型的支持，实现了自定义该功能的需求，仅需要以下几步即可实现一个完善的自定义路由，可用于快速开发一个 web 框架。</p>
+<p>Go 语言的路由库有很多，功能上都大同小异，最大的差异应该是路由函数的签名，官方采用了 <code>http.Handler</code> 接口，而大部分非官方路由都将 <code>http.ResponseWriter</code> 和 <code>http.Request</code> 合并成了一个对象。本文介绍的库 <a href="https://github.com/issue9/mux">https://github.com/issue9/mux</a> 利用 go1.18 对泛型的支持，实现了用户自定义该功能的需求，仅需要几步即可实现一个完善的路由，适用于快速开发一个 web 框架。</p>
 <h2 id="usage">如何使用</h2>
 <p>以实现一个兼容 <code>http.Handler</code> 接口的路由为例，仅需以下几个步骤即可。</p>
 <h3 id="usage_route_func">定义路由处理类型</h3>
@@ -202,7 +202,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2022-02-11T05:03:18Z">2022-02-11</time>
+                    <time title="2022-02-11T09:46:06Z">2022-02-11</time>
                 </span>
             </div>
         </footer>

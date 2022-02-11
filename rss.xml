@@ -5,9 +5,9 @@
 		<link>https://caixw.io</link>
 		<description>subtitle</description>
 		<pubDate>06 Mar 16 00:00 +0800</pubDate>
-		<lastBuildDate>11 Feb 22 18:21 +0800</lastBuildDate>
+		<lastBuildDate>11 Feb 22 17:41 +0800</lastBuildDate>
 		<item>
-			<title>利用 Go 的泛型实现自定义的路由</title>
+			<title>基于 Go 的泛型快速实现一个功能完备的路由</title>
 			<link>https://caixw.io/posts/2022/build-go-router-with-generics.html</link>
 			<description></description>
 			<pubDate>11 Feb 22 18:21 +0800</pubDate>
