@@ -3,25 +3,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
 		<loc>https://caixw.io/tags.html</loc>
-		<lastmod>2022-02-11T17:41:51+08:00</lastmod>
+		<lastmod>2022-02-15T01:10:20+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
 		<loc>https://caixw.io/tags/version.html</loc>
 		<lastmod>2021-08-23T04:31:42+08:00</lastmod>
-		<changefreq>monthly</changefreq>
-		<priority>0.5</priority>
-	</url>
-	<url>
-		<loc>https://caixw.io/tags/sqlite3.html</loc>
-		<lastmod>0001-01-01T00:00:00Z</lastmod>
-		<changefreq>monthly</changefreq>
-		<priority>0.5</priority>
-	</url>
-	<url>
-		<loc>https://caixw.io/tags/sql.html</loc>
-		<lastmod>0001-01-01T00:00:00Z</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>
@@ -69,19 +57,19 @@
 	</url>
 	<url>
 		<loc>https://caixw.io/tags/oauth.html</loc>
-		<lastmod>2021-08-21T23:45:30+08:00</lastmod>
+		<lastmod>2022-02-15T01:10:20+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
 		<loc>https://caixw.io/tags/jwt.html</loc>
-		<lastmod>2021-08-21T23:45:30+08:00</lastmod>
+		<lastmod>2022-02-15T01:10:20+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
 		<loc>https://caixw.io/tags/json.html</loc>
-		<lastmod>2021-08-21T23:45:30+08:00</lastmod>
+		<lastmod>2022-02-15T01:10:20+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>
@@ -111,7 +99,7 @@
 	</url>
 	<url>
 		<loc>https://caixw.io/tags/go.html</loc>
-		<lastmod>2022-02-11T17:41:51+08:00</lastmod>
+		<lastmod>2022-02-15T01:10:20+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>
@@ -140,12 +128,6 @@
 		<priority>0.5</priority>
 	</url>
 	<url>
-		<loc>https://caixw.io/tags/database.html</loc>
-		<lastmod>0001-01-01T00:00:00Z</lastmod>
-		<changefreq>monthly</changefreq>
-		<priority>0.5</priority>
-	</url>
-	<url>
 		<loc>https://caixw.io/tags/api.html</loc>
 		<lastmod>2017-07-29T21:36:45+08:00</lastmod>
 		<changefreq>monthly</changefreq>
@@ -153,7 +135,7 @@
 	</url>
 	<url>
 		<loc>https://caixw.io</loc>
-		<lastmod>2022-02-11T17:41:51+08:00</lastmod>
+		<lastmod>2022-02-15T01:10:20+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>
@@ -183,7 +165,7 @@
 	</url>
 	<url>
 		<loc>https://caixw.io/posts/2016/jwt-intro.html</loc>
-		<lastmod>2021-08-21T23:45:30+08:00</lastmod>
+		<lastmod>2022-02-15T01:10:20+08:00</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.6</priority>
 	</url>

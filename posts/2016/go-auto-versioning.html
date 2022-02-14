@@ -33,52 +33,52 @@
 <article id="content">
 <p>一般情况下，我会在发布程序时把编译的时期附在版本号里，按照 <a href="https://semver.org">semver</a> 的规则，一个版本号会是这样子：<code>0.1.2+20161129</code>，前三个字符相对来说改动比较少，但是最后的日期一天一变，如果采用手动改变代码中常的方式，就比较得麻烦。所以我会使用 shell 和 <code>go build</code> 命令的 <code>ldflags</code> 参数相结合，在每次编译时，自动更新这个个变量。</p>
 <p>下面是一段简单的代码，用来作为示例，除了编译日期之外，还指定了一个 commit hash，用于记录最后的提交 ID：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-c1">// Copyright 2016 by caixw, All rights reserved.
-</span><span class="hl-ln"> 2</span><span class="hl-c1">// Use of this source code is governed by a MIT
-</span><span class="hl-ln"> 3</span><span class="hl-c1">// license that can be found in the LICENSE file.
-</span><span class="hl-ln"> 4</span><span class="hl-c1"></span>
-<span class="hl-ln"> 5</span><span class="hl-kn">package</span> <span class="hl-nx">main</span>
-<span class="hl-ln"> 6</span>
-<span class="hl-ln"> 7</span><span class="hl-kn">import</span> <span class="hl-p">(</span>
-<span class="hl-ln"> 8</span>    <span class="hl-s">&#34;flag&#34;</span>
-<span class="hl-ln"> 9</span><span class="hl-p">)</span>
-<span class="hl-ln">10</span>
-<span class="hl-ln">11</span><span class="hl-kd">const</span> <span class="hl-nx">mainVersion</span> <span class="hl-p">=</span> <span class="hl-s">&#34;1.2.3&#34;</span>
-<span class="hl-ln">12</span>
-<span class="hl-ln">13</span><span class="hl-kd">var</span> <span class="hl-p">(</span>
-<span class="hl-ln">14</span>    <span class="hl-nx">buildDate</span>  <span class="hl-kt">string</span>
-<span class="hl-ln">15</span>    <span class="hl-nx">commitHash</span> <span class="hl-kt">string</span>
-<span class="hl-ln">16</span><span class="hl-p">)</span>
-<span class="hl-ln">17</span>
-<span class="hl-ln">18</span><span class="hl-kd">func</span> <span class="hl-nf">main</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">19</span>    <span class="hl-nx">v</span> <span class="hl-o">:=</span> <span class="hl-nx">flag</span><span class="hl-p">.</span><span class="hl-nf">Bool</span><span class="hl-p">(</span><span class="hl-s">&#34;v&#34;</span><span class="hl-p">,</span> <span class="hl-kc">false</span><span class="hl-p">,</span> <span class="hl-s">&#34;显示版本号&#34;</span><span class="hl-p">)</span>
-<span class="hl-ln">20</span>    <span class="hl-nx">flag</span><span class="hl-p">.</span><span class="hl-nf">Parse</span><span class="hl-p">()</span>
-<span class="hl-ln">21</span>
-<span class="hl-ln">22</span>    <span class="hl-k">if</span> <span class="hl-o">*</span><span class="hl-nx">v</span> <span class="hl-p">{</span>
-<span class="hl-ln">23</span>        <span class="hl-nx">version</span> <span class="hl-o">:=</span> <span class="hl-nx">mainVersion</span>
-<span class="hl-ln">24</span>        <span class="hl-k">if</span> <span class="hl-nb">len</span><span class="hl-p">(</span><span class="hl-nx">buildDate</span><span class="hl-p">)</span> <span class="hl-p">&gt;</span> <span class="hl-mi">0</span> <span class="hl-p">{</span>
-<span class="hl-ln">25</span>            <span class="hl-nx">version</span> <span class="hl-o">+=</span> <span class="hl-s">&#34;+&#34;</span> <span class="hl-o">+</span> <span class="hl-nx">buildDate</span>
-<span class="hl-ln">26</span>        <span class="hl-p">}</span>
-<span class="hl-ln">27</span>        <span class="hl-nx">fmt</span><span class="hl-p">.</span><span class="hl-nf">Println</span><span class="hl-p">(</span><span class="hl-s">&#34;version:&#34;</span><span class="hl-p">,</span> <span class="hl-nx">version</span><span class="hl-p">)</span>
-<span class="hl-ln">28</span>
-<span class="hl-ln">29</span>        <span class="hl-k">if</span> <span class="hl-nb">len</span><span class="hl-p">(</span><span class="hl-nx">commitHash</span><span class="hl-p">)</span> <span class="hl-p">&gt;</span> <span class="hl-mi">0</span> <span class="hl-p">{</span>
-<span class="hl-ln">30</span>            <span class="hl-nx">fmt</span><span class="hl-p">.</span><span class="hl-nf">Println</span><span class="hl-p">(</span><span class="hl-s">&#34;git commit hash:&#34;</span><span class="hl-p">,</span> <span class="hl-nx">commitHash</span><span class="hl-p">)</span>
-<span class="hl-ln">31</span>        <span class="hl-p">}</span>
-<span class="hl-ln">32</span>        <span class="hl-k">return</span>
-<span class="hl-ln">33</span>    <span class="hl-p">}</span>
-<span class="hl-ln">34</span>
-<span class="hl-ln">35</span>    <span class="hl-c1">// TODO
-</span><span class="hl-ln">36</span><span class="hl-c1"></span><span class="hl-p">}</span>
-</pre><p>下面是相对应的一个简单 shell 脚本，用于编译代码：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-c1"># 获取两个参数变量，等号两端不要有空格</span>
-<span class="hl-ln">2</span><span class="hl-nv">buildDate</span><span class="hl-o">=</span><span class="hl-k">$(</span>date -u <span class="hl-s1">&#39;+%Y%m%d&#39;</span><span class="hl-k">)</span>
-<span class="hl-ln">3</span><span class="hl-nv">hash</span><span class="hl-o">=</span><span class="hl-k">$(</span>git rev-parse HEAD<span class="hl-k">)</span>
-<span class="hl-ln">4</span>
-<span class="hl-ln">5</span>go build  -ldflags <span class="hl-s2">&#34;-X main.buildDate=</span><span class="hl-si">${</span><span class="hl-nv">buildDate</span><span class="hl-si">}</span><span class="hl-s2"> -X main.commitHash=</span><span class="hl-si">${</span><span class="hl-nv">hash</span><span class="hl-si">}</span><span class="hl-s2">&#34;</span>
-</pre><p>执行 <code>./main</code>，将会输出类似以下内容：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span>version:1.2.3+20161129
-<span class="hl-ln">2</span>git commit hash: 8b3632a2451edcd175939de6581315b9dde0fbd7
-</pre><p>关于 ldflags 参数：</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln"> 1</span><span class="hl-cl"><span class="hl-c1">// Copyright 2016 by caixw, All rights reserved.
+</span></span></span><span class="hl-line"><span class="hl-ln"> 2</span><span class="hl-cl"><span class="hl-c1">// Use of this source code is governed by a MIT
+</span></span></span><span class="hl-line"><span class="hl-ln"> 3</span><span class="hl-cl"><span class="hl-c1">// license that can be found in the LICENSE file.
+</span></span></span><span class="hl-line"><span class="hl-ln"> 4</span><span class="hl-cl"><span class="hl-c1"></span>
+</span></span><span class="hl-line"><span class="hl-ln"> 5</span><span class="hl-cl"><span class="hl-kn">package</span> <span class="hl-nx">main</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 6</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 7</span><span class="hl-cl"><span class="hl-kn">import</span> <span class="hl-p">(</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 8</span><span class="hl-cl">    <span class="hl-s">&#34;flag&#34;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 9</span><span class="hl-cl"><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">10</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">11</span><span class="hl-cl"><span class="hl-kd">const</span> <span class="hl-nx">mainVersion</span> <span class="hl-p">=</span> <span class="hl-s">&#34;1.2.3&#34;</span>
+</span></span><span class="hl-line"><span class="hl-ln">12</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">13</span><span class="hl-cl"><span class="hl-kd">var</span> <span class="hl-p">(</span>
+</span></span><span class="hl-line"><span class="hl-ln">14</span><span class="hl-cl">    <span class="hl-nx">buildDate</span>  <span class="hl-kt">string</span>
+</span></span><span class="hl-line"><span class="hl-ln">15</span><span class="hl-cl">    <span class="hl-nx">commitHash</span> <span class="hl-kt">string</span>
+</span></span><span class="hl-line"><span class="hl-ln">16</span><span class="hl-cl"><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">17</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">18</span><span class="hl-cl"><span class="hl-kd">func</span> <span class="hl-nf">main</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">19</span><span class="hl-cl">    <span class="hl-nx">v</span> <span class="hl-o">:=</span> <span class="hl-nx">flag</span><span class="hl-p">.</span><span class="hl-nf">Bool</span><span class="hl-p">(</span><span class="hl-s">&#34;v&#34;</span><span class="hl-p">,</span> <span class="hl-kc">false</span><span class="hl-p">,</span> <span class="hl-s">&#34;显示版本号&#34;</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">20</span><span class="hl-cl">    <span class="hl-nx">flag</span><span class="hl-p">.</span><span class="hl-nf">Parse</span><span class="hl-p">()</span>
+</span></span><span class="hl-line"><span class="hl-ln">21</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">22</span><span class="hl-cl">    <span class="hl-k">if</span> <span class="hl-o">*</span><span class="hl-nx">v</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">23</span><span class="hl-cl">        <span class="hl-nx">version</span> <span class="hl-o">:=</span> <span class="hl-nx">mainVersion</span>
+</span></span><span class="hl-line"><span class="hl-ln">24</span><span class="hl-cl">        <span class="hl-k">if</span> <span class="hl-nb">len</span><span class="hl-p">(</span><span class="hl-nx">buildDate</span><span class="hl-p">)</span> <span class="hl-p">&gt;</span> <span class="hl-mi">0</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">25</span><span class="hl-cl">            <span class="hl-nx">version</span> <span class="hl-o">+=</span> <span class="hl-s">&#34;+&#34;</span> <span class="hl-o">+</span> <span class="hl-nx">buildDate</span>
+</span></span><span class="hl-line"><span class="hl-ln">26</span><span class="hl-cl">        <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">27</span><span class="hl-cl">        <span class="hl-nx">fmt</span><span class="hl-p">.</span><span class="hl-nf">Println</span><span class="hl-p">(</span><span class="hl-s">&#34;version:&#34;</span><span class="hl-p">,</span> <span class="hl-nx">version</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">28</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">29</span><span class="hl-cl">        <span class="hl-k">if</span> <span class="hl-nb">len</span><span class="hl-p">(</span><span class="hl-nx">commitHash</span><span class="hl-p">)</span> <span class="hl-p">&gt;</span> <span class="hl-mi">0</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">30</span><span class="hl-cl">            <span class="hl-nx">fmt</span><span class="hl-p">.</span><span class="hl-nf">Println</span><span class="hl-p">(</span><span class="hl-s">&#34;git commit hash:&#34;</span><span class="hl-p">,</span> <span class="hl-nx">commitHash</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">31</span><span class="hl-cl">        <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">32</span><span class="hl-cl">        <span class="hl-k">return</span>
+</span></span><span class="hl-line"><span class="hl-ln">33</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">34</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">35</span><span class="hl-cl">    <span class="hl-c1">// TODO
+</span></span></span><span class="hl-line"><span class="hl-ln">36</span><span class="hl-cl"><span class="hl-c1"></span><span class="hl-p">}</span>
+</span></span></code></pre><p>下面是相对应的一个简单 shell 脚本，用于编译代码：</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln">1</span><span class="hl-cl"><span class="hl-c1"># 获取两个参数变量，等号两端不要有空格</span>
+</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl"><span class="hl-nv">buildDate</span><span class="hl-o">=</span><span class="hl-k">$(</span>date -u <span class="hl-s1">&#39;+%Y%m%d&#39;</span><span class="hl-k">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">3</span><span class="hl-cl"><span class="hl-nv">hash</span><span class="hl-o">=</span><span class="hl-k">$(</span>git rev-parse HEAD<span class="hl-k">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">4</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">5</span><span class="hl-cl">go build  -ldflags <span class="hl-s2">&#34;-X main.buildDate=</span><span class="hl-si">${</span><span class="hl-nv">buildDate</span><span class="hl-si">}</span><span class="hl-s2"> -X main.commitHash=</span><span class="hl-si">${</span><span class="hl-nv">hash</span><span class="hl-si">}</span><span class="hl-s2">&#34;</span>
+</span></span></code></pre><p>执行 <code>./main</code>，将会输出类似以下内容：</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln">1</span><span class="hl-cl">version:1.2.3+20161129
+</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl">git commit hash: 8b3632a2451edcd175939de6581315b9dde0fbd7
+</span></span></code></pre><p>关于 ldflags 参数：</p>
 <ul>
 <li>不能修改常量，只能是变量；</li>
 <li>变量可以小写；</li>
@@ -108,7 +108,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2022-02-11T09:46:06Z">2022-02-11</time>
+                    <time title="2022-02-14T17:16:06Z">2022-02-14</time>
                 </span>
             </div>
         </footer>

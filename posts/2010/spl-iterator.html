@@ -34,234 +34,234 @@
 <p>迭代器这种设计模式很常见，也很实用。最著名的要算是 C++ 中 STL 的实现了。它提供了一个统一的接口，使用访问者在不知道类对象内部数据结构的情况下遍历其内部数据。PHP5 中提供了对这种设计模式的内置支持，其实所谓的内置支持就是可以使用 <code>foreach</code> 语言结构来访问实现迭代器接口的类。</p>
 <h2 id="iterator-implement">一个简单的自定义迭代器</h2>
 <p>首先看一下下面这三段代码：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-nv">$array</span> <span class="hl-o">=</span> <span class="hl-k">array</span><span class="hl-p">(</span><span class="hl-s1">&#39;a&#39;</span><span class="hl-p">,</span> <span class="hl-s1">&#39;b&#39;</span><span class="hl-p">,</span> <span class="hl-s1">&#39;c&#39;</span><span class="hl-p">);</span>
-<span class="hl-ln"> 2</span><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-nv">$a</span> <span class="hl-o">=</span> <span class="hl-nx">next</span><span class="hl-p">(</span><span class="hl-nv">$array</span><span class="hl-p">))</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 3</span>    <span class="hl-c1">// do something
-</span><span class="hl-ln"> 4</span><span class="hl-c1"></span><span class="hl-p">}</span>
-<span class="hl-ln"> 5</span>
-<span class="hl-ln"> 6</span><span class="hl-nv">$dh</span> <span class="hl-o">=</span> <span class="hl-nx">opendir</span><span class="hl-p">(</span><span class="hl-s1">&#39;/home/test/files&#39;</span><span class="hl-p">);</span>
-<span class="hl-ln"> 7</span><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-k">false</span> <span class="hl-o">!==</span> <span class="hl-p">(</span><span class="hl-nv">$file</span> <span class="hl-o">=</span> <span class="hl-nx">readdir</span><span class="hl-p">(</span><span class="hl-nv">$dh</span><span class="hl-p">)))</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 8</span>    <span class="hl-c1">// do something
-</span><span class="hl-ln"> 9</span><span class="hl-c1"></span><span class="hl-p">}</span>
-<span class="hl-ln">10</span>
-<span class="hl-ln">11</span><span class="hl-nv">$fh</span> <span class="hl-o">=</span> <span class="hl-nx">fopen</span><span class="hl-p">(</span><span class="hl-s2">&#34;/home/test/files/results.txt&#34;</span><span class="hl-p">,</span> <span class="hl-s2">&#34;r&#34;</span><span class="hl-p">);</span>
-<span class="hl-ln">12</span><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-o">!</span><span class="hl-nx">feof</span><span class="hl-p">(</span><span class="hl-nv">$fh</span><span class="hl-p">))</span> <span class="hl-p">{</span>
-<span class="hl-ln">13</span>   <span class="hl-nv">$line</span> <span class="hl-o">=</span> <span class="hl-nx">fgets</span><span class="hl-p">(</span><span class="hl-nv">$fh</span><span class="hl-p">);</span>
-<span class="hl-ln">14</span>   <span class="hl-c1">// do something
-</span><span class="hl-ln">15</span><span class="hl-c1"></span><span class="hl-p">}</span>
-</pre><p>以上这三段代码虽然操作的资源(resource)各不相同，但是其功能是一样的，都是遍历资源中的数据。但是这三段代码却用了三套不同的函数，这些函数拥有不同的参数，不同的行为，我们在使用之前必须要了解其用途，才能写出一段遍历某种资源(resource)的代码。</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln"> 1</span><span class="hl-cl"><span class="hl-nv">$array</span> <span class="hl-o">=</span> <span class="hl-k">array</span><span class="hl-p">(</span><span class="hl-s1">&#39;a&#39;</span><span class="hl-p">,</span> <span class="hl-s1">&#39;b&#39;</span><span class="hl-p">,</span> <span class="hl-s1">&#39;c&#39;</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 2</span><span class="hl-cl"><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-nv">$a</span> <span class="hl-o">=</span> <span class="hl-nx">next</span><span class="hl-p">(</span><span class="hl-nv">$array</span><span class="hl-p">))</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 3</span><span class="hl-cl">    <span class="hl-c1">// do something
+</span></span></span><span class="hl-line"><span class="hl-ln"> 4</span><span class="hl-cl"><span class="hl-c1"></span><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 5</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 6</span><span class="hl-cl"><span class="hl-nv">$dh</span> <span class="hl-o">=</span> <span class="hl-nx">opendir</span><span class="hl-p">(</span><span class="hl-s1">&#39;/home/test/files&#39;</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 7</span><span class="hl-cl"><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-k">false</span> <span class="hl-o">!==</span> <span class="hl-p">(</span><span class="hl-nv">$file</span> <span class="hl-o">=</span> <span class="hl-nx">readdir</span><span class="hl-p">(</span><span class="hl-nv">$dh</span><span class="hl-p">)))</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 8</span><span class="hl-cl">    <span class="hl-c1">// do something
+</span></span></span><span class="hl-line"><span class="hl-ln"> 9</span><span class="hl-cl"><span class="hl-c1"></span><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">10</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">11</span><span class="hl-cl"><span class="hl-nv">$fh</span> <span class="hl-o">=</span> <span class="hl-nx">fopen</span><span class="hl-p">(</span><span class="hl-s2">&#34;/home/test/files/results.txt&#34;</span><span class="hl-p">,</span> <span class="hl-s2">&#34;r&#34;</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">12</span><span class="hl-cl"><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-o">!</span><span class="hl-nx">feof</span><span class="hl-p">(</span><span class="hl-nv">$fh</span><span class="hl-p">))</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">13</span><span class="hl-cl">   <span class="hl-nv">$line</span> <span class="hl-o">=</span> <span class="hl-nx">fgets</span><span class="hl-p">(</span><span class="hl-nv">$fh</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">14</span><span class="hl-cl">   <span class="hl-c1">// do something
+</span></span></span><span class="hl-line"><span class="hl-ln">15</span><span class="hl-cl"><span class="hl-c1"></span><span class="hl-p">}</span>
+</span></span></code></pre><p>以上这三段代码虽然操作的资源(resource)各不相同，但是其功能是一样的，都是遍历资源中的数据。但是这三段代码却用了三套不同的函数，这些函数拥有不同的参数，不同的行为，我们在使用之前必须要了解其用途，才能写出一段遍历某种资源(resource)的代码。</p>
 <p>迭代器设计模式就是在这种情况下产生：我们将其中的一些相同的操作抽象出来形成一个接口，不同的资源只要实现这一接口，就能以相同的方式遍历其中的数据。以下是一个简单迭代器接口的实现，在以 PHP5 之前，迭代器一般也是按照这种方式实现的。当然真实的代码中会比这更加复杂和健壮些。</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">interface</span> <span class="hl-nx">SimpleIterator</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 2</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">next</span><span class="hl-p">();</span>
-<span class="hl-ln"> 3</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">current</span><span class="hl-p">();</span>
-<span class="hl-ln"> 4</span><span class="hl-p">}</span>
-<span class="hl-ln"> 5</span>
-<span class="hl-ln"> 6</span><span class="hl-k">class</span> <span class="hl-nc">ArrayIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">SimpleIterator</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 7</span>    <span class="hl-k">private</span> <span class="hl-nv">$_data</span><span class="hl-p">;</span>
-<span class="hl-ln"> 8</span>
-<span class="hl-ln"> 9</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__construct</span><span class="hl-p">(</span><span class="hl-k">array</span> <span class="hl-nv">$data</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln">10</span>        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_data</span> <span class="hl-o">=</span> <span class="hl-nv">$data</span><span class="hl-p">;</span>
-<span class="hl-ln">11</span>    <span class="hl-p">}</span>
-<span class="hl-ln">12</span>
-<span class="hl-ln">13</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">next</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">14</span>        <span class="hl-k">return</span> <span class="hl-nx">next</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_data</span><span class="hl-p">);</span>
-<span class="hl-ln">15</span>    <span class="hl-p">}</span>
-<span class="hl-ln">16</span>
-<span class="hl-ln">17</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">current</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">18</span>        <span class="hl-k">return</span> <span class="hl-nx">current</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_data</span><span class="hl-p">);</span>
-<span class="hl-ln">19</span>    <span class="hl-p">}</span>
-<span class="hl-ln">20</span><span class="hl-p">}</span>
-<span class="hl-ln">21</span>
-<span class="hl-ln">22</span><span class="hl-k">class</span> <span class="hl-nc">DirIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">SimpleIterator</span> <span class="hl-p">{</span>
-<span class="hl-ln">23</span>    <span class="hl-k">private</span> <span class="hl-nv">$_handle</span><span class="hl-p">;</span>
-<span class="hl-ln">24</span>    <span class="hl-k">private</span> <span class="hl-nv">$_current</span><span class="hl-p">;</span>
-<span class="hl-ln">25</span>
-<span class="hl-ln">26</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__construct</span><span class="hl-p">(</span><span class="hl-nv">$path</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln">27</span>        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span> <span class="hl-o">=</span> <span class="hl-nx">opendir</span><span class="hl-p">(</span><span class="hl-nv">$path</span><span class="hl-p">);</span>
-<span class="hl-ln">28</span>    <span class="hl-p">}</span>
-<span class="hl-ln">29</span>
-<span class="hl-ln">30</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">next</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">31</span>         <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_current</span> <span class="hl-o">=</span> <span class="hl-nx">readdir</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span><span class="hl-p">);</span>
-<span class="hl-ln">32</span>         <span class="hl-k">return</span> <span class="hl-k">false</span> <span class="hl-o">===</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_current</span><span class="hl-p">;</span>
-<span class="hl-ln">33</span>    <span class="hl-p">}</span>
-<span class="hl-ln">34</span>
-<span class="hl-ln">35</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">current</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">36</span>        <span class="hl-k">return</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_current</span><span class="hl-p">;</span>
-<span class="hl-ln">37</span>    <span class="hl-p">}</span>
-<span class="hl-ln">38</span>
-<span class="hl-ln">39</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__destruct</span><span class="hl-p">(){</span>
-<span class="hl-ln">40</span>        <span class="hl-nx">closedir</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span><span class="hl-p">);</span>
-<span class="hl-ln">41</span>    <span class="hl-p">}</span>
-<span class="hl-ln">42</span><span class="hl-p">}</span>
-<span class="hl-ln">43</span>
-<span class="hl-ln">44</span><span class="hl-k">class</span> <span class="hl-nc">FileIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">SimpleIterator</span> <span class="hl-p">{</span>
-<span class="hl-ln">45</span>    <span class="hl-k">private</span> <span class="hl-nv">$_handle</span><span class="hl-p">;</span>
-<span class="hl-ln">46</span>    <span class="hl-k">private</span> <span class="hl-nv">$_line</span><span class="hl-p">;</span>
-<span class="hl-ln">47</span>
-<span class="hl-ln">48</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__construct</span><span class="hl-p">(</span><span class="hl-nv">$file</span><span class="hl-p">,</span> <span class="hl-nv">$mode</span> <span class="hl-o">=</span> <span class="hl-s1">&#39;r&#39;</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln">49</span>        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span> <span class="hl-o">=</span> <span class="hl-nx">fopen</span><span class="hl-p">(</span><span class="hl-nv">$file</span><span class="hl-p">,</span> <span class="hl-nv">$mode</span><span class="hl-p">);</span>
-<span class="hl-ln">50</span>    <span class="hl-p">}</span>
-<span class="hl-ln">51</span>
-<span class="hl-ln">52</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">next</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">53</span>        <span class="hl-k">if</span><span class="hl-p">(</span><span class="hl-nx">feof</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span><span class="hl-p">))</span> <span class="hl-p">{</span>
-<span class="hl-ln">54</span>            <span class="hl-k">return</span> <span class="hl-k">false</span><span class="hl-p">;</span>
-<span class="hl-ln">55</span>        <span class="hl-p">}</span>
-<span class="hl-ln">56</span>        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_line</span> <span class="hl-o">=</span> <span class="hl-nx">fgets</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span><span class="hl-p">);</span>
-<span class="hl-ln">57</span>        <span class="hl-k">return</span> <span class="hl-k">true</span><span class="hl-p">;</span>
-<span class="hl-ln">58</span>    <span class="hl-p">}</span>
-<span class="hl-ln">59</span>
-<span class="hl-ln">60</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">current</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">61</span>        <span class="hl-k">return</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_line</span><span class="hl-p">;</span>
-<span class="hl-ln">62</span>    <span class="hl-p">}</span>
-<span class="hl-ln">63</span>
-<span class="hl-ln">64</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__destruct</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">65</span>        <span class="hl-nx">fclose</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span><span class="hl-p">);</span>
-<span class="hl-ln">66</span>    <span class="hl-p">}</span>
-<span class="hl-ln">67</span><span class="hl-p">}</span>
-<span class="hl-ln">68</span>
-<span class="hl-ln">69</span><span class="hl-cm">/* 以相同的接口遍历不同资源的数据 */</span>
-<span class="hl-ln">70</span><span class="hl-nv">$arrayIter</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">ArrayIterator</span><span class="hl-p">(</span><span class="hl-k">array</span><span class="hl-p">(</span><span class="hl-s1">&#39;a&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;b&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;c&#39;</span><span class="hl-p">));</span>
-<span class="hl-ln">71</span><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-nv">$arrayIter</span><span class="hl-o">-&gt;</span><span class="hl-na">next</span><span class="hl-p">())</span> <span class="hl-p">{</span>
-<span class="hl-ln">72</span>    <span class="hl-k">echo</span> <span class="hl-nv">$arrayIter</span><span class="hl-o">-&gt;</span><span class="hl-na">current</span><span class="hl-p">();</span>
-<span class="hl-ln">73</span><span class="hl-p">}</span>
-<span class="hl-ln">74</span>
-<span class="hl-ln">75</span><span class="hl-nv">$dirIter</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">DirIterator</span><span class="hl-p">(</span><span class="hl-s1">&#39;/home/test/files/&#39;</span><span class="hl-p">)</span>
-<span class="hl-ln">76</span><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-nv">$dirIter</span><span class="hl-o">-&gt;</span><span class="hl-na">next</span><span class="hl-p">())</span> <span class="hl-p">{</span>
-<span class="hl-ln">77</span>    <span class="hl-k">echo</span> <span class="hl-nv">$dirIter</span><span class="hl-o">-&gt;</span><span class="hl-na">current</span><span class="hl-p">();</span>
-<span class="hl-ln">78</span><span class="hl-p">}</span>
-<span class="hl-ln">79</span>
-<span class="hl-ln">80</span><span class="hl-nv">$fileIter</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">FileIterator</span><span class="hl-p">(</span><span class="hl-s1">&#39;/home/test/files/results.txt&#39;</span><span class="hl-p">,</span> <span class="hl-s1">&#39;r&#39;</span><span class="hl-p">);</span>
-<span class="hl-ln">81</span><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-nv">$fileIter</span><span class="hl-o">-&gt;</span><span class="hl-na">next</span><span class="hl-p">())</span> <span class="hl-p">{</span>
-<span class="hl-ln">82</span>    <span class="hl-k">echo</span> <span class="hl-nv">$fileIter</span><span class="hl-o">-&gt;</span><span class="hl-na">current</span><span class="hl-p">();</span>
-<span class="hl-ln">83</span><span class="hl-p">}</span>
-</pre><h2 id="spl-iterator">SPL 中的 iterator 接口</h2>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln"> 1</span><span class="hl-cl"><span class="hl-k">interface</span> <span class="hl-nx">SimpleIterator</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 2</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">next</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 3</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">current</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 4</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 5</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 6</span><span class="hl-cl"><span class="hl-k">class</span> <span class="hl-nc">ArrayIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">SimpleIterator</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 7</span><span class="hl-cl">    <span class="hl-k">private</span> <span class="hl-nv">$_data</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 8</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 9</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__construct</span><span class="hl-p">(</span><span class="hl-k">array</span> <span class="hl-nv">$data</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">10</span><span class="hl-cl">        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_data</span> <span class="hl-o">=</span> <span class="hl-nv">$data</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">11</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">12</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">13</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">next</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">14</span><span class="hl-cl">        <span class="hl-k">return</span> <span class="hl-nx">next</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_data</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">15</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">16</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">17</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">current</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">18</span><span class="hl-cl">        <span class="hl-k">return</span> <span class="hl-nx">current</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_data</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">19</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">20</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">21</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">22</span><span class="hl-cl"><span class="hl-k">class</span> <span class="hl-nc">DirIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">SimpleIterator</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">23</span><span class="hl-cl">    <span class="hl-k">private</span> <span class="hl-nv">$_handle</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">24</span><span class="hl-cl">    <span class="hl-k">private</span> <span class="hl-nv">$_current</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">25</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">26</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__construct</span><span class="hl-p">(</span><span class="hl-nv">$path</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">27</span><span class="hl-cl">        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span> <span class="hl-o">=</span> <span class="hl-nx">opendir</span><span class="hl-p">(</span><span class="hl-nv">$path</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">28</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">29</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">30</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">next</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">31</span><span class="hl-cl">         <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_current</span> <span class="hl-o">=</span> <span class="hl-nx">readdir</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">32</span><span class="hl-cl">         <span class="hl-k">return</span> <span class="hl-k">false</span> <span class="hl-o">===</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_current</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">33</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">34</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">35</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">current</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">36</span><span class="hl-cl">        <span class="hl-k">return</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_current</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">37</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">38</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">39</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__destruct</span><span class="hl-p">(){</span>
+</span></span><span class="hl-line"><span class="hl-ln">40</span><span class="hl-cl">        <span class="hl-nx">closedir</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">41</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">42</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">43</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">44</span><span class="hl-cl"><span class="hl-k">class</span> <span class="hl-nc">FileIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">SimpleIterator</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">45</span><span class="hl-cl">    <span class="hl-k">private</span> <span class="hl-nv">$_handle</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">46</span><span class="hl-cl">    <span class="hl-k">private</span> <span class="hl-nv">$_line</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">47</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">48</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__construct</span><span class="hl-p">(</span><span class="hl-nv">$file</span><span class="hl-p">,</span> <span class="hl-nv">$mode</span> <span class="hl-o">=</span> <span class="hl-s1">&#39;r&#39;</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">49</span><span class="hl-cl">        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span> <span class="hl-o">=</span> <span class="hl-nx">fopen</span><span class="hl-p">(</span><span class="hl-nv">$file</span><span class="hl-p">,</span> <span class="hl-nv">$mode</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">50</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">51</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">52</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">next</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">53</span><span class="hl-cl">        <span class="hl-k">if</span><span class="hl-p">(</span><span class="hl-nx">feof</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span><span class="hl-p">))</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">54</span><span class="hl-cl">            <span class="hl-k">return</span> <span class="hl-k">false</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">55</span><span class="hl-cl">        <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">56</span><span class="hl-cl">        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_line</span> <span class="hl-o">=</span> <span class="hl-nx">fgets</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">57</span><span class="hl-cl">        <span class="hl-k">return</span> <span class="hl-k">true</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">58</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">59</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">60</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">current</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">61</span><span class="hl-cl">        <span class="hl-k">return</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_line</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">62</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">63</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">64</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__destruct</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">65</span><span class="hl-cl">        <span class="hl-nx">fclose</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">66</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">67</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">68</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">69</span><span class="hl-cl"><span class="hl-cm">/* 以相同的接口遍历不同资源的数据 */</span>
+</span></span><span class="hl-line"><span class="hl-ln">70</span><span class="hl-cl"><span class="hl-nv">$arrayIter</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">ArrayIterator</span><span class="hl-p">(</span><span class="hl-k">array</span><span class="hl-p">(</span><span class="hl-s1">&#39;a&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;b&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;c&#39;</span><span class="hl-p">));</span>
+</span></span><span class="hl-line"><span class="hl-ln">71</span><span class="hl-cl"><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-nv">$arrayIter</span><span class="hl-o">-&gt;</span><span class="hl-na">next</span><span class="hl-p">())</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">72</span><span class="hl-cl">    <span class="hl-k">echo</span> <span class="hl-nv">$arrayIter</span><span class="hl-o">-&gt;</span><span class="hl-na">current</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln">73</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">74</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">75</span><span class="hl-cl"><span class="hl-nv">$dirIter</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">DirIterator</span><span class="hl-p">(</span><span class="hl-s1">&#39;/home/test/files/&#39;</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">76</span><span class="hl-cl"><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-nv">$dirIter</span><span class="hl-o">-&gt;</span><span class="hl-na">next</span><span class="hl-p">())</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">77</span><span class="hl-cl">    <span class="hl-k">echo</span> <span class="hl-nv">$dirIter</span><span class="hl-o">-&gt;</span><span class="hl-na">current</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln">78</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">79</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">80</span><span class="hl-cl"><span class="hl-nv">$fileIter</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">FileIterator</span><span class="hl-p">(</span><span class="hl-s1">&#39;/home/test/files/results.txt&#39;</span><span class="hl-p">,</span> <span class="hl-s1">&#39;r&#39;</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">81</span><span class="hl-cl"><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-nv">$fileIter</span><span class="hl-o">-&gt;</span><span class="hl-na">next</span><span class="hl-p">())</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">82</span><span class="hl-cl">    <span class="hl-k">echo</span> <span class="hl-nv">$fileIter</span><span class="hl-o">-&gt;</span><span class="hl-na">current</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln">83</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><h2 id="spl-iterator">SPL 中的 iterator 接口</h2>
 <p>上面这种自定义实现的迭代器接口有一个缺点，就是不能用于 <code>foreach</code> 语句。而 SPL 中提供的迭代器却实现了对 <code>foreach</code> 的支持。</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">interface</span> <span class="hl-nx">Iterator</span> <span class="hl-k">extends</span> <span class="hl-nx">Traversable</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 2</span>   <span class="hl-c1">// 将迭代器的指针移向第一个元素。类似于数组操作函数reset()。
-</span><span class="hl-ln"> 3</span><span class="hl-c1"></span>   <span class="hl-k">function</span> <span class="hl-nf">rewind</span><span class="hl-p">();</span>
-<span class="hl-ln"> 4</span>
-<span class="hl-ln"> 5</span>   <span class="hl-c1">// 类似于数组操作函数current()。返回迭代的当前元素。
-</span><span class="hl-ln"> 6</span><span class="hl-c1"></span>   <span class="hl-k">function</span> <span class="hl-nf">current</span><span class="hl-p">();</span>
-<span class="hl-ln"> 7</span>
-<span class="hl-ln"> 8</span>   <span class="hl-c1">// 返回当前迭代器元素的键名，类似于数组操作函数key()。
-</span><span class="hl-ln"> 9</span><span class="hl-c1"></span>   <span class="hl-k">function</span> <span class="hl-nf">key</span><span class="hl-p">();</span>
-<span class="hl-ln">10</span>
-<span class="hl-ln">11</span>   <span class="hl-c1">// 将指针移向迭代器的下一个元素，类似于数组操作函数next()。
-</span><span class="hl-ln">12</span><span class="hl-c1"></span>   <span class="hl-k">function</span> <span class="hl-nf">next</span><span class="hl-p">();</span>
-<span class="hl-ln">13</span>
-<span class="hl-ln">14</span>   <span class="hl-c1">// 检测在执行了rewind()或是next()函数之后，当前值是否是一个有效的值。
-</span><span class="hl-ln">15</span><span class="hl-c1"></span>   <span class="hl-k">function</span> <span class="hl-nf">valid</span><span class="hl-p">();</span>
-<span class="hl-ln">16</span><span class="hl-p">}</span>
-</pre><p>这就是 SPL 的迭代器接口，<code>Traversable</code> 是 Zend 引擎的内置接口，它才是真正让类能用于 <code>foreach</code> 语句的接口，但是在 PHP 中并不能直接实现 <code>Traversable</code>。只能间接地通过 <code>Iterator</code> 或 <code>IteratorAggregate</code> 接口实现。下面我们通过两个简单的例子看看如何实现 <code>Iterator</code> 接口的，虽然有点多余，但有时候代码住住比文字更能说明问题。</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">ArrayIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 2</span>    <span class="hl-k">private</span> <span class="hl-nv">$_data</span><span class="hl-p">;</span>
-<span class="hl-ln"> 3</span>    <span class="hl-k">private</span> <span class="hl-nv">$_valid</span><span class="hl-p">;</span>
-<span class="hl-ln"> 4</span>
-<span class="hl-ln"> 5</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__construct</span><span class="hl-p">(</span><span class="hl-k">array</span> <span class="hl-nv">$data</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 6</span>        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_data</span> <span class="hl-o">=</span> <span class="hl-nv">$data</span><span class="hl-p">;</span>
-<span class="hl-ln"> 7</span>    <span class="hl-p">}</span>
-<span class="hl-ln"> 8</span>
-<span class="hl-ln"> 9</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">rewind</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">10</span>        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_valid</span> <span class="hl-o">=</span> <span class="hl-nx">rewind</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_data</span><span class="hl-p">;);</span>
-<span class="hl-ln">11</span>    <span class="hl-p">}</span>
-<span class="hl-ln">12</span>
-<span class="hl-ln">13</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">current</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">14</span>        <span class="hl-k">return</span> <span class="hl-nx">current</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_data</span><span class="hl-p">);</span>
-<span class="hl-ln">15</span>    <span class="hl-p">}</span>
-<span class="hl-ln">16</span>
-<span class="hl-ln">17</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">key</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">18</span>        <span class="hl-k">return</span> <span class="hl-nx">key</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_data</span><span class="hl-p">);</span>
-<span class="hl-ln">19</span>    <span class="hl-p">}</span>
-<span class="hl-ln">20</span>
-<span class="hl-ln">21</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">next</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">22</span>        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_valid</span> <span class="hl-o">=</span> <span class="hl-nx">next</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_data</span><span class="hl-p">);</span>
-<span class="hl-ln">23</span>    <span class="hl-p">}</span>
-<span class="hl-ln">24</span>
-<span class="hl-ln">25</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">valid</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">26</span>        <span class="hl-k">return</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_valid</span><span class="hl-p">;</span>
-<span class="hl-ln">27</span>    <span class="hl-p">}</span>
-<span class="hl-ln">28</span><span class="hl-p">}</span>
-<span class="hl-ln">29</span>
-<span class="hl-ln">30</span><span class="hl-k">class</span> <span class="hl-nc">DirIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
-<span class="hl-ln">31</span>    <span class="hl-k">private</span> <span class="hl-nv">$_handle</span><span class="hl-p">;</span>
-<span class="hl-ln">32</span>    <span class="hl-k">private</span> <span class="hl-nv">$_current</span><span class="hl-p">;</span>
-<span class="hl-ln">33</span>
-<span class="hl-ln">34</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__construct</span><span class="hl-p">(</span><span class="hl-nv">$dir</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln">35</span>        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span> <span class="hl-o">=</span> <span class="hl-nx">opendir</span><span class="hl-p">(</span><span class="hl-nv">$dir</span><span class="hl-p">);</span>
-<span class="hl-ln">36</span>    <span class="hl-p">}</span>
-<span class="hl-ln">37</span>
-<span class="hl-ln">38</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">rewind</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">39</span>        <span class="hl-nx">rewinddir</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span><span class="hl-p">);</span>
-<span class="hl-ln">40</span>        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">next</span><span class="hl-p">();</span>
-<span class="hl-ln">41</span>    <span class="hl-p">}</span>
-<span class="hl-ln">42</span>
-<span class="hl-ln">43</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">current</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">44</span>        <span class="hl-k">return</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_current</span><span class="hl-p">;</span>
-<span class="hl-ln">45</span>    <span class="hl-p">}</span>
-<span class="hl-ln">46</span>
-<span class="hl-ln">47</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">key</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">48</span>        <span class="hl-k">return</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_current</span><span class="hl-p">;</span>
-<span class="hl-ln">49</span>    <span class="hl-p">}</span>
-<span class="hl-ln">50</span>
-<span class="hl-ln">51</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">next</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">52</span>            <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_current</span> <span class="hl-o">=</span> <span class="hl-nx">readdir</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span><span class="hl-p">);</span>
-<span class="hl-ln">53</span>    <span class="hl-p">}</span>
-<span class="hl-ln">54</span>
-<span class="hl-ln">55</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">valid</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">56</span>        <span class="hl-k">return</span> <span class="hl-k">false</span> <span class="hl-o">!==</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_current</span><span class="hl-p">;</span>
-<span class="hl-ln">57</span>    <span class="hl-p">}</span>
-<span class="hl-ln">58</span><span class="hl-p">}</span>
-<span class="hl-ln">59</span>
-<span class="hl-ln">60</span><span class="hl-nv">$dirIter</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">DirIterator</span><span class="hl-p">(</span><span class="hl-s1">&#39;/home/test/files&#39;</span><span class="hl-p">);</span>
-<span class="hl-ln">61</span><span class="hl-k">foreach</span><span class="hl-p">(</span><span class="hl-nv">$dirIter</span> <span class="hl-k">as</span> <span class="hl-nv">$key</span><span class="hl-o">=&gt;</span><span class="hl-nv">$dir</span><span class="hl-p">){</span>
-<span class="hl-ln">62</span>    <span class="hl-k">echo</span> <span class="hl-nv">$key</span><span class="hl-p">,</span><span class="hl-s1">&#39;====&gt;&#39;</span><span class="hl-p">,</span><span class="hl-nv">$dir</span><span class="hl-p">,</span><span class="hl-s1">&#39;&lt;br /&gt;&#39;</span><span class="hl-p">;</span>
-<span class="hl-ln">63</span><span class="hl-p">}</span>
-<span class="hl-ln">64</span>
-<span class="hl-ln">65</span><span class="hl-cm">/* 或者用 while 的形式 */</span>
-<span class="hl-ln">66</span><span class="hl-nv">$dirIter</span><span class="hl-o">-&gt;</span><span class="hl-na">rewind</span><span class="hl-p">();</span>
-<span class="hl-ln">67</span><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-nv">$dirIter</span><span class="hl-o">-&gt;</span><span class="hl-na">valid</span><span class="hl-p">())</span> <span class="hl-p">{</span>
-<span class="hl-ln">68</span>    <span class="hl-k">echo</span> <span class="hl-nv">$dirIter</span><span class="hl-o">-&gt;</span><span class="hl-na">key</span><span class="hl-p">(),</span> <span class="hl-s1">&#39;====&gt;&#39;</span><span class="hl-p">,</span> <span class="hl-nv">$dirIter</span><span class="hl-o">-&gt;</span><span class="hl-na">current</span><span class="hl-p">(),</span> <span class="hl-s1">&#39;&lt;br /&gt;&#39;</span><span class="hl-p">;</span>
-<span class="hl-ln">69</span>    <span class="hl-nv">$dirIter</span><span class="hl-o">-&gt;</span><span class="hl-na">next</span><span class="hl-p">();</span>
-<span class="hl-ln">70</span><span class="hl-p">}</span>
-</pre><p>上面这段代码将会输出：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span>.<span class="hl-o">====</span>&gt;.
-<span class="hl-ln">2</span>..<span class="hl-o">====</span>&gt;..
-<span class="hl-ln">3</span><span class="hl-nv">dir1</span><span class="hl-o">====</span>&gt;dir1
-<span class="hl-ln">4</span><span class="hl-nv">dir2</span><span class="hl-o">====</span>&gt;dir2
-<span class="hl-ln">5</span>file2.txt<span class="hl-o">====</span>&gt;file2.txt
-</pre><p>相对于 <code>while</code> 语句，<code>foreach</code> 语句隐藏了各函数的调用情况，使人不甚了解其具体调用情况，但是我们只要稍微写点代码就能对其调用情况了如指掌：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">TestIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 2</span>    <span class="hl-k">private</span> <span class="hl-nv">$_count</span> <span class="hl-o">=</span> <span class="hl-mi">1</span><span class="hl-p">;</span>
-<span class="hl-ln"> 3</span>
-<span class="hl-ln"> 4</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">rewind</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 5</span>        <span class="hl-k">echo</span> <span class="hl-s1">&#39;rewind&#39;</span><span class="hl-p">;</span>
-<span class="hl-ln"> 6</span>        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_count</span> <span class="hl-o">=</span> <span class="hl-mi">1</span><span class="hl-p">;</span>
-<span class="hl-ln"> 7</span>    <span class="hl-p">}</span>
-<span class="hl-ln"> 8</span>
-<span class="hl-ln"> 9</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">current</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">10</span>        <span class="hl-k">echo</span> <span class="hl-s1">&#39;current &#39;</span><span class="hl-p">,</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_count</span><span class="hl-p">,</span> <span class="hl-s1">&#39;&lt;br /&gt;&#39;</span><span class="hl-p">;</span>
-<span class="hl-ln">11</span>    <span class="hl-p">}</span>
-<span class="hl-ln">12</span>
-<span class="hl-ln">13</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">key</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">14</span>        <span class="hl-k">echo</span> <span class="hl-s1">&#39;key &#39;</span><span class="hl-p">,</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_count</span><span class="hl-p">,</span> <span class="hl-s1">&#39;&lt;br /&gt;&#39;</span><span class="hl-p">;</span>
-<span class="hl-ln">15</span>    <span class="hl-p">}</span>
-<span class="hl-ln">16</span>
-<span class="hl-ln">17</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">next</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">18</span>        <span class="hl-k">echo</span> <span class="hl-s1">&#39;next&lt;br /&gt;&#39;</span><span class="hl-p">;</span>
-<span class="hl-ln">19</span>        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_count</span><span class="hl-o">++</span><span class="hl-p">;</span>
-<span class="hl-ln">20</span>    <span class="hl-p">}</span>
-<span class="hl-ln">21</span>
-<span class="hl-ln">22</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">valid</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">23</span>        <span class="hl-k">echo</span> <span class="hl-s1">&#39;valid&lt;br /&gt;&#39;</span><span class="hl-p">;</span>
-<span class="hl-ln">24</span>        <span class="hl-k">return</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_count</span> <span class="hl-o">&lt;=</span> <span class="hl-mi">5</span><span class="hl-p">;</span>
-<span class="hl-ln">25</span>    <span class="hl-p">}</span>
-<span class="hl-ln">26</span><span class="hl-p">}</span>
-<span class="hl-ln">27</span>
-<span class="hl-ln">28</span><span class="hl-nv">$test</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">TestIterator</span><span class="hl-p">();</span>
-<span class="hl-ln">29</span><span class="hl-k">foreach</span><span class="hl-p">(</span><span class="hl-nv">$test</span> <span class="hl-k">as</span> <span class="hl-nv">$k</span><span class="hl-o">=&gt;</span><span class="hl-nv">$v</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln">30</span>    <span class="hl-c1">// TODO;
-</span><span class="hl-ln">31</span><span class="hl-c1"></span><span class="hl-p">}</span>
-</pre><p>不难发现：</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln"> 1</span><span class="hl-cl"><span class="hl-k">interface</span> <span class="hl-nx">Iterator</span> <span class="hl-k">extends</span> <span class="hl-nx">Traversable</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 2</span><span class="hl-cl">   <span class="hl-c1">// 将迭代器的指针移向第一个元素。类似于数组操作函数reset()。
+</span></span></span><span class="hl-line"><span class="hl-ln"> 3</span><span class="hl-cl"><span class="hl-c1"></span>   <span class="hl-k">function</span> <span class="hl-nf">rewind</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 4</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 5</span><span class="hl-cl">   <span class="hl-c1">// 类似于数组操作函数current()。返回迭代的当前元素。
+</span></span></span><span class="hl-line"><span class="hl-ln"> 6</span><span class="hl-cl"><span class="hl-c1"></span>   <span class="hl-k">function</span> <span class="hl-nf">current</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 7</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 8</span><span class="hl-cl">   <span class="hl-c1">// 返回当前迭代器元素的键名，类似于数组操作函数key()。
+</span></span></span><span class="hl-line"><span class="hl-ln"> 9</span><span class="hl-cl"><span class="hl-c1"></span>   <span class="hl-k">function</span> <span class="hl-nf">key</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln">10</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">11</span><span class="hl-cl">   <span class="hl-c1">// 将指针移向迭代器的下一个元素，类似于数组操作函数next()。
+</span></span></span><span class="hl-line"><span class="hl-ln">12</span><span class="hl-cl"><span class="hl-c1"></span>   <span class="hl-k">function</span> <span class="hl-nf">next</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln">13</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">14</span><span class="hl-cl">   <span class="hl-c1">// 检测在执行了rewind()或是next()函数之后，当前值是否是一个有效的值。
+</span></span></span><span class="hl-line"><span class="hl-ln">15</span><span class="hl-cl"><span class="hl-c1"></span>   <span class="hl-k">function</span> <span class="hl-nf">valid</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln">16</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><p>这就是 SPL 的迭代器接口，<code>Traversable</code> 是 Zend 引擎的内置接口，它才是真正让类能用于 <code>foreach</code> 语句的接口，但是在 PHP 中并不能直接实现 <code>Traversable</code>。只能间接地通过 <code>Iterator</code> 或 <code>IteratorAggregate</code> 接口实现。下面我们通过两个简单的例子看看如何实现 <code>Iterator</code> 接口的，虽然有点多余，但有时候代码住住比文字更能说明问题。</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln"> 1</span><span class="hl-cl"><span class="hl-k">class</span> <span class="hl-nc">ArrayIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 2</span><span class="hl-cl">    <span class="hl-k">private</span> <span class="hl-nv">$_data</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 3</span><span class="hl-cl">    <span class="hl-k">private</span> <span class="hl-nv">$_valid</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 4</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 5</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__construct</span><span class="hl-p">(</span><span class="hl-k">array</span> <span class="hl-nv">$data</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 6</span><span class="hl-cl">        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_data</span> <span class="hl-o">=</span> <span class="hl-nv">$data</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 7</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 8</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 9</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">rewind</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">10</span><span class="hl-cl">        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_valid</span> <span class="hl-o">=</span> <span class="hl-nx">rewind</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_data</span><span class="hl-p">;);</span>
+</span></span><span class="hl-line"><span class="hl-ln">11</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">12</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">13</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">current</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">14</span><span class="hl-cl">        <span class="hl-k">return</span> <span class="hl-nx">current</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_data</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">15</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">16</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">17</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">key</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">18</span><span class="hl-cl">        <span class="hl-k">return</span> <span class="hl-nx">key</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_data</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">19</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">20</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">21</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">next</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">22</span><span class="hl-cl">        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_valid</span> <span class="hl-o">=</span> <span class="hl-nx">next</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_data</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">23</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">24</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">25</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">valid</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">26</span><span class="hl-cl">        <span class="hl-k">return</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_valid</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">27</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">28</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">29</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">30</span><span class="hl-cl"><span class="hl-k">class</span> <span class="hl-nc">DirIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">31</span><span class="hl-cl">    <span class="hl-k">private</span> <span class="hl-nv">$_handle</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">32</span><span class="hl-cl">    <span class="hl-k">private</span> <span class="hl-nv">$_current</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">33</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">34</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__construct</span><span class="hl-p">(</span><span class="hl-nv">$dir</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">35</span><span class="hl-cl">        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span> <span class="hl-o">=</span> <span class="hl-nx">opendir</span><span class="hl-p">(</span><span class="hl-nv">$dir</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">36</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">37</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">38</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">rewind</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">39</span><span class="hl-cl">        <span class="hl-nx">rewinddir</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">40</span><span class="hl-cl">        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">next</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln">41</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">42</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">43</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">current</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">44</span><span class="hl-cl">        <span class="hl-k">return</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_current</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">45</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">46</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">47</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">key</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">48</span><span class="hl-cl">        <span class="hl-k">return</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_current</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">49</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">50</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">51</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">next</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">52</span><span class="hl-cl">            <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_current</span> <span class="hl-o">=</span> <span class="hl-nx">readdir</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_handle</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">53</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">54</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">55</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">valid</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">56</span><span class="hl-cl">        <span class="hl-k">return</span> <span class="hl-k">false</span> <span class="hl-o">!==</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_current</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">57</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">58</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">59</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">60</span><span class="hl-cl"><span class="hl-nv">$dirIter</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">DirIterator</span><span class="hl-p">(</span><span class="hl-s1">&#39;/home/test/files&#39;</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">61</span><span class="hl-cl"><span class="hl-k">foreach</span><span class="hl-p">(</span><span class="hl-nv">$dirIter</span> <span class="hl-k">as</span> <span class="hl-nv">$key</span><span class="hl-o">=&gt;</span><span class="hl-nv">$dir</span><span class="hl-p">){</span>
+</span></span><span class="hl-line"><span class="hl-ln">62</span><span class="hl-cl">    <span class="hl-k">echo</span> <span class="hl-nv">$key</span><span class="hl-p">,</span><span class="hl-s1">&#39;====&gt;&#39;</span><span class="hl-p">,</span><span class="hl-nv">$dir</span><span class="hl-p">,</span><span class="hl-s1">&#39;&lt;br /&gt;&#39;</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">63</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">64</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">65</span><span class="hl-cl"><span class="hl-cm">/* 或者用 while 的形式 */</span>
+</span></span><span class="hl-line"><span class="hl-ln">66</span><span class="hl-cl"><span class="hl-nv">$dirIter</span><span class="hl-o">-&gt;</span><span class="hl-na">rewind</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln">67</span><span class="hl-cl"><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-nv">$dirIter</span><span class="hl-o">-&gt;</span><span class="hl-na">valid</span><span class="hl-p">())</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">68</span><span class="hl-cl">    <span class="hl-k">echo</span> <span class="hl-nv">$dirIter</span><span class="hl-o">-&gt;</span><span class="hl-na">key</span><span class="hl-p">(),</span> <span class="hl-s1">&#39;====&gt;&#39;</span><span class="hl-p">,</span> <span class="hl-nv">$dirIter</span><span class="hl-o">-&gt;</span><span class="hl-na">current</span><span class="hl-p">(),</span> <span class="hl-s1">&#39;&lt;br /&gt;&#39;</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">69</span><span class="hl-cl">    <span class="hl-nv">$dirIter</span><span class="hl-o">-&gt;</span><span class="hl-na">next</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln">70</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><p>上面这段代码将会输出：</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln">1</span><span class="hl-cl">.<span class="hl-o">====</span>&gt;.
+</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl">..<span class="hl-o">====</span>&gt;..
+</span></span><span class="hl-line"><span class="hl-ln">3</span><span class="hl-cl"><span class="hl-nv">dir1</span><span class="hl-o">====</span>&gt;dir1
+</span></span><span class="hl-line"><span class="hl-ln">4</span><span class="hl-cl"><span class="hl-nv">dir2</span><span class="hl-o">====</span>&gt;dir2
+</span></span><span class="hl-line"><span class="hl-ln">5</span><span class="hl-cl">file2.txt<span class="hl-o">====</span>&gt;file2.txt
+</span></span></code></pre><p>相对于 <code>while</code> 语句，<code>foreach</code> 语句隐藏了各函数的调用情况，使人不甚了解其具体调用情况，但是我们只要稍微写点代码就能对其调用情况了如指掌：</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln"> 1</span><span class="hl-cl"><span class="hl-k">class</span> <span class="hl-nc">TestIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 2</span><span class="hl-cl">    <span class="hl-k">private</span> <span class="hl-nv">$_count</span> <span class="hl-o">=</span> <span class="hl-mi">1</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 3</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 4</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">rewind</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 5</span><span class="hl-cl">        <span class="hl-k">echo</span> <span class="hl-s1">&#39;rewind&#39;</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 6</span><span class="hl-cl">        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_count</span> <span class="hl-o">=</span> <span class="hl-mi">1</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 7</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 8</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 9</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">current</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">10</span><span class="hl-cl">        <span class="hl-k">echo</span> <span class="hl-s1">&#39;current &#39;</span><span class="hl-p">,</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_count</span><span class="hl-p">,</span> <span class="hl-s1">&#39;&lt;br /&gt;&#39;</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">11</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">12</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">13</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">key</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">14</span><span class="hl-cl">        <span class="hl-k">echo</span> <span class="hl-s1">&#39;key &#39;</span><span class="hl-p">,</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_count</span><span class="hl-p">,</span> <span class="hl-s1">&#39;&lt;br /&gt;&#39;</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">15</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">16</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">17</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">next</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">18</span><span class="hl-cl">        <span class="hl-k">echo</span> <span class="hl-s1">&#39;next&lt;br /&gt;&#39;</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">19</span><span class="hl-cl">        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_count</span><span class="hl-o">++</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">20</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">21</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">22</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">valid</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">23</span><span class="hl-cl">        <span class="hl-k">echo</span> <span class="hl-s1">&#39;valid&lt;br /&gt;&#39;</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">24</span><span class="hl-cl">        <span class="hl-k">return</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_count</span> <span class="hl-o">&lt;=</span> <span class="hl-mi">5</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">25</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">26</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">27</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">28</span><span class="hl-cl"><span class="hl-nv">$test</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">TestIterator</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln">29</span><span class="hl-cl"><span class="hl-k">foreach</span><span class="hl-p">(</span><span class="hl-nv">$test</span> <span class="hl-k">as</span> <span class="hl-nv">$k</span><span class="hl-o">=&gt;</span><span class="hl-nv">$v</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">30</span><span class="hl-cl">    <span class="hl-c1">// TODO;
+</span></span></span><span class="hl-line"><span class="hl-ln">31</span><span class="hl-cl"><span class="hl-c1"></span><span class="hl-p">}</span>
+</span></span></code></pre><p>不难发现：</p>
 <ul>
 <li><code>foreach</code> 在执行前会调用对象的 <code>rewind()</code> 函数，确保每次都是从头开始；</li>
 <li>之后会调用 <code>valid()</code> 函数确保值是否有效；</li>
@@ -270,138 +270,138 @@
 </ul>
 <h2 id="recursive-iterator">递归迭代器(RecursiveIterator)</h2>
 <p>这也是一种很常见的迭代器，SPL 中也为其定义了一个接口：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-k">interface</span> <span class="hl-nx">RecursiveIterator</span> <span class="hl-k">extends</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
-<span class="hl-ln">2</span>    <span class="hl-c1">// 是否存在子元素
-</span><span class="hl-ln">3</span><span class="hl-c1"></span>    <span class="hl-k">function</span> <span class="hl-nf">hasChildren</span><span class="hl-p">();</span>
-<span class="hl-ln">4</span>
-<span class="hl-ln">5</span>    <span class="hl-c1">// 获取子元素的迭代器
-</span><span class="hl-ln">6</span><span class="hl-c1"></span>    <span class="hl-k">function</span> <span class="hl-nf">getChildren</span><span class="hl-p">();</span>
-<span class="hl-ln">7</span><span class="hl-p">}</span>
-</pre><p>我们依旧以上面的 <code>DirIterator</code> 类为例，实现一个递归的迭代器。因为 <code>RecursiveIterator</code> 也是从 <code>Iterator</code> 继承而来的，所以我们的递归类也不用从头开始写，只须从 <code>DirIterator</code> 继承再实现 <code>RecursiveIterator</code> 接口的两个特有函数即可：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">RecursiveDirIterator</span> <span class="hl-k">extends</span> <span class="hl-nx">DirIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">RecursiveIterator</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 2</span>    <span class="hl-k">private</span> <span class="hl-nv">$_path</span><span class="hl-p">;</span>
-<span class="hl-ln"> 3</span>
-<span class="hl-ln"> 4</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__construct</span><span class="hl-p">(</span><span class="hl-nv">$path</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 5</span>        <span class="hl-k">parent</span><span class="hl-o">::</span><span class="hl-na">__construct</span><span class="hl-p">(</span><span class="hl-nv">$path</span><span class="hl-p">);</span>
-<span class="hl-ln"> 6</span>        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_path</span> <span class="hl-o">=</span> <span class="hl-nv">$path</span><span class="hl-p">;</span>
-<span class="hl-ln"> 7</span>    <span class="hl-p">}</span>
-<span class="hl-ln"> 8</span>
-<span class="hl-ln"> 9</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">hasChildren</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">10</span>        <span class="hl-nv">$c</span> <span class="hl-o">=</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">current</span><span class="hl-p">();</span>
-<span class="hl-ln">11</span>        <span class="hl-c1">// 需要过滤掉 &#39;.&#39;和&#39;..&#39;目录
-</span><span class="hl-ln">12</span><span class="hl-c1"></span>        <span class="hl-k">return</span> <span class="hl-p">(</span><span class="hl-nx">is_dir</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_path</span> <span class="hl-o">.</span> <span class="hl-nx">DIRECTORY_SEPARATOR</span> <span class="hl-o">.</span> <span class="hl-nv">$c</span><span class="hl-p">)</span> <span class="hl-o">&amp;&amp;</span> <span class="hl-nv">$c</span> <span class="hl-o">!=</span> <span class="hl-s1">&#39;.&#39;</span> <span class="hl-o">&amp;&amp;</span> <span class="hl-nv">$c</span> <span class="hl-o">!=</span><span class="hl-s1">&#39;..&#39;</span><span class="hl-p">);</span>
-<span class="hl-ln">13</span>    <span class="hl-p">}</span>
-<span class="hl-ln">14</span>
-<span class="hl-ln">15</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">getChildren</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">16</span>        <span class="hl-k">return</span> <span class="hl-k">new</span> <span class="hl-nx">RecursiveDirIterator</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_path</span> <span class="hl-o">.</span> <span class="hl-nx">DIRECTORY_SEPARATOR</span> <span class="hl-o">.</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">current</span><span class="hl-p">());</span>
-<span class="hl-ln">17</span>    <span class="hl-p">}</span>
-<span class="hl-ln">18</span><span class="hl-p">}</span>
-<span class="hl-ln">19</span>
-<span class="hl-ln">20</span><span class="hl-nv">$rdi</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">RecursiveDirIterator</span><span class="hl-p">(</span><span class="hl-s1">&#39;/home/test/files&#39;</span><span class="hl-p">);</span>
-<span class="hl-ln">21</span><span class="hl-k">foreach</span><span class="hl-p">(</span><span class="hl-nv">$rdi</span> <span class="hl-k">as</span> <span class="hl-nv">$k</span><span class="hl-o">=&gt;</span><span class="hl-nv">$v</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln">22</span>    <span class="hl-k">echo</span> <span class="hl-nv">$k</span><span class="hl-p">,</span> <span class="hl-s1">&#39;===&gt;&#39;</span><span class="hl-p">,</span> <span class="hl-nv">$v</span><span class="hl-p">,</span> <span class="hl-s1">&#39; &#39;</span><span class="hl-p">;</span>
-<span class="hl-ln">23</span><span class="hl-p">}</span>
-</pre><h2 id="iterator-aggregate"><code>IteratorAggregate</code> 接口</h2>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln">1</span><span class="hl-cl"><span class="hl-k">interface</span> <span class="hl-nx">RecursiveIterator</span> <span class="hl-k">extends</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl">    <span class="hl-c1">// 是否存在子元素
+</span></span></span><span class="hl-line"><span class="hl-ln">3</span><span class="hl-cl"><span class="hl-c1"></span>    <span class="hl-k">function</span> <span class="hl-nf">hasChildren</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln">4</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">5</span><span class="hl-cl">    <span class="hl-c1">// 获取子元素的迭代器
+</span></span></span><span class="hl-line"><span class="hl-ln">6</span><span class="hl-cl"><span class="hl-c1"></span>    <span class="hl-k">function</span> <span class="hl-nf">getChildren</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln">7</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><p>我们依旧以上面的 <code>DirIterator</code> 类为例，实现一个递归的迭代器。因为 <code>RecursiveIterator</code> 也是从 <code>Iterator</code> 继承而来的，所以我们的递归类也不用从头开始写，只须从 <code>DirIterator</code> 继承再实现 <code>RecursiveIterator</code> 接口的两个特有函数即可：</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln"> 1</span><span class="hl-cl"><span class="hl-k">class</span> <span class="hl-nc">RecursiveDirIterator</span> <span class="hl-k">extends</span> <span class="hl-nx">DirIterator</span> <span class="hl-k">implements</span> <span class="hl-nx">RecursiveIterator</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 2</span><span class="hl-cl">    <span class="hl-k">private</span> <span class="hl-nv">$_path</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 3</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 4</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__construct</span><span class="hl-p">(</span><span class="hl-nv">$path</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 5</span><span class="hl-cl">        <span class="hl-k">parent</span><span class="hl-o">::</span><span class="hl-na">__construct</span><span class="hl-p">(</span><span class="hl-nv">$path</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 6</span><span class="hl-cl">        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_path</span> <span class="hl-o">=</span> <span class="hl-nv">$path</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 7</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 8</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 9</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">hasChildren</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">10</span><span class="hl-cl">        <span class="hl-nv">$c</span> <span class="hl-o">=</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">current</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln">11</span><span class="hl-cl">        <span class="hl-c1">// 需要过滤掉 &#39;.&#39;和&#39;..&#39;目录
+</span></span></span><span class="hl-line"><span class="hl-ln">12</span><span class="hl-cl"><span class="hl-c1"></span>        <span class="hl-k">return</span> <span class="hl-p">(</span><span class="hl-nx">is_dir</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_path</span> <span class="hl-o">.</span> <span class="hl-nx">DIRECTORY_SEPARATOR</span> <span class="hl-o">.</span> <span class="hl-nv">$c</span><span class="hl-p">)</span> <span class="hl-o">&amp;&amp;</span> <span class="hl-nv">$c</span> <span class="hl-o">!=</span> <span class="hl-s1">&#39;.&#39;</span> <span class="hl-o">&amp;&amp;</span> <span class="hl-nv">$c</span> <span class="hl-o">!=</span><span class="hl-s1">&#39;..&#39;</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">13</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">14</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">15</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">getChildren</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">16</span><span class="hl-cl">        <span class="hl-k">return</span> <span class="hl-k">new</span> <span class="hl-nx">RecursiveDirIterator</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_path</span> <span class="hl-o">.</span> <span class="hl-nx">DIRECTORY_SEPARATOR</span> <span class="hl-o">.</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">current</span><span class="hl-p">());</span>
+</span></span><span class="hl-line"><span class="hl-ln">17</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">18</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">19</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">20</span><span class="hl-cl"><span class="hl-nv">$rdi</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">RecursiveDirIterator</span><span class="hl-p">(</span><span class="hl-s1">&#39;/home/test/files&#39;</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">21</span><span class="hl-cl"><span class="hl-k">foreach</span><span class="hl-p">(</span><span class="hl-nv">$rdi</span> <span class="hl-k">as</span> <span class="hl-nv">$k</span><span class="hl-o">=&gt;</span><span class="hl-nv">$v</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">22</span><span class="hl-cl">    <span class="hl-k">echo</span> <span class="hl-nv">$k</span><span class="hl-p">,</span> <span class="hl-s1">&#39;===&gt;&#39;</span><span class="hl-p">,</span> <span class="hl-nv">$v</span><span class="hl-p">,</span> <span class="hl-s1">&#39; &#39;</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">23</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><h2 id="iterator-aggregate"><code>IteratorAggregate</code> 接口</h2>
 <p><code>IteratorAggregate</code> 是除 <code>Iterator</code> 之外另一个从 <code>Traversable</code> 接口中继承而来的。其接口也很简单，只有一个函数。就是返回一个迭代器实例：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-k">interface</span> <span class="hl-nx">IteratorAggregate</span> <span class="hl-k">extends</span> <span class="hl-nx">Traversable</span> <span class="hl-p">{</span>
-<span class="hl-ln">2</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">getIterator</span><span class="hl-p">();</span>
-<span class="hl-ln">3</span><span class="hl-p">}</span>
-</pre><p>该接口的功能也是让实现者拥有迭代器的功能。初看之下，貌似没什么特别的，我们完全可以用 <code>Iterator</code> 接口来替代。事实上也是如此。之所以提供该类只不过是让我们少写点代码和减少类与类之间的耦合度。</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln">1</span><span class="hl-cl"><span class="hl-k">interface</span> <span class="hl-nx">IteratorAggregate</span> <span class="hl-k">extends</span> <span class="hl-nx">Traversable</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">getIterator</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln">3</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><p>该接口的功能也是让实现者拥有迭代器的功能。初看之下，貌似没什么特别的，我们完全可以用 <code>Iterator</code> 接口来替代。事实上也是如此。之所以提供该类只不过是让我们少写点代码和减少类与类之间的耦合度。</p>
 <p>我们依旧以 <code>DirIterator</code> 为例。假设有一个类 A 包含了一个私有成员 <code>DirIterator</code>，而类 A 本身又要实现 <code>DirIterator</code> 的迭代器功能。按照我们之前的作法，会让类A实现 <code>Iterator</code> 接口，然后在各接口函数重写一次 <code>DirIterator</code> 的内容。但是这样做，若是后期将 <code>DirIterator</code> 更改为 <code>RecursiveDirIterator</code>，则同时需要更改类 A 的接口，以符合要求。而用 <code>IteratorAggregate</code> 则不会出现这种情况。</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">A</span> <span class="hl-k">implements</span> <span class="hl-nx">IteratorAggregate</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 2</span>    <span class="hl-k">private</span> <span class="hl-nv">$_dirIter</span><span class="hl-p">;</span>
-<span class="hl-ln"> 3</span>
-<span class="hl-ln"> 4</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__construct</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 5</span>        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_dirIter</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">DirIterator</span><span class="hl-p">(</span><span class="hl-s1">&#39;/home/test/files&#39;</span><span class="hl-p">);</span>
-<span class="hl-ln"> 6</span>    <span class="hl-p">}</span>
-<span class="hl-ln"> 7</span>
-<span class="hl-ln"> 8</span>    <span class="hl-c1">// 返回一个迭代。
-</span><span class="hl-ln"> 9</span><span class="hl-c1"></span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">getIterator</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">10</span>        <span class="hl-k">return</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_dirIter</span><span class="hl-p">;</span>
-<span class="hl-ln">11</span>    <span class="hl-p">}</span>
-<span class="hl-ln">12</span><span class="hl-p">}</span>
-<span class="hl-ln">13</span>
-<span class="hl-ln">14</span><span class="hl-nv">$a</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">A</span><span class="hl-p">();</span>
-<span class="hl-ln">15</span><span class="hl-nv">$iter</span> <span class="hl-o">=</span> <span class="hl-nv">$a</span><span class="hl-o">-&gt;</span><span class="hl-na">getIterator</span><span class="hl-p">();</span>
-<span class="hl-ln">16</span><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-nv">$iter</span><span class="hl-o">-&gt;</span><span class="hl-na">valid</span><span class="hl-p">())</span> <span class="hl-p">{</span>
-<span class="hl-ln">17</span>    <span class="hl-c1">// do something
-</span><span class="hl-ln">18</span><span class="hl-c1"></span><span class="hl-p">}</span>
-<span class="hl-ln">19</span>
-<span class="hl-ln">20</span><span class="hl-c1">// foreach 能识别 IteratorAggregate 接口，并取得迭代器，进入循环。
-</span><span class="hl-ln">21</span><span class="hl-c1"></span><span class="hl-k">foreach</span><span class="hl-p">(</span><span class="hl-nv">$a</span> <span class="hl-k">as</span> <span class="hl-nv">$v</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln">22</span>    <span class="hl-c1">// do something
-</span><span class="hl-ln">23</span><span class="hl-c1"></span><span class="hl-p">}</span>
-</pre><h2 id="outer-iterator">OuterIterator</h2>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-k">interface</span> <span class="hl-nx">OuterIterator</span> <span class="hl-k">extends</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
-<span class="hl-ln">2</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">getInnerIterator</span><span class="hl-p">();</span>
-<span class="hl-ln">3</span><span class="hl-p">}</span>
-</pre><p><code>OuterIterator</code> 相当于我们前一节讲的类 A 的另一种实现。它实现者可以包含一个或多个迭代器成员，即可以通过<code>getInnerIterator()</code> 接口函数获取内部的迭代器，也可以直接通过类本身实现的 <code>Iterator</code> 接口遍历内部的迭代器数据。这在 SPL 是一个非常重要的接口，SPL 中很多内置的迭代器实现了这个接口。</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln"> 1</span><span class="hl-cl"><span class="hl-k">class</span> <span class="hl-nc">A</span> <span class="hl-k">implements</span> <span class="hl-nx">IteratorAggregate</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 2</span><span class="hl-cl">    <span class="hl-k">private</span> <span class="hl-nv">$_dirIter</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 3</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 4</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-fm">__construct</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 5</span><span class="hl-cl">        <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_dirIter</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">DirIterator</span><span class="hl-p">(</span><span class="hl-s1">&#39;/home/test/files&#39;</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 6</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 7</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 8</span><span class="hl-cl">    <span class="hl-c1">// 返回一个迭代。
+</span></span></span><span class="hl-line"><span class="hl-ln"> 9</span><span class="hl-cl"><span class="hl-c1"></span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">getIterator</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">10</span><span class="hl-cl">        <span class="hl-k">return</span> <span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">_dirIter</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">11</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">12</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">13</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">14</span><span class="hl-cl"><span class="hl-nv">$a</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">A</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln">15</span><span class="hl-cl"><span class="hl-nv">$iter</span> <span class="hl-o">=</span> <span class="hl-nv">$a</span><span class="hl-o">-&gt;</span><span class="hl-na">getIterator</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln">16</span><span class="hl-cl"><span class="hl-k">while</span><span class="hl-p">(</span><span class="hl-nv">$iter</span><span class="hl-o">-&gt;</span><span class="hl-na">valid</span><span class="hl-p">())</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">17</span><span class="hl-cl">    <span class="hl-c1">// do something
+</span></span></span><span class="hl-line"><span class="hl-ln">18</span><span class="hl-cl"><span class="hl-c1"></span><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">19</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">20</span><span class="hl-cl"><span class="hl-c1">// foreach 能识别 IteratorAggregate 接口，并取得迭代器，进入循环。
+</span></span></span><span class="hl-line"><span class="hl-ln">21</span><span class="hl-cl"><span class="hl-c1"></span><span class="hl-k">foreach</span><span class="hl-p">(</span><span class="hl-nv">$a</span> <span class="hl-k">as</span> <span class="hl-nv">$v</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">22</span><span class="hl-cl">    <span class="hl-c1">// do something
+</span></span></span><span class="hl-line"><span class="hl-ln">23</span><span class="hl-cl"><span class="hl-c1"></span><span class="hl-p">}</span>
+</span></span></code></pre><h2 id="outer-iterator">OuterIterator</h2>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln">1</span><span class="hl-cl"><span class="hl-k">interface</span> <span class="hl-nx">OuterIterator</span> <span class="hl-k">extends</span> <span class="hl-nx">Iterator</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">getInnerIterator</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln">3</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><p><code>OuterIterator</code> 相当于我们前一节讲的类 A 的另一种实现。它实现者可以包含一个或多个迭代器成员，即可以通过<code>getInnerIterator()</code> 接口函数获取内部的迭代器，也可以直接通过类本身实现的 <code>Iterator</code> 接口遍历内部的迭代器数据。这在 SPL 是一个非常重要的接口，SPL 中很多内置的迭代器实现了这个接口。</p>
 <h2 id="filteriterator-filter-iterator">FilterIterator{filter-iterator}</h2>
 <p><code>FilterIterator</code> 这是一个抽象类，它实现了 <code>OuterIterator</code> 接口。它包装一个已有的迭代器类，通过抽象方法 <code>accept()</code> 过滤掉不需要的内容，形成一个新的迭代器。我们还是用上面的 <code>DirIterator</code> 作一个例子，定义一个只返回所有以 'a' 开头的目录名的迭代器：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">ADirIterator</span> <span class="hl-k">extends</span> <span class="hl-nx">FilterIterator</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 2</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">accept</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 3</span>        <span class="hl-k">return</span> <span class="hl-mi">0</span> <span class="hl-o">===</span> <span class="hl-nx">strpos</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">current</span><span class="hl-p">(),</span> <span class="hl-s1">&#39;a&#39;</span><span class="hl-p">);</span>
-<span class="hl-ln"> 4</span>    <span class="hl-p">}</span>
-<span class="hl-ln"> 5</span><span class="hl-p">}</span>
-<span class="hl-ln"> 6</span>
-<span class="hl-ln"> 7</span><span class="hl-nv">$dirIter</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">DirIter</span><span class="hl-p">(</span><span class="hl-s1">&#39;/home/test/files&#39;</span><span class="hl-p">);</span>
-<span class="hl-ln"> 8</span><span class="hl-nv">$adirIter</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">ADirIter</span><span class="hl-p">(</span><span class="hl-nv">$dirIter</span><span class="hl-p">);</span>
-<span class="hl-ln"> 9</span><span class="hl-k">foreach</span><span class="hl-p">(</span><span class="hl-nv">$adirIter</span> <span class="hl-k">as</span> <span class="hl-nv">$dir</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln">10</span>    <span class="hl-c1">// TODO
-</span><span class="hl-ln">11</span><span class="hl-c1"></span><span class="hl-p">}</span>
-</pre><h2 id="limit-iterator">LimitIterator</h2>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln"> 1</span><span class="hl-cl"><span class="hl-k">class</span> <span class="hl-nc">ADirIterator</span> <span class="hl-k">extends</span> <span class="hl-nx">FilterIterator</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 2</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">accept</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 3</span><span class="hl-cl">        <span class="hl-k">return</span> <span class="hl-mi">0</span> <span class="hl-o">===</span> <span class="hl-nx">strpos</span><span class="hl-p">(</span><span class="hl-nv">$this</span><span class="hl-o">-&gt;</span><span class="hl-na">current</span><span class="hl-p">(),</span> <span class="hl-s1">&#39;a&#39;</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 4</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 5</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 6</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 7</span><span class="hl-cl"><span class="hl-nv">$dirIter</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">DirIter</span><span class="hl-p">(</span><span class="hl-s1">&#39;/home/test/files&#39;</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 8</span><span class="hl-cl"><span class="hl-nv">$adirIter</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">ADirIter</span><span class="hl-p">(</span><span class="hl-nv">$dirIter</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 9</span><span class="hl-cl"><span class="hl-k">foreach</span><span class="hl-p">(</span><span class="hl-nv">$adirIter</span> <span class="hl-k">as</span> <span class="hl-nv">$dir</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">10</span><span class="hl-cl">    <span class="hl-c1">// TODO
+</span></span></span><span class="hl-line"><span class="hl-ln">11</span><span class="hl-cl"><span class="hl-c1"></span><span class="hl-p">}</span>
+</span></span></code></pre><h2 id="limit-iterator">LimitIterator</h2>
 <p>这也是一个实现 <code>OuterIterator</code> 的类。它有点类似于 SQL 中的 <code>LIMIT</code> 语句。它通过包装一个已有迭代器，然后截取其中某一段数据形成一个新的迭代器。它同时还提供了两个函数：</p>
 <ul>
 <li><code>getPosition()</code>：当前迭代器的位置；</li>
 <li><code>seek($pos)</code>：直接跳到某个位置的元素。</li>
 </ul>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-nv">$data</span> <span class="hl-o">=</span> <span class="hl-k">array</span><span class="hl-p">(</span><span class="hl-s1">&#39;a&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;d&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;c&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;f&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;g&#39;</span><span class="hl-p">);</span>
-<span class="hl-ln"> 2</span><span class="hl-nv">$offset</span> <span class="hl-o">=</span> <span class="hl-mi">2</span><span class="hl-p">;</span>
-<span class="hl-ln"> 3</span><span class="hl-nv">$count</span> <span class="hl-o">=</span> <span class="hl-mi">3</span><span class="hl-p">;</span>
-<span class="hl-ln"> 4</span>
-<span class="hl-ln"> 5</span><span class="hl-nv">$limitData</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">LimitIterator</span><span class="hl-p">(</span><span class="hl-k">new</span> <span class="hl-nx">ArrayIterator</span><span class="hl-p">(</span><span class="hl-nv">$data</span><span class="hl-p">),</span> <span class="hl-nv">$offset</span><span class="hl-p">,</span> <span class="hl-nv">$count</span><span class="hl-p">);</span>
-<span class="hl-ln"> 6</span><span class="hl-k">foreach</span><span class="hl-p">(</span><span class="hl-nv">$limitData</span> <span class="hl-k">as</span> <span class="hl-nv">$v</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 7</span>    <span class="hl-k">echo</span> <span class="hl-nv">$limitData</span><span class="hl-o">-&gt;</span><span class="hl-na">getPosition</span><span class="hl-p">(),</span> <span class="hl-s1">&#39;:&#39;</span><span class="hl-p">,</span> <span class="hl-nv">$v</span><span class="hl-p">,</span> <span class="hl-s1">&#39;&lt;br /&gt;&#39;</span><span class="hl-p">;</span>
-<span class="hl-ln"> 8</span><span class="hl-p">}</span>
-<span class="hl-ln"> 9</span>
-<span class="hl-ln">10</span><span class="hl-k">try</span><span class="hl-p">{</span>
-<span class="hl-ln">11</span>    <span class="hl-nv">$limitData</span><span class="hl-o">-&gt;</span><span class="hl-na">seek</span><span class="hl-p">(</span><span class="hl-mi">4</span><span class="hl-p">);</span>
-<span class="hl-ln">12</span><span class="hl-p">}</span><span class="hl-k">catch</span><span class="hl-p">(</span><span class="hl-nx">exception</span> <span class="hl-nv">$e</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln">13</span>    <span class="hl-k">echo</span> <span class="hl-nv">$e</span><span class="hl-o">-&gt;</span><span class="hl-na">getMessage</span><span class="hl-p">();</span>
-<span class="hl-ln">14</span><span class="hl-p">}</span>
-</pre><h2 id="foreach">遍历对象属性</h2>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln"> 1</span><span class="hl-cl"><span class="hl-nv">$data</span> <span class="hl-o">=</span> <span class="hl-k">array</span><span class="hl-p">(</span><span class="hl-s1">&#39;a&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;d&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;c&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;f&#39;</span><span class="hl-p">,</span><span class="hl-s1">&#39;g&#39;</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 2</span><span class="hl-cl"><span class="hl-nv">$offset</span> <span class="hl-o">=</span> <span class="hl-mi">2</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 3</span><span class="hl-cl"><span class="hl-nv">$count</span> <span class="hl-o">=</span> <span class="hl-mi">3</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 4</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 5</span><span class="hl-cl"><span class="hl-nv">$limitData</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">LimitIterator</span><span class="hl-p">(</span><span class="hl-k">new</span> <span class="hl-nx">ArrayIterator</span><span class="hl-p">(</span><span class="hl-nv">$data</span><span class="hl-p">),</span> <span class="hl-nv">$offset</span><span class="hl-p">,</span> <span class="hl-nv">$count</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 6</span><span class="hl-cl"><span class="hl-k">foreach</span><span class="hl-p">(</span><span class="hl-nv">$limitData</span> <span class="hl-k">as</span> <span class="hl-nv">$v</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 7</span><span class="hl-cl">    <span class="hl-k">echo</span> <span class="hl-nv">$limitData</span><span class="hl-o">-&gt;</span><span class="hl-na">getPosition</span><span class="hl-p">(),</span> <span class="hl-s1">&#39;:&#39;</span><span class="hl-p">,</span> <span class="hl-nv">$v</span><span class="hl-p">,</span> <span class="hl-s1">&#39;&lt;br /&gt;&#39;</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 8</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 9</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">10</span><span class="hl-cl"><span class="hl-k">try</span><span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">11</span><span class="hl-cl">    <span class="hl-nv">$limitData</span><span class="hl-o">-&gt;</span><span class="hl-na">seek</span><span class="hl-p">(</span><span class="hl-mi">4</span><span class="hl-p">);</span>
+</span></span><span class="hl-line"><span class="hl-ln">12</span><span class="hl-cl"><span class="hl-p">}</span><span class="hl-k">catch</span><span class="hl-p">(</span><span class="hl-nx">exception</span> <span class="hl-nv">$e</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">13</span><span class="hl-cl">    <span class="hl-k">echo</span> <span class="hl-nv">$e</span><span class="hl-o">-&gt;</span><span class="hl-na">getMessage</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln">14</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><h2 id="foreach">遍历对象属性</h2>
 <p>当我们对一个没有实现 iterator 接口的对象使用 <code>foreach</code> 时，它会依次访问对象的公共属性，这是一个非常棒的机制：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">Test</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 2</span>    <span class="hl-k">public</span> <span class="hl-nv">$p1</span> <span class="hl-o">=</span> <span class="hl-mi">1</span><span class="hl-p">;</span>
-<span class="hl-ln"> 3</span>    <span class="hl-k">public</span> <span class="hl-nv">$p2</span> <span class="hl-o">=</span> <span class="hl-mi">2</span><span class="hl-p">;</span>
-<span class="hl-ln"> 4</span>
-<span class="hl-ln"> 5</span>    <span class="hl-k">protected</span> <span class="hl-nv">$p3</span> <span class="hl-o">=</span> <span class="hl-mi">3</span><span class="hl-p">;</span>
-<span class="hl-ln"> 6</span>    <span class="hl-k">protected</span> <span class="hl-nv">$p4</span> <span class="hl-o">=</span> <span class="hl-mi">4</span><span class="hl-p">;</span>
-<span class="hl-ln"> 7</span>
-<span class="hl-ln"> 8</span>    <span class="hl-k">private</span> <span class="hl-nv">$p5</span> <span class="hl-o">=</span> <span class="hl-mi">5</span><span class="hl-p">;</span>
-<span class="hl-ln"> 9</span>    <span class="hl-k">private</span> <span class="hl-nv">$p6</span> <span class="hl-o">=</span> <span class="hl-mi">6</span><span class="hl-p">;</span>
-<span class="hl-ln">10</span><span class="hl-p">}</span>
-<span class="hl-ln">11</span>
-<span class="hl-ln">12</span><span class="hl-nv">$t</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">Test</span><span class="hl-p">();</span>
-<span class="hl-ln">13</span><span class="hl-k">foreach</span><span class="hl-p">(</span><span class="hl-nv">$t</span> <span class="hl-k">as</span> <span class="hl-nv">$property</span><span class="hl-o">=&gt;</span><span class="hl-nv">$value</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln">14</span>    <span class="hl-k">echo</span> <span class="hl-nv">$property</span><span class="hl-p">,</span><span class="hl-s1">&#39;====&gt;&#39;</span><span class="hl-p">,</span><span class="hl-nv">$value</span><span class="hl-p">,</span><span class="hl-s1">&#39;&lt;br /&gt;&#39;</span><span class="hl-p">;</span>
-<span class="hl-ln">15</span><span class="hl-p">}</span>
-</pre><p>上例中会显示出 <code>$p1,$p2</code> 的属性。而 <code>$p3,$p4,$p5,$p6</code> 则因为访问权限问题无法列出。若想要列出被保护的成员，只需将 <code>foreach</code> 移到类内即可：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-k">class</span> <span class="hl-nc">Test</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 2</span>    <span class="hl-k">public</span> <span class="hl-nv">$p1</span> <span class="hl-o">=</span> <span class="hl-mi">1</span><span class="hl-p">;</span>
-<span class="hl-ln"> 3</span>    <span class="hl-k">public</span> <span class="hl-nv">$p2</span> <span class="hl-o">=</span> <span class="hl-mi">2</span><span class="hl-p">;</span>
-<span class="hl-ln"> 4</span>    <span class="hl-k">protected</span> <span class="hl-nv">$p3</span> <span class="hl-o">=</span> <span class="hl-mi">3</span><span class="hl-p">;</span>
-<span class="hl-ln"> 5</span>    <span class="hl-k">protected</span> <span class="hl-nv">$p4</span> <span class="hl-o">=</span> <span class="hl-mi">4</span><span class="hl-p">;</span>
-<span class="hl-ln"> 6</span>    <span class="hl-k">private</span> <span class="hl-nv">$p5</span> <span class="hl-o">=</span> <span class="hl-mi">5</span><span class="hl-p">;</span>
-<span class="hl-ln"> 7</span>    <span class="hl-k">private</span> <span class="hl-nv">$p6</span> <span class="hl-o">=</span> <span class="hl-mi">6</span><span class="hl-p">;</span>
-<span class="hl-ln"> 8</span>
-<span class="hl-ln"> 9</span>    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">properties</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">10</span>        <span class="hl-k">foreach</span><span class="hl-p">(</span><span class="hl-nv">$this</span> <span class="hl-k">as</span> <span class="hl-nv">$property</span><span class="hl-o">=&gt;</span><span class="hl-nv">$value</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln">11</span>            <span class="hl-k">echo</span> <span class="hl-nv">$property</span><span class="hl-p">,</span><span class="hl-s1">&#39;====&gt;&#39;</span><span class="hl-p">,</span><span class="hl-nv">$value</span><span class="hl-p">,</span><span class="hl-s1">&#39;&lt;br /&gt;&#39;</span><span class="hl-p">;</span>
-<span class="hl-ln">12</span>        <span class="hl-p">}</span>
-<span class="hl-ln">13</span>    <span class="hl-p">}</span>
-<span class="hl-ln">14</span><span class="hl-p">}</span>
-</pre><h2 id="spl-implemented-iterator">SPL 中一些已实现的迭代器类</h2>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln"> 1</span><span class="hl-cl"><span class="hl-k">class</span> <span class="hl-nc">Test</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 2</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-nv">$p1</span> <span class="hl-o">=</span> <span class="hl-mi">1</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 3</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-nv">$p2</span> <span class="hl-o">=</span> <span class="hl-mi">2</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 4</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 5</span><span class="hl-cl">    <span class="hl-k">protected</span> <span class="hl-nv">$p3</span> <span class="hl-o">=</span> <span class="hl-mi">3</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 6</span><span class="hl-cl">    <span class="hl-k">protected</span> <span class="hl-nv">$p4</span> <span class="hl-o">=</span> <span class="hl-mi">4</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 7</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 8</span><span class="hl-cl">    <span class="hl-k">private</span> <span class="hl-nv">$p5</span> <span class="hl-o">=</span> <span class="hl-mi">5</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 9</span><span class="hl-cl">    <span class="hl-k">private</span> <span class="hl-nv">$p6</span> <span class="hl-o">=</span> <span class="hl-mi">6</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">10</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">11</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">12</span><span class="hl-cl"><span class="hl-nv">$t</span> <span class="hl-o">=</span> <span class="hl-k">new</span> <span class="hl-nx">Test</span><span class="hl-p">();</span>
+</span></span><span class="hl-line"><span class="hl-ln">13</span><span class="hl-cl"><span class="hl-k">foreach</span><span class="hl-p">(</span><span class="hl-nv">$t</span> <span class="hl-k">as</span> <span class="hl-nv">$property</span><span class="hl-o">=&gt;</span><span class="hl-nv">$value</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">14</span><span class="hl-cl">    <span class="hl-k">echo</span> <span class="hl-nv">$property</span><span class="hl-p">,</span><span class="hl-s1">&#39;====&gt;&#39;</span><span class="hl-p">,</span><span class="hl-nv">$value</span><span class="hl-p">,</span><span class="hl-s1">&#39;&lt;br /&gt;&#39;</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">15</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><p>上例中会显示出 <code>$p1,$p2</code> 的属性。而 <code>$p3,$p4,$p5,$p6</code> 则因为访问权限问题无法列出。若想要列出被保护的成员，只需将 <code>foreach</code> 移到类内即可：</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln"> 1</span><span class="hl-cl"><span class="hl-k">class</span> <span class="hl-nc">Test</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 2</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-nv">$p1</span> <span class="hl-o">=</span> <span class="hl-mi">1</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 3</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-nv">$p2</span> <span class="hl-o">=</span> <span class="hl-mi">2</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 4</span><span class="hl-cl">    <span class="hl-k">protected</span> <span class="hl-nv">$p3</span> <span class="hl-o">=</span> <span class="hl-mi">3</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 5</span><span class="hl-cl">    <span class="hl-k">protected</span> <span class="hl-nv">$p4</span> <span class="hl-o">=</span> <span class="hl-mi">4</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 6</span><span class="hl-cl">    <span class="hl-k">private</span> <span class="hl-nv">$p5</span> <span class="hl-o">=</span> <span class="hl-mi">5</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 7</span><span class="hl-cl">    <span class="hl-k">private</span> <span class="hl-nv">$p6</span> <span class="hl-o">=</span> <span class="hl-mi">6</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 8</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 9</span><span class="hl-cl">    <span class="hl-k">public</span> <span class="hl-k">function</span> <span class="hl-nf">properties</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">10</span><span class="hl-cl">        <span class="hl-k">foreach</span><span class="hl-p">(</span><span class="hl-nv">$this</span> <span class="hl-k">as</span> <span class="hl-nv">$property</span><span class="hl-o">=&gt;</span><span class="hl-nv">$value</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">11</span><span class="hl-cl">            <span class="hl-k">echo</span> <span class="hl-nv">$property</span><span class="hl-p">,</span><span class="hl-s1">&#39;====&gt;&#39;</span><span class="hl-p">,</span><span class="hl-nv">$value</span><span class="hl-p">,</span><span class="hl-s1">&#39;&lt;br /&gt;&#39;</span><span class="hl-p">;</span>
+</span></span><span class="hl-line"><span class="hl-ln">12</span><span class="hl-cl">        <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">13</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">14</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><h2 id="spl-implemented-iterator">SPL 中一些已实现的迭代器类</h2>
 <p>在 SPL 中已经定义了一非常有用的迭代器类，我们可以直接拿来用：</p>
 <ul>
 <li>DirectoryIterator: 和我们上面实现的 <code>DirIterator</code> 类大同小异。但是功能更全；</li>
@@ -442,7 +442,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2022-02-11T09:46:06Z">2022-02-11</time>
+                    <time title="2022-02-14T17:16:06Z">2022-02-14</time>
                 </span>
             </div>
         </footer>

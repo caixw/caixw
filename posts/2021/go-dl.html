@@ -32,14 +32,14 @@
 </div>
 <article id="content">
 <p>用 brew 更新 go 越来越慢。改回了官方给出的 go install 方式管理，感觉比 brew 更加方便，特别是在多版本管理方面，关键是版本更新更加快速，不用像 brew 那样死等。以下两步即可完成：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span>go install golang.org/dl/go1.17@latest
-<span class="hl-ln">2</span>go1.17 download
-</pre><p>其原理也简单，<code>golang.org/dl/go1.17</code> 就是一个普通的包，通过 <code>go install</code> 下载并在 <code>$GOBIN</code> 下生成一个名为 go1.17 的程序。该程序对 <code>download</code> 子命令作了特殊处理，表示从服务器上下载 go1.17 版本到本地的 <code>~/sdk/go1.17</code> 目录下，其它子命令则会尝试传递给 <code>~/sdk/go1.17/bin/go</code>。所以一旦下载完成，就可以直接把 go1.17 当作 1.17 版的 go 来使用。把 1.17 换成其它版本，即可下载相应版本。</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln">1</span><span class="hl-cl">go install golang.org/dl/go1.17@latest
+</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl">go1.17 download
+</span></span></code></pre><p>其原理也简单，<code>golang.org/dl/go1.17</code> 就是一个普通的包，通过 <code>go install</code> 下载并在 <code>$GOBIN</code> 下生成一个名为 go1.17 的程序。该程序对 <code>download</code> 子命令作了特殊处理，表示从服务器上下载 go1.17 版本到本地的 <code>~/sdk/go1.17</code> 目录下，其它子命令则会尝试传递给 <code>~/sdk/go1.17/bin/go</code>。所以一旦下载完成，就可以直接把 go1.17 当作 1.17 版的 go 来使用。把 1.17 换成其它版本，即可下载相应版本。</p>
 <p>想要多个版本共存，直接下载想要的几个版本就可以了，支持的版本号可以从 <a href="https://github.com/golang/dl">https://github.com/golang/dl</a> 查看。</p>
 <p>当然使用的主要版本，可以将其做一个链接指向 go 命令：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span>ln -s ~/sdk/go1.17/bin/go /usr/local/bin/go
-<span class="hl-ln">2</span>ln -s ~/sdk/go1.17/bin/gofmt /usr/local/bin/gofmt
-</pre><p>目前主要问题是下载目录是不可修改的，直接在代码中写死了 <code>~/sdk</code>，而且还不好移动，因为 <code>go1.17</code> 这些的子命令传递也是从 <code>~/sdk</code> 下查找相应的版本程序的。</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln">1</span><span class="hl-cl">ln -s ~/sdk/go1.17/bin/go /usr/local/bin/go
+</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl">ln -s ~/sdk/go1.17/bin/gofmt /usr/local/bin/gofmt
+</span></span></code></pre><p>目前主要问题是下载目录是不可修改的，直接在代码中写死了 <code>~/sdk</code>，而且还不好移动，因为 <code>go1.17</code> 这些的子命令传递也是从 <code>~/sdk</code> 下查找相应的版本程序的。</p>
 
 </article>
 </article><div class="pages-nav">
@@ -63,7 +63,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2022-02-11T09:46:06Z">2022-02-11</time>
+                    <time title="2022-02-14T17:16:06Z">2022-02-14</time>
                 </span>
             </div>
         </footer>

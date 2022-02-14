@@ -38,145 +38,145 @@
 <p>可以是接口，也可以是函数，我们以 <code>http.Handler</code> 为例，那么该类型就是 <code>http.Handler</code> 接口，此步可以省略。</p>
 <h3 id="usage_types">定义泛型对应的类型</h3>
 <p>以 <code>http.Handler</code> 为参数实例化泛型类型：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-kn">package</span> <span class="hl-nx">custom_router</span>
-<span class="hl-ln"> 2</span>
-<span class="hl-ln"> 3</span><span class="hl-kn">import</span> <span class="hl-s">&#34;github.com/issue9/mux/v6&#34;</span>
-<span class="hl-ln"> 4</span>
-<span class="hl-ln"> 5</span><span class="hl-kd">type</span> <span class="hl-p">(</span>
-<span class="hl-ln"> 6</span>    <span class="hl-nx">Router</span>         <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">RouterOf</span><span class="hl-p">[</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
-<span class="hl-ln"> 7</span>    <span class="hl-nx">Prefix</span>         <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">PrefixOf</span><span class="hl-p">[</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
-<span class="hl-ln"> 8</span>    <span class="hl-nx">Resource</span>       <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">ResourceOf</span><span class="hl-p">[</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
-<span class="hl-ln"> 9</span>    <span class="hl-nx">Options</span>        <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">OptionsOf</span><span class="hl-p">[</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
-<span class="hl-ln">10</span>    <span class="hl-nx">Middleware</span>     <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">MiddlewareOf</span><span class="hl-p">[</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
-<span class="hl-ln">11</span><span class="hl-p">)</span>
-</pre><h3 id="usage_new">定义 New 函数</h3>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln"> 1</span><span class="hl-cl"><span class="hl-kn">package</span> <span class="hl-nx">custom_router</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 2</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 3</span><span class="hl-cl"><span class="hl-kn">import</span> <span class="hl-s">&#34;github.com/issue9/mux/v6&#34;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 4</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 5</span><span class="hl-cl"><span class="hl-kd">type</span> <span class="hl-p">(</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 6</span><span class="hl-cl">    <span class="hl-nx">Router</span>         <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">RouterOf</span><span class="hl-p">[</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 7</span><span class="hl-cl">    <span class="hl-nx">Prefix</span>         <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">PrefixOf</span><span class="hl-p">[</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 8</span><span class="hl-cl">    <span class="hl-nx">Resource</span>       <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">ResourceOf</span><span class="hl-p">[</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 9</span><span class="hl-cl">    <span class="hl-nx">Options</span>        <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">OptionsOf</span><span class="hl-p">[</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
+</span></span><span class="hl-line"><span class="hl-ln">10</span><span class="hl-cl">    <span class="hl-nx">Middleware</span>     <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">MiddlewareOf</span><span class="hl-p">[</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
+</span></span><span class="hl-line"><span class="hl-ln">11</span><span class="hl-cl"><span class="hl-p">)</span>
+</span></span></code></pre><h3 id="usage_new">定义 New 函数</h3>
 <p>我们需要一个 <code>CallOf</code> 函数，用于将给定的参数转换成调用 <code>http.Handler</code> 的方法。其原型如下：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-nx">CallOf</span><span class="hl-p">[</span><span class="hl-nx">T</span> <span class="hl-nx">any</span><span class="hl-p">]</span> <span class="hl-kd">func</span><span class="hl-p">(</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">ResponseWriter</span><span class="hl-p">,</span> <span class="hl-o">*</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Request</span><span class="hl-p">,</span> <span class="hl-nx">Params</span><span class="hl-p">,</span> <span class="hl-nx">T</span><span class="hl-p">)</span>
-</pre><p><code>New</code> 可以直接调用 <code>NewRouterOf</code> 方法，给出 <code>CallOf</code> 的实例化方法即可。</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-kn">package</span> <span class="hl-nx">custom_router</span>
-<span class="hl-ln"> 2</span>
-<span class="hl-ln"> 3</span><span class="hl-kn">import</span> <span class="hl-s">&#34;github.com/issue9/mux/v6&#34;</span>
-<span class="hl-ln"> 4</span>
-<span class="hl-ln"> 5</span><span class="hl-kd">func</span> <span class="hl-nf">call</span><span class="hl-p">(</span><span class="hl-nx">w</span> <span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">ResponseWriter</span><span class="hl-p">,</span> <span class="hl-nx">r</span> <span class="hl-o">*</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Request</span><span class="hl-p">,</span> <span class="hl-nx">ps</span> <span class="hl-nx">Params</span><span class="hl-p">,</span> <span class="hl-nx">h</span> <span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Handler</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 6</span>    <span class="hl-nx">h</span><span class="hl-p">.</span><span class="hl-nf">ServeHTTP</span><span class="hl-p">(</span><span class="hl-nx">w</span><span class="hl-p">,</span> <span class="hl-nf">WithValue</span><span class="hl-p">(</span><span class="hl-nx">r</span><span class="hl-p">,</span> <span class="hl-nx">ps</span><span class="hl-p">))</span>
-<span class="hl-ln"> 7</span><span class="hl-p">}</span>
-<span class="hl-ln"> 8</span>
-<span class="hl-ln"> 9</span><span class="hl-kd">func</span> <span class="hl-nf">New</span><span class="hl-p">(</span><span class="hl-nx">name</span> <span class="hl-kt">string</span><span class="hl-p">,</span> <span class="hl-nx">o</span> <span class="hl-o">*</span><span class="hl-nx">Options</span><span class="hl-p">)</span> <span class="hl-o">*</span><span class="hl-nx">Router</span> <span class="hl-p">{</span>
-<span class="hl-ln">10</span>    <span class="hl-k">return</span> <span class="hl-nx">NewRouterOf</span><span class="hl-p">[</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Handler</span><span class="hl-p">](</span><span class="hl-nx">name</span><span class="hl-p">,</span> <span class="hl-nx">call</span><span class="hl-p">,</span> <span class="hl-nx">o</span><span class="hl-p">)</span>
-<span class="hl-ln">11</span><span class="hl-p">}</span>
-</pre><h3 id="usage_helper">辅助函数</h3>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln">1</span><span class="hl-cl"><span class="hl-nx">CallOf</span><span class="hl-p">[</span><span class="hl-nx">T</span> <span class="hl-nx">any</span><span class="hl-p">]</span> <span class="hl-kd">func</span><span class="hl-p">(</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">ResponseWriter</span><span class="hl-p">,</span> <span class="hl-o">*</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Request</span><span class="hl-p">,</span> <span class="hl-nx">Params</span><span class="hl-p">,</span> <span class="hl-nx">T</span><span class="hl-p">)</span>
+</span></span></code></pre><p><code>New</code> 可以直接调用 <code>NewRouterOf</code> 方法，给出 <code>CallOf</code> 的实例化方法即可。</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln"> 1</span><span class="hl-cl"><span class="hl-kn">package</span> <span class="hl-nx">custom_router</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 2</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 3</span><span class="hl-cl"><span class="hl-kn">import</span> <span class="hl-s">&#34;github.com/issue9/mux/v6&#34;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 4</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 5</span><span class="hl-cl"><span class="hl-kd">func</span> <span class="hl-nf">call</span><span class="hl-p">(</span><span class="hl-nx">w</span> <span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">ResponseWriter</span><span class="hl-p">,</span> <span class="hl-nx">r</span> <span class="hl-o">*</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Request</span><span class="hl-p">,</span> <span class="hl-nx">ps</span> <span class="hl-nx">Params</span><span class="hl-p">,</span> <span class="hl-nx">h</span> <span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Handler</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 6</span><span class="hl-cl">    <span class="hl-nx">h</span><span class="hl-p">.</span><span class="hl-nf">ServeHTTP</span><span class="hl-p">(</span><span class="hl-nx">w</span><span class="hl-p">,</span> <span class="hl-nf">WithValue</span><span class="hl-p">(</span><span class="hl-nx">r</span><span class="hl-p">,</span> <span class="hl-nx">ps</span><span class="hl-p">))</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 7</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 8</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 9</span><span class="hl-cl"><span class="hl-kd">func</span> <span class="hl-nf">New</span><span class="hl-p">(</span><span class="hl-nx">name</span> <span class="hl-kt">string</span><span class="hl-p">,</span> <span class="hl-nx">o</span> <span class="hl-o">*</span><span class="hl-nx">Options</span><span class="hl-p">)</span> <span class="hl-o">*</span><span class="hl-nx">Router</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">10</span><span class="hl-cl">    <span class="hl-k">return</span> <span class="hl-nx">NewRouterOf</span><span class="hl-p">[</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Handler</span><span class="hl-p">](</span><span class="hl-nx">name</span><span class="hl-p">,</span> <span class="hl-nx">call</span><span class="hl-p">,</span> <span class="hl-nx">o</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">11</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><h3 id="usage_helper">辅助函数</h3>
 <p>然后定义一些辅助函数，比如将参数写入到 <code>http.Request</code> 和从 <code>http.Request</code> 中获取参数。</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-kn">package</span> <span class="hl-nx">custom_router</span>
-<span class="hl-ln"> 2</span>
-<span class="hl-ln"> 3</span><span class="hl-kn">import</span> <span class="hl-s">&#34;github.com/issue9/mux/v6&#34;</span>
-<span class="hl-ln"> 4</span>
-<span class="hl-ln"> 5</span><span class="hl-kd">type</span> <span class="hl-nx">contextKey</span> <span class="hl-kt">int</span>
-<span class="hl-ln"> 6</span>
-<span class="hl-ln"> 7</span><span class="hl-kd">const</span> <span class="hl-nx">contextKeyParams</span> <span class="hl-nx">contextKey</span> <span class="hl-p">=</span> <span class="hl-mi">0</span>
-<span class="hl-ln"> 8</span>
-<span class="hl-ln"> 9</span><span class="hl-c1">// GetParams 获取当前请求实例上的参数列表
-</span><span class="hl-ln">10</span><span class="hl-c1"></span><span class="hl-kd">func</span> <span class="hl-nf">GetParams</span><span class="hl-p">(</span><span class="hl-nx">r</span> <span class="hl-o">*</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Request</span><span class="hl-p">)</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">Params</span> <span class="hl-p">{</span>
-<span class="hl-ln">11</span>    <span class="hl-k">if</span> <span class="hl-nx">ps</span> <span class="hl-o">:=</span> <span class="hl-nx">r</span><span class="hl-p">.</span><span class="hl-nf">Context</span><span class="hl-p">().</span><span class="hl-nf">Value</span><span class="hl-p">(</span><span class="hl-nx">contextKeyParams</span><span class="hl-p">);</span> <span class="hl-nx">ps</span> <span class="hl-o">!=</span> <span class="hl-kc">nil</span> <span class="hl-p">{</span>
-<span class="hl-ln">12</span>        <span class="hl-k">return</span> <span class="hl-nx">ps</span><span class="hl-p">.(</span><span class="hl-nx">Params</span><span class="hl-p">)</span>
-<span class="hl-ln">13</span>    <span class="hl-p">}</span>
-<span class="hl-ln">14</span>    <span class="hl-k">return</span> <span class="hl-kc">nil</span>
-<span class="hl-ln">15</span><span class="hl-p">}</span>
-<span class="hl-ln">16</span>
-<span class="hl-ln">17</span><span class="hl-c1">// WithValue 将参数 ps 附加在 r 上
-</span><span class="hl-ln">18</span><span class="hl-c1"></span><span class="hl-kd">func</span> <span class="hl-nf">WithValue</span><span class="hl-p">(</span><span class="hl-nx">r</span> <span class="hl-o">*</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Request</span><span class="hl-p">,</span> <span class="hl-nx">ps</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">Params</span><span class="hl-p">)</span> <span class="hl-o">*</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Request</span> <span class="hl-p">{</span>
-<span class="hl-ln">19</span>    <span class="hl-k">if</span> <span class="hl-nx">ps</span> <span class="hl-o">==</span> <span class="hl-kc">nil</span> <span class="hl-o">||</span> <span class="hl-nx">ps</span><span class="hl-p">.</span><span class="hl-nf">Count</span><span class="hl-p">()</span> <span class="hl-o">==</span> <span class="hl-mi">0</span> <span class="hl-p">{</span>
-<span class="hl-ln">20</span>        <span class="hl-k">return</span> <span class="hl-nx">r</span>
-<span class="hl-ln">21</span>    <span class="hl-p">}</span>
-<span class="hl-ln">22</span>
-<span class="hl-ln">23</span>    <span class="hl-k">if</span> <span class="hl-nx">ps2</span> <span class="hl-o">:=</span> <span class="hl-nf">GetParams</span><span class="hl-p">(</span><span class="hl-nx">r</span><span class="hl-p">);</span> <span class="hl-nx">ps2</span> <span class="hl-o">!=</span> <span class="hl-kc">nil</span> <span class="hl-o">&amp;&amp;</span> <span class="hl-nx">ps2</span><span class="hl-p">.</span><span class="hl-nf">Count</span><span class="hl-p">()</span> <span class="hl-p">&gt;</span> <span class="hl-mi">0</span> <span class="hl-p">{</span>
-<span class="hl-ln">24</span>        <span class="hl-nx">ps2</span><span class="hl-p">.</span><span class="hl-nf">Range</span><span class="hl-p">(</span><span class="hl-kd">func</span><span class="hl-p">(</span><span class="hl-nx">k</span><span class="hl-p">,</span> <span class="hl-nx">v</span> <span class="hl-kt">string</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln">25</span>            <span class="hl-nx">ps</span><span class="hl-p">.</span><span class="hl-nf">Set</span><span class="hl-p">(</span><span class="hl-nx">k</span><span class="hl-p">,</span> <span class="hl-nx">v</span><span class="hl-p">)</span>
-<span class="hl-ln">26</span>        <span class="hl-p">})</span>
-<span class="hl-ln">27</span>    <span class="hl-p">}</span>
-<span class="hl-ln">28</span>
-<span class="hl-ln">29</span>    <span class="hl-k">return</span> <span class="hl-nx">r</span><span class="hl-p">.</span><span class="hl-nf">WithContext</span><span class="hl-p">(</span><span class="hl-nx">context</span><span class="hl-p">.</span><span class="hl-nf">WithValue</span><span class="hl-p">(</span><span class="hl-nx">r</span><span class="hl-p">.</span><span class="hl-nf">Context</span><span class="hl-p">(),</span> <span class="hl-nx">contextKeyParams</span><span class="hl-p">,</span> <span class="hl-nx">ps</span><span class="hl-p">))</span>
-<span class="hl-ln">30</span><span class="hl-p">}</span>
-</pre><p>这样一个兼容 <code>http.Handler</code> 的路由就完成了，之后就可以正常使用路由。
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln"> 1</span><span class="hl-cl"><span class="hl-kn">package</span> <span class="hl-nx">custom_router</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 2</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 3</span><span class="hl-cl"><span class="hl-kn">import</span> <span class="hl-s">&#34;github.com/issue9/mux/v6&#34;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 4</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 5</span><span class="hl-cl"><span class="hl-kd">type</span> <span class="hl-nx">contextKey</span> <span class="hl-kt">int</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 6</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 7</span><span class="hl-cl"><span class="hl-kd">const</span> <span class="hl-nx">contextKeyParams</span> <span class="hl-nx">contextKey</span> <span class="hl-p">=</span> <span class="hl-mi">0</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 8</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 9</span><span class="hl-cl"><span class="hl-c1">// GetParams 获取当前请求实例上的参数列表
+</span></span></span><span class="hl-line"><span class="hl-ln">10</span><span class="hl-cl"><span class="hl-c1"></span><span class="hl-kd">func</span> <span class="hl-nf">GetParams</span><span class="hl-p">(</span><span class="hl-nx">r</span> <span class="hl-o">*</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Request</span><span class="hl-p">)</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">Params</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">11</span><span class="hl-cl">    <span class="hl-k">if</span> <span class="hl-nx">ps</span> <span class="hl-o">:=</span> <span class="hl-nx">r</span><span class="hl-p">.</span><span class="hl-nf">Context</span><span class="hl-p">().</span><span class="hl-nf">Value</span><span class="hl-p">(</span><span class="hl-nx">contextKeyParams</span><span class="hl-p">);</span> <span class="hl-nx">ps</span> <span class="hl-o">!=</span> <span class="hl-kc">nil</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">12</span><span class="hl-cl">        <span class="hl-k">return</span> <span class="hl-nx">ps</span><span class="hl-p">.(</span><span class="hl-nx">Params</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">13</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">14</span><span class="hl-cl">    <span class="hl-k">return</span> <span class="hl-kc">nil</span>
+</span></span><span class="hl-line"><span class="hl-ln">15</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">16</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">17</span><span class="hl-cl"><span class="hl-c1">// WithValue 将参数 ps 附加在 r 上
+</span></span></span><span class="hl-line"><span class="hl-ln">18</span><span class="hl-cl"><span class="hl-c1"></span><span class="hl-kd">func</span> <span class="hl-nf">WithValue</span><span class="hl-p">(</span><span class="hl-nx">r</span> <span class="hl-o">*</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Request</span><span class="hl-p">,</span> <span class="hl-nx">ps</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">Params</span><span class="hl-p">)</span> <span class="hl-o">*</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Request</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">19</span><span class="hl-cl">    <span class="hl-k">if</span> <span class="hl-nx">ps</span> <span class="hl-o">==</span> <span class="hl-kc">nil</span> <span class="hl-o">||</span> <span class="hl-nx">ps</span><span class="hl-p">.</span><span class="hl-nf">Count</span><span class="hl-p">()</span> <span class="hl-o">==</span> <span class="hl-mi">0</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">20</span><span class="hl-cl">        <span class="hl-k">return</span> <span class="hl-nx">r</span>
+</span></span><span class="hl-line"><span class="hl-ln">21</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">22</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">23</span><span class="hl-cl">    <span class="hl-k">if</span> <span class="hl-nx">ps2</span> <span class="hl-o">:=</span> <span class="hl-nf">GetParams</span><span class="hl-p">(</span><span class="hl-nx">r</span><span class="hl-p">);</span> <span class="hl-nx">ps2</span> <span class="hl-o">!=</span> <span class="hl-kc">nil</span> <span class="hl-o">&amp;&amp;</span> <span class="hl-nx">ps2</span><span class="hl-p">.</span><span class="hl-nf">Count</span><span class="hl-p">()</span> <span class="hl-p">&gt;</span> <span class="hl-mi">0</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">24</span><span class="hl-cl">        <span class="hl-nx">ps2</span><span class="hl-p">.</span><span class="hl-nf">Range</span><span class="hl-p">(</span><span class="hl-kd">func</span><span class="hl-p">(</span><span class="hl-nx">k</span><span class="hl-p">,</span> <span class="hl-nx">v</span> <span class="hl-kt">string</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">25</span><span class="hl-cl">            <span class="hl-nx">ps</span><span class="hl-p">.</span><span class="hl-nf">Set</span><span class="hl-p">(</span><span class="hl-nx">k</span><span class="hl-p">,</span> <span class="hl-nx">v</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">26</span><span class="hl-cl">        <span class="hl-p">})</span>
+</span></span><span class="hl-line"><span class="hl-ln">27</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">28</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">29</span><span class="hl-cl">    <span class="hl-k">return</span> <span class="hl-nx">r</span><span class="hl-p">.</span><span class="hl-nf">WithContext</span><span class="hl-p">(</span><span class="hl-nx">context</span><span class="hl-p">.</span><span class="hl-nf">WithValue</span><span class="hl-p">(</span><span class="hl-nx">r</span><span class="hl-p">.</span><span class="hl-nf">Context</span><span class="hl-p">(),</span> <span class="hl-nx">contextKeyParams</span><span class="hl-p">,</span> <span class="hl-nx">ps</span><span class="hl-p">))</span>
+</span></span><span class="hl-line"><span class="hl-ln">30</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><p>这样一个兼容 <code>http.Handler</code> 的路由就完成了，之后就可以正常使用路由。
 它支持普通字符串匹配，也支持以 <code>{name:rule}</code> 形式的匹配，其中 rule 可以是正则表达式或空值。具体的语法可以参考 <a href="https://github.com/issue9/mux">https://github.com/issue9/mux</a>。</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-kn">package</span> <span class="hl-nx">custom_router</span>
-<span class="hl-ln">2</span>
-<span class="hl-ln">3</span><span class="hl-kd">func</span> <span class="hl-nf">main</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">4</span>    <span class="hl-nx">r</span> <span class="hl-o">:=</span> <span class="hl-nf">New</span><span class="hl-p">(</span><span class="hl-s">&#34;&#34;</span><span class="hl-p">,</span> <span class="hl-o">&amp;</span><span class="hl-nx">Options</span><span class="hl-p">{})</span>
-<span class="hl-ln">5</span>    <span class="hl-nx">r</span><span class="hl-p">.</span><span class="hl-nf">Get</span><span class="hl-p">(</span><span class="hl-s">&#34;/users/{id:\\d+}&#34;</span><span class="hl-p">,</span> <span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nf">HandlerFunc</span><span class="hl-p">(</span><span class="hl-kd">func</span><span class="hl-p">(</span><span class="hl-nx">w</span> <span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">ResponseWriter</span><span class="hl-p">,</span> <span class="hl-nx">r</span> <span class="hl-o">*</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Request</span><span class="hl-p">){</span>
-<span class="hl-ln">6</span>        <span class="hl-c1">// TODO
-</span><span class="hl-ln">7</span><span class="hl-c1"></span>    <span class="hl-p">}))</span>
-<span class="hl-ln">8</span><span class="hl-p">}</span>
-</pre><h2 id="advance">一个更复杂的例子</h2>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln">1</span><span class="hl-cl"><span class="hl-kn">package</span> <span class="hl-nx">custom_router</span>
+</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">3</span><span class="hl-cl"><span class="hl-kd">func</span> <span class="hl-nf">main</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">4</span><span class="hl-cl">    <span class="hl-nx">r</span> <span class="hl-o">:=</span> <span class="hl-nf">New</span><span class="hl-p">(</span><span class="hl-s">&#34;&#34;</span><span class="hl-p">,</span> <span class="hl-o">&amp;</span><span class="hl-nx">Options</span><span class="hl-p">{})</span>
+</span></span><span class="hl-line"><span class="hl-ln">5</span><span class="hl-cl">    <span class="hl-nx">r</span><span class="hl-p">.</span><span class="hl-nf">Get</span><span class="hl-p">(</span><span class="hl-s">&#34;/users/{id:\\d+}&#34;</span><span class="hl-p">,</span> <span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nf">HandlerFunc</span><span class="hl-p">(</span><span class="hl-kd">func</span><span class="hl-p">(</span><span class="hl-nx">w</span> <span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">ResponseWriter</span><span class="hl-p">,</span> <span class="hl-nx">r</span> <span class="hl-o">*</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Request</span><span class="hl-p">){</span>
+</span></span><span class="hl-line"><span class="hl-ln">6</span><span class="hl-cl">        <span class="hl-c1">// TODO
+</span></span></span><span class="hl-line"><span class="hl-ln">7</span><span class="hl-cl"><span class="hl-c1"></span>    <span class="hl-p">}))</span>
+</span></span><span class="hl-line"><span class="hl-ln">8</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><h2 id="advance">一个更复杂的例子</h2>
 <p>下面定义了一个新路由，摒弃了官方的 <code>http.ResponseWriter</code> 和 <code>http.Request</code>，采用 <code>Context</code> 对象传递上下文所需的内容。所以我们自定义了一个 <code>Handler</code> 接口用以代替官方的 <code>http.Handler</code> 接口，其 <code>Handle</code> 方法的参数只接收 <code>Context</code> 对象。</p>
 <p>对于 <code>New</code> 方法也不再是直接传递 <code>*options</code> 对象，而是以可选的函数方法的形式传递。</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-kn">package</span> <span class="hl-nx">custom_router</span>
-<span class="hl-ln"> 2</span>
-<span class="hl-ln"> 3</span><span class="hl-kn">import</span> <span class="hl-s">&#34;github.com/issue9/mux/v6&#34;</span>
-<span class="hl-ln"> 4</span>
-<span class="hl-ln"> 5</span><span class="hl-kd">type</span> <span class="hl-p">(</span>
-<span class="hl-ln"> 6</span>    <span class="hl-nx">Context</span> <span class="hl-kd">struct</span> <span class="hl-p">{</span>
-<span class="hl-ln"> 7</span>        <span class="hl-nx">R</span> <span class="hl-o">*</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Request</span>
-<span class="hl-ln"> 8</span>        <span class="hl-nx">W</span> <span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">ResponseWriter</span>
-<span class="hl-ln"> 9</span>        <span class="hl-nx">P</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">Params</span>
-<span class="hl-ln">10</span>    <span class="hl-p">}</span>
-<span class="hl-ln">11</span>
-<span class="hl-ln">12</span>    <span class="hl-nx">Handler</span> <span class="hl-kd">interface</span> <span class="hl-p">{</span>
-<span class="hl-ln">13</span>        <span class="hl-nf">Handle</span><span class="hl-p">(</span><span class="hl-o">*</span><span class="hl-nx">Context</span><span class="hl-p">)</span>
-<span class="hl-ln">14</span>    <span class="hl-p">}</span>
-<span class="hl-ln">15</span>
-<span class="hl-ln">16</span>    <span class="hl-nx">HandlerFunc</span> <span class="hl-kd">func</span><span class="hl-p">(</span><span class="hl-o">*</span><span class="hl-nx">Context</span><span class="hl-p">)</span>
-<span class="hl-ln">17</span>
-<span class="hl-ln">18</span>    <span class="hl-nx">Router</span>         <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">RouterOf</span><span class="hl-p">[</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
-<span class="hl-ln">19</span>    <span class="hl-nx">Prefix</span>         <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">PrefixOf</span><span class="hl-p">[</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
-<span class="hl-ln">20</span>    <span class="hl-nx">Resource</span>       <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">ResourceOf</span><span class="hl-p">[</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
-<span class="hl-ln">21</span>    <span class="hl-nx">Middleware</span>     <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">MiddlewareOf</span><span class="hl-p">[</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
-<span class="hl-ln">22</span>
-<span class="hl-ln">23</span>    <span class="hl-nx">options</span>        <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">OptionsOf</span><span class="hl-p">[</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
-<span class="hl-ln">24</span>    <span class="hl-nx">Option</span> <span class="hl-kd">func</span><span class="hl-p">(</span><span class="hl-nx">o</span> <span class="hl-o">*</span><span class="hl-nx">options</span><span class="hl-p">)</span>
-<span class="hl-ln">25</span><span class="hl-p">)</span>
-<span class="hl-ln">26</span>
-<span class="hl-ln">27</span><span class="hl-kd">func</span> <span class="hl-p">(</span><span class="hl-nx">f</span> <span class="hl-nx">HandlerFunc</span><span class="hl-p">)</span> <span class="hl-nf">Handle</span><span class="hl-p">(</span><span class="hl-nx">c</span> <span class="hl-o">*</span><span class="hl-nx">Context</span><span class="hl-p">)</span> <span class="hl-p">{</span> <span class="hl-nf">f</span><span class="hl-p">(</span><span class="hl-nx">c</span><span class="hl-p">)</span> <span class="hl-p">}</span>
-<span class="hl-ln">28</span>
-<span class="hl-ln">29</span><span class="hl-kd">func</span> <span class="hl-nf">call</span><span class="hl-p">(</span><span class="hl-nx">w</span> <span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">ResponseWriter</span><span class="hl-p">,</span> <span class="hl-nx">r</span> <span class="hl-o">*</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Request</span><span class="hl-p">,</span> <span class="hl-nx">ps</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">Params</span><span class="hl-p">,</span> <span class="hl-nx">h</span> <span class="hl-nx">Handler</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln">30</span>    <span class="hl-nx">h</span><span class="hl-p">.</span><span class="hl-nf">Handle</span><span class="hl-p">(</span><span class="hl-o">&amp;</span><span class="hl-nx">Context</span><span class="hl-p">{</span><span class="hl-nx">R</span><span class="hl-p">:</span> <span class="hl-nx">r</span><span class="hl-p">,</span> <span class="hl-nx">W</span><span class="hl-p">:</span> <span class="hl-nx">w</span><span class="hl-p">,</span> <span class="hl-nx">P</span><span class="hl-p">:</span> <span class="hl-nx">ps</span><span class="hl-p">})</span>
-<span class="hl-ln">31</span><span class="hl-p">}</span>
-<span class="hl-ln">32</span>
-<span class="hl-ln">33</span><span class="hl-kd">func</span> <span class="hl-nf">New</span><span class="hl-p">(</span><span class="hl-nx">name</span> <span class="hl-kt">string</span><span class="hl-p">,</span> <span class="hl-nx">o</span> <span class="hl-o">...</span><span class="hl-nx">Option</span><span class="hl-p">)</span> <span class="hl-o">*</span><span class="hl-nx">Router</span> <span class="hl-p">{</span>
-<span class="hl-ln">34</span>    <span class="hl-nx">opt</span> <span class="hl-o">:=</span> <span class="hl-o">&amp;</span><span class="hl-nx">options</span><span class="hl-p">{}</span>
-<span class="hl-ln">35</span>    <span class="hl-k">for</span> <span class="hl-nx">_</span><span class="hl-p">,</span> <span class="hl-nx">oo</span> <span class="hl-o">:=</span> <span class="hl-k">range</span> <span class="hl-nx">o</span> <span class="hl-p">{</span>
-<span class="hl-ln">36</span>        <span class="hl-nf">oo</span><span class="hl-p">(</span><span class="hl-nx">opt</span><span class="hl-p">)</span>
-<span class="hl-ln">37</span>    <span class="hl-p">}</span>
-<span class="hl-ln">38</span>    <span class="hl-k">return</span> <span class="hl-nx">NewRouterOf</span><span class="hl-p">[</span><span class="hl-nx">Handler</span><span class="hl-p">](</span><span class="hl-nx">name</span><span class="hl-p">,</span> <span class="hl-nx">call</span><span class="hl-p">,</span> <span class="hl-nx">opt</span><span class="hl-p">)</span>
-<span class="hl-ln">39</span><span class="hl-p">}</span>
-<span class="hl-ln">40</span>
-<span class="hl-ln">41</span><span class="hl-c1">// 一些实现 Option 的函数，整个 options 的内容都可以采用此方式设置。
-</span><span class="hl-ln">42</span><span class="hl-c1"></span>
-<span class="hl-ln">43</span><span class="hl-kd">func</span> <span class="hl-nf">Lock</span><span class="hl-p">(</span><span class="hl-nx">o</span> <span class="hl-o">*</span><span class="hl-nx">options</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln">44</span>    <span class="hl-nx">o</span><span class="hl-p">.</span><span class="hl-nx">Lock</span> <span class="hl-p">=</span> <span class="hl-kc">true</span>
-<span class="hl-ln">45</span><span class="hl-p">}</span>
-<span class="hl-ln">46</span>
-<span class="hl-ln">47</span><span class="hl-kd">func</span> <span class="hl-nf">Unlock</span><span class="hl-p">(</span><span class="hl-nx">o</span> <span class="hl-o">*</span><span class="hl-nx">options</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln">48</span>    <span class="hl-nx">o</span><span class="hl-p">.</span><span class="hl-nx">Lock</span> <span class="hl-p">=</span> <span class="hl-kc">false</span>
-<span class="hl-ln">49</span><span class="hl-p">}</span>
-<span class="hl-ln">50</span>
-<span class="hl-ln">51</span><span class="hl-kd">func</span> <span class="hl-nf">NotFound</span><span class="hl-p">(</span><span class="hl-nx">f</span> <span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">HandlerFunc</span><span class="hl-p">)</span> <span class="hl-nx">Option</span> <span class="hl-p">{</span>
-<span class="hl-ln">52</span>    <span class="hl-k">if</span> <span class="hl-nx">f</span> <span class="hl-o">==</span> <span class="hl-kc">nil</span> <span class="hl-p">{</span>
-<span class="hl-ln">53</span>        <span class="hl-nx">f</span> <span class="hl-p">=</span> <span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">NotFound</span>
-<span class="hl-ln">54</span>    <span class="hl-p">}</span>
-<span class="hl-ln">55</span>    <span class="hl-k">return</span> <span class="hl-kd">func</span><span class="hl-p">(</span><span class="hl-nx">o</span> <span class="hl-o">*</span><span class="hl-nx">Options</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln">56</span>        <span class="hl-nx">o</span><span class="hl-p">.</span><span class="hl-nx">NotFound</span> <span class="hl-p">=</span> <span class="hl-nx">f</span>
-<span class="hl-ln">57</span>    <span class="hl-p">}</span>
-<span class="hl-ln">58</span><span class="hl-p">}</span>
-</pre><p>之后就可以正常使用路由：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-kn">package</span> <span class="hl-nx">custom_router</span>
-<span class="hl-ln">2</span>
-<span class="hl-ln">3</span><span class="hl-kd">func</span> <span class="hl-nf">main</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">4</span>    <span class="hl-nx">r</span> <span class="hl-o">:=</span> <span class="hl-nf">New</span><span class="hl-p">(</span><span class="hl-s">&#34;&#34;</span><span class="hl-p">)</span>
-<span class="hl-ln">5</span>    <span class="hl-nx">r</span><span class="hl-p">.</span><span class="hl-nf">Get</span><span class="hl-p">(</span><span class="hl-s">&#34;/users/{id:\\d+}&#34;</span><span class="hl-p">,</span> <span class="hl-nf">HandlerFunc</span><span class="hl-p">(</span><span class="hl-kd">func</span><span class="hl-p">(</span><span class="hl-nx">ctx</span> <span class="hl-o">*</span><span class="hl-nx">Context</span><span class="hl-p">){</span>
-<span class="hl-ln">6</span>        <span class="hl-c1">// TODO
-</span><span class="hl-ln">7</span><span class="hl-c1"></span>    <span class="hl-p">}))</span>
-<span class="hl-ln">8</span><span class="hl-p">}</span>
-</pre><h2 id="perf">性能</h2>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln"> 1</span><span class="hl-cl"><span class="hl-kn">package</span> <span class="hl-nx">custom_router</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 2</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 3</span><span class="hl-cl"><span class="hl-kn">import</span> <span class="hl-s">&#34;github.com/issue9/mux/v6&#34;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 4</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 5</span><span class="hl-cl"><span class="hl-kd">type</span> <span class="hl-p">(</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 6</span><span class="hl-cl">    <span class="hl-nx">Context</span> <span class="hl-kd">struct</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 7</span><span class="hl-cl">        <span class="hl-nx">R</span> <span class="hl-o">*</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Request</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 8</span><span class="hl-cl">        <span class="hl-nx">W</span> <span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">ResponseWriter</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 9</span><span class="hl-cl">        <span class="hl-nx">P</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">Params</span>
+</span></span><span class="hl-line"><span class="hl-ln">10</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">11</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">12</span><span class="hl-cl">    <span class="hl-nx">Handler</span> <span class="hl-kd">interface</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">13</span><span class="hl-cl">        <span class="hl-nf">Handle</span><span class="hl-p">(</span><span class="hl-o">*</span><span class="hl-nx">Context</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">14</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">15</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">16</span><span class="hl-cl">    <span class="hl-nx">HandlerFunc</span> <span class="hl-kd">func</span><span class="hl-p">(</span><span class="hl-o">*</span><span class="hl-nx">Context</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">17</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">18</span><span class="hl-cl">    <span class="hl-nx">Router</span>         <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">RouterOf</span><span class="hl-p">[</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
+</span></span><span class="hl-line"><span class="hl-ln">19</span><span class="hl-cl">    <span class="hl-nx">Prefix</span>         <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">PrefixOf</span><span class="hl-p">[</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
+</span></span><span class="hl-line"><span class="hl-ln">20</span><span class="hl-cl">    <span class="hl-nx">Resource</span>       <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">ResourceOf</span><span class="hl-p">[</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
+</span></span><span class="hl-line"><span class="hl-ln">21</span><span class="hl-cl">    <span class="hl-nx">Middleware</span>     <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">MiddlewareOf</span><span class="hl-p">[</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
+</span></span><span class="hl-line"><span class="hl-ln">22</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">23</span><span class="hl-cl">    <span class="hl-nx">options</span>        <span class="hl-p">=</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">OptionsOf</span><span class="hl-p">[</span><span class="hl-nx">Handler</span><span class="hl-p">]</span>
+</span></span><span class="hl-line"><span class="hl-ln">24</span><span class="hl-cl">    <span class="hl-nx">Option</span> <span class="hl-kd">func</span><span class="hl-p">(</span><span class="hl-nx">o</span> <span class="hl-o">*</span><span class="hl-nx">options</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">25</span><span class="hl-cl"><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">26</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">27</span><span class="hl-cl"><span class="hl-kd">func</span> <span class="hl-p">(</span><span class="hl-nx">f</span> <span class="hl-nx">HandlerFunc</span><span class="hl-p">)</span> <span class="hl-nf">Handle</span><span class="hl-p">(</span><span class="hl-nx">c</span> <span class="hl-o">*</span><span class="hl-nx">Context</span><span class="hl-p">)</span> <span class="hl-p">{</span> <span class="hl-nf">f</span><span class="hl-p">(</span><span class="hl-nx">c</span><span class="hl-p">)</span> <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">28</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">29</span><span class="hl-cl"><span class="hl-kd">func</span> <span class="hl-nf">call</span><span class="hl-p">(</span><span class="hl-nx">w</span> <span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">ResponseWriter</span><span class="hl-p">,</span> <span class="hl-nx">r</span> <span class="hl-o">*</span><span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">Request</span><span class="hl-p">,</span> <span class="hl-nx">ps</span> <span class="hl-nx">mux</span><span class="hl-p">.</span><span class="hl-nx">Params</span><span class="hl-p">,</span> <span class="hl-nx">h</span> <span class="hl-nx">Handler</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">30</span><span class="hl-cl">    <span class="hl-nx">h</span><span class="hl-p">.</span><span class="hl-nf">Handle</span><span class="hl-p">(</span><span class="hl-o">&amp;</span><span class="hl-nx">Context</span><span class="hl-p">{</span><span class="hl-nx">R</span><span class="hl-p">:</span> <span class="hl-nx">r</span><span class="hl-p">,</span> <span class="hl-nx">W</span><span class="hl-p">:</span> <span class="hl-nx">w</span><span class="hl-p">,</span> <span class="hl-nx">P</span><span class="hl-p">:</span> <span class="hl-nx">ps</span><span class="hl-p">})</span>
+</span></span><span class="hl-line"><span class="hl-ln">31</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">32</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">33</span><span class="hl-cl"><span class="hl-kd">func</span> <span class="hl-nf">New</span><span class="hl-p">(</span><span class="hl-nx">name</span> <span class="hl-kt">string</span><span class="hl-p">,</span> <span class="hl-nx">o</span> <span class="hl-o">...</span><span class="hl-nx">Option</span><span class="hl-p">)</span> <span class="hl-o">*</span><span class="hl-nx">Router</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">34</span><span class="hl-cl">    <span class="hl-nx">opt</span> <span class="hl-o">:=</span> <span class="hl-o">&amp;</span><span class="hl-nx">options</span><span class="hl-p">{}</span>
+</span></span><span class="hl-line"><span class="hl-ln">35</span><span class="hl-cl">    <span class="hl-k">for</span> <span class="hl-nx">_</span><span class="hl-p">,</span> <span class="hl-nx">oo</span> <span class="hl-o">:=</span> <span class="hl-k">range</span> <span class="hl-nx">o</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">36</span><span class="hl-cl">        <span class="hl-nf">oo</span><span class="hl-p">(</span><span class="hl-nx">opt</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">37</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">38</span><span class="hl-cl">    <span class="hl-k">return</span> <span class="hl-nx">NewRouterOf</span><span class="hl-p">[</span><span class="hl-nx">Handler</span><span class="hl-p">](</span><span class="hl-nx">name</span><span class="hl-p">,</span> <span class="hl-nx">call</span><span class="hl-p">,</span> <span class="hl-nx">opt</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">39</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">40</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">41</span><span class="hl-cl"><span class="hl-c1">// 一些实现 Option 的函数，整个 options 的内容都可以采用此方式设置。
+</span></span></span><span class="hl-line"><span class="hl-ln">42</span><span class="hl-cl"><span class="hl-c1"></span>
+</span></span><span class="hl-line"><span class="hl-ln">43</span><span class="hl-cl"><span class="hl-kd">func</span> <span class="hl-nf">Lock</span><span class="hl-p">(</span><span class="hl-nx">o</span> <span class="hl-o">*</span><span class="hl-nx">options</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">44</span><span class="hl-cl">    <span class="hl-nx">o</span><span class="hl-p">.</span><span class="hl-nx">Lock</span> <span class="hl-p">=</span> <span class="hl-kc">true</span>
+</span></span><span class="hl-line"><span class="hl-ln">45</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">46</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">47</span><span class="hl-cl"><span class="hl-kd">func</span> <span class="hl-nf">Unlock</span><span class="hl-p">(</span><span class="hl-nx">o</span> <span class="hl-o">*</span><span class="hl-nx">options</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">48</span><span class="hl-cl">    <span class="hl-nx">o</span><span class="hl-p">.</span><span class="hl-nx">Lock</span> <span class="hl-p">=</span> <span class="hl-kc">false</span>
+</span></span><span class="hl-line"><span class="hl-ln">49</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">50</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">51</span><span class="hl-cl"><span class="hl-kd">func</span> <span class="hl-nf">NotFound</span><span class="hl-p">(</span><span class="hl-nx">f</span> <span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">HandlerFunc</span><span class="hl-p">)</span> <span class="hl-nx">Option</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">52</span><span class="hl-cl">    <span class="hl-k">if</span> <span class="hl-nx">f</span> <span class="hl-o">==</span> <span class="hl-kc">nil</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">53</span><span class="hl-cl">        <span class="hl-nx">f</span> <span class="hl-p">=</span> <span class="hl-nx">http</span><span class="hl-p">.</span><span class="hl-nx">NotFound</span>
+</span></span><span class="hl-line"><span class="hl-ln">54</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">55</span><span class="hl-cl">    <span class="hl-k">return</span> <span class="hl-kd">func</span><span class="hl-p">(</span><span class="hl-nx">o</span> <span class="hl-o">*</span><span class="hl-nx">Options</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">56</span><span class="hl-cl">        <span class="hl-nx">o</span><span class="hl-p">.</span><span class="hl-nx">NotFound</span> <span class="hl-p">=</span> <span class="hl-nx">f</span>
+</span></span><span class="hl-line"><span class="hl-ln">57</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">58</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><p>之后就可以正常使用路由：</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln">1</span><span class="hl-cl"><span class="hl-kn">package</span> <span class="hl-nx">custom_router</span>
+</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">3</span><span class="hl-cl"><span class="hl-kd">func</span> <span class="hl-nf">main</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">4</span><span class="hl-cl">    <span class="hl-nx">r</span> <span class="hl-o">:=</span> <span class="hl-nf">New</span><span class="hl-p">(</span><span class="hl-s">&#34;&#34;</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">5</span><span class="hl-cl">    <span class="hl-nx">r</span><span class="hl-p">.</span><span class="hl-nf">Get</span><span class="hl-p">(</span><span class="hl-s">&#34;/users/{id:\\d+}&#34;</span><span class="hl-p">,</span> <span class="hl-nf">HandlerFunc</span><span class="hl-p">(</span><span class="hl-kd">func</span><span class="hl-p">(</span><span class="hl-nx">ctx</span> <span class="hl-o">*</span><span class="hl-nx">Context</span><span class="hl-p">){</span>
+</span></span><span class="hl-line"><span class="hl-ln">6</span><span class="hl-cl">        <span class="hl-c1">// TODO
+</span></span></span><span class="hl-line"><span class="hl-ln">7</span><span class="hl-cl"><span class="hl-c1"></span>    <span class="hl-p">}))</span>
+</span></span><span class="hl-line"><span class="hl-ln">8</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><h2 id="perf">性能</h2>
 <p>有关性能可以参考 <a href="https://caixw.github.io/go-http-routers-testing/">https://caixw.github.io/go-http-routers-testing/</a> 提供了基于 <code>http.Handler</code> 的性能测试。</p>
 
 </article>
@@ -202,7 +202,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2022-02-11T09:46:06Z">2022-02-11</time>
+                    <time title="2022-02-14T17:16:06Z">2022-02-14</time>
                 </span>
             </div>
         </footer>

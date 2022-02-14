@@ -7,7 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>JSON Web Token 的简单介绍 | 一斤瓜子铺</title><link rel="canonical" href="https://caixw.io/posts/2016/jwt-intro.html" /><link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel=”mask-icon” href=”/favicon.svg” color=”#000000” /><link rel="alternate" type="application/rss+xml" title="RSS" href="https://caixw.io/rss.xml" /><link rel="alternate" type="application/atom+xml" title="Atom" href="https://caixw.io/atom.xml" /><meta name="keywords" content="JWT, JSON, Go, Base64, 编码, token, web, oauth" /><link rel="next" href="https://caixw.io/posts/2016/restful-api-guide.html" /><link rel="prev" href="https://caixw.io/posts/2016/parse-version-with-go-struct-tag.html" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: dark)" href="https://caixw.io/themes/default/solarized-dark256.css" /><link rel="stylesheet" type="text/css" media="(prefers-color-scheme: light)" href="https://caixw.io/themes/default/solarized-light.css" /><link rel="stylesheet" type="text/css" media="print" href="https://caixw.io/themes/default/igor.css" /><link rel="stylesheet" type="text/css" href="https://caixw.io/themes/default/style.css" /><script type="application/ld+json">
-        {"@context":"https://schema.org/","@type":"BlogPosting","headline":"JSON Web Token 的简单介绍","author":[{"@type":"Person","name":"caixw","url":"https://caixw.io"}],"dateCreated":"2016-04-24T03:35:19+08:00","dateModified":"2021-08-21T23:45:30+08:00","license":"https://creativecommons.org/licenses/by/4.0/deed.zh","keywords":"JWT, JSON, Go, Base64, 编码, token, web, oauth","inLanguage":"cmn-Hans"}
+        {"@context":"https://schema.org/","@type":"BlogPosting","headline":"JSON Web Token 的简单介绍","author":[{"@type":"Person","name":"caixw","url":"https://caixw.io"}],"dateCreated":"2016-04-24T03:35:19+08:00","dateModified":"2022-02-15T01:10:20+08:00","license":"https://creativecommons.org/licenses/by/4.0/deed.zh","keywords":"JWT, JSON, Go, Base64, 编码, token, web, oauth","inLanguage":"cmn-Hans"}
         </script></head>
 
     <body>
@@ -25,9 +25,9 @@
     <div class="item">
         <span class="value">标签:</span><a class="value" href="https://caixw.io/tags/jwt.html">JWT</a><a class="value" href="https://caixw.io/tags/json.html">JSON</a><a class="value" href="https://caixw.io/tags/go.html">Go</a><a class="value" href="https://caixw.io/tags/oauth.html">OAuth</a></div>
 
-    <div class="item" title="修改时间:2021-08-21T23:45:30&#43;08:00&#10;添加时间:2016-04-24T03:35:19&#43;08:00">
+    <div class="item" title="修改时间:2022-02-15T01:10:20&#43;08:00&#10;添加时间:2016-04-24T03:35:19&#43;08:00">
         <span class="value">修改时间:</span>
-        <time class="value">2021-08-21</time>
+        <time class="value">2022-02-15</time>
     </div>
 </div>
 <article id="content">
@@ -36,11 +36,11 @@
 <p>一个 JWT 由三段 base64 统码的字符串通过点号(.)组合而成，看起来像这个样子：<code>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYWl4dyIsInN1YiI6InRlc3Qgand0IiwiZXhwIjoxNDYyNDU5MzUxLCJ1aWQiOjEwMjQsInR5cGUiOjF9.y2TytagRDbHI-uQrsMqae2FD5OxqAAFbKp-8rYB2k0I</code>，其中前两段是两个 JSON 结构体的 base64 编码，第三段为对前两段编码的再次编码，起到验证的作用，大致算法可以理解成以下样子：<code>token := base64(header) + base64(payload) + base64(signature)</code>。</p>
 <h3 id="header">header</h3>
 <p>Header 为一个 JSON 结构，定义了 JWT 使用的 Token 类型和加密方法，经过 base64 编码后组成 JWT 的第一部分。其结构如下：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-p">{</span>
-<span class="hl-ln">2</span>    <span class="hl-nt">&#34;typ&#34;</span><span class="hl-p">:</span><span class="hl-s2">&#34;JWT&#34;</span><span class="hl-p">,</span>
-<span class="hl-ln">3</span>    <span class="hl-nt">&#34;alg&#34;</span><span class="hl-p">:</span><span class="hl-s2">&#34;HS256&#34;</span>
-<span class="hl-ln">4</span><span class="hl-p">}</span>
-</pre><p>对其进行 base64 编码之后，得到以下字符串:<code>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9</code>。</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln">1</span><span class="hl-cl"><span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl">    <span class="hl-nt">&#34;typ&#34;</span><span class="hl-p">:</span><span class="hl-s2">&#34;JWT&#34;</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">3</span><span class="hl-cl">    <span class="hl-nt">&#34;alg&#34;</span><span class="hl-p">:</span><span class="hl-s2">&#34;HS256&#34;</span>
+</span></span><span class="hl-line"><span class="hl-ln">4</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><p>对其进行 base64 编码之后，得到以下字符串:<code>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9</code>。</p>
 <h3 id="payload-claims">Payload(Claims)</h3>
 <p>Payload 是 JWT 的核心部分，包含了描述 JWT 的重要信息。也是一个 JSON 数据，字段可以根据用户的需求自定义，只要保证字段名唯一就行。当然官方也定义了一些可能会经常用到的内容，所有这些字段都是可选的，Payload 的值是没有加密的，所以不要在里面包含一些敏感信息。</p>
 <p>一些官方定义的字段：</p>
@@ -49,109 +49,110 @@
 <li>sub:主题；</li>
 <li>exp:过期时间。</li>
 </ul>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-p">{</span>
-<span class="hl-ln">2</span>    <span class="hl-nt">&#34;iss&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;caixw&#34;</span><span class="hl-p">,</span>
-<span class="hl-ln">3</span>    <span class="hl-nt">&#34;sub&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;test jwt&#34;</span><span class="hl-p">,</span>
-<span class="hl-ln">4</span>    <span class="hl-nt">&#34;exp&#34;</span><span class="hl-p">:</span> <span class="hl-mi">1462459351</span><span class="hl-p">,</span>
-<span class="hl-ln">5</span>    <span class="hl-nt">&#34;uid&#34;</span><span class="hl-p">:</span> <span class="hl-mi">1024</span><span class="hl-p">,</span>
-<span class="hl-ln">6</span>    <span class="hl-nt">&#34;type&#34;</span><span class="hl-p">:</span><span class="hl-mi">1</span>
-<span class="hl-ln">7</span><span class="hl-p">}</span>
-</pre><p>编码之后，会得到：<code>eyJpc3MiOiJjYWl4dyIsInN1YiI6InRlc3Qgand0IiwiZXhwIjoxNDYyNDU5MzUxLCJ1aWQiOjEwMjQsInR5cGUiOjF9</code>。</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln">1</span><span class="hl-cl"><span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl">    <span class="hl-nt">&#34;iss&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;caixw&#34;</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">3</span><span class="hl-cl">    <span class="hl-nt">&#34;sub&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;test jwt&#34;</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">4</span><span class="hl-cl">    <span class="hl-nt">&#34;exp&#34;</span><span class="hl-p">:</span> <span class="hl-mi">1462459351</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">5</span><span class="hl-cl">    <span class="hl-nt">&#34;uid&#34;</span><span class="hl-p">:</span> <span class="hl-mi">1024</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">6</span><span class="hl-cl">    <span class="hl-nt">&#34;type&#34;</span><span class="hl-p">:</span><span class="hl-mi">1</span>
+</span></span><span class="hl-line"><span class="hl-ln">7</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><p>编码之后，会得到：<code>eyJpc3MiOiJjYWl4dyIsInN1YiI6InRlc3Qgand0IiwiZXhwIjoxNDYyNDU5MzUxLCJ1aWQiOjEwMjQsInR5cGUiOjF9</code>。</p>
 <h3 id="signature">Signature</h3>
 <p>Signature 是对前两段编码的一个签名验证，用于验证 Token 是否有效果，是否被篡改过等。其大致的算法为：将前两段编码通过点号(.)拼接起来，然后对其进行一次 base64 编码。</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-nx">header</span> <span class="hl-o">:=</span> <span class="hl-nf">base64</span><span class="hl-p">(</span><span class="hl-nx">headerJSON</span><span class="hl-p">)</span>
-<span class="hl-ln">2</span><span class="hl-nx">payload</span> <span class="hl-o">:=</span> <span class="hl-nf">base64</span><span class="hl-p">(</span><span class="hl-nx">payloadJSON</span><span class="hl-p">)</span>
-<span class="hl-ln">3</span><span class="hl-nx">content</span> <span class="hl-o">:=</span> <span class="hl-nx">header</span> <span class="hl-o">+</span> <span class="hl-s">&#34;.&#34;</span> <span class="hl-o">+</span> <span class="hl-nx">payload</span>
-<span class="hl-ln">4</span><span class="hl-nx">signature</span> <span class="hl-o">:=</span> <span class="hl-nf">base64</span><span class="hl-p">(</span><span class="hl-nx">content</span><span class="hl-p">)</span>
-</pre><p>计算之后会得到以下字符串：<code>y2TytagRDbHI-uQrsMqae2FD5OxqAAFbKp-8rYB2k0I</code>。</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln">1</span><span class="hl-cl"><span class="hl-nx">header</span> <span class="hl-o">:=</span> <span class="hl-nf">base64</span><span class="hl-p">(</span><span class="hl-nx">headerJSON</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl"><span class="hl-nx">payload</span> <span class="hl-o">:=</span> <span class="hl-nf">base64</span><span class="hl-p">(</span><span class="hl-nx">payloadJSON</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">3</span><span class="hl-cl"><span class="hl-nx">content</span> <span class="hl-o">:=</span> <span class="hl-nx">header</span> <span class="hl-o">+</span> <span class="hl-s">&#34;.&#34;</span> <span class="hl-o">+</span> <span class="hl-nx">payload</span>
+</span></span><span class="hl-line"><span class="hl-ln">4</span><span class="hl-cl"><span class="hl-nx">signature</span> <span class="hl-o">:=</span> <span class="hl-nf">sign</span><span class="hl-p">(</span><span class="hl-nx">content</span><span class="hl-p">,</span> <span class="hl-nx">secret</span><span class="hl-p">)</span>
+</span></span></code></pre><p>计算之后会得到以下字符串：<code>y2TytagRDbHI-uQrsMqae2FD5OxqAAFbKp-8rYB2k0I</code>。</p>
 <p>之后将三段字符串用点号(.)进行拼接，就得到一个完整的 JWT 了：<code>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYWl4dyIsInN1YiI6InRlc3Qgand0IiwiZXhwIjoxNDYyNDU5MzUxLCJ1aWQiOjEwMjQsInR5cGUiOjF9.y2TytagRDbHI-uQrsMqae2FD5OxqAAFbKp-8rYB2k0I</code>。</p>
 <p>JWT 是 URL Safe 的，所以对进行 base64 编码的时候，应该使用 <code>base64.RawURLEncoding</code> 对其进行编码，而不是 <code>base64.RawStdEncoding</code>。</p>
+<p><code>sign</code> 为加密算法，即 Header.alg 指定的值，<code>secret</code> 为算法所需的密钥，仅服务器持有。</p>
 <h2 id="impl">简单的实现</h2>
 <p>这是一个简单的 Go 实现版本，其它语言也大同小异。</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln"> 1</span><span class="hl-c1">// Copyright 2016 by caixw, All rights reserved.
-</span><span class="hl-ln"> 2</span><span class="hl-c1">// Use of this source code is governed by a MIT
-</span><span class="hl-ln"> 3</span><span class="hl-c1">// license that can be found in the LICENSE file.
-</span><span class="hl-ln"> 4</span><span class="hl-c1"></span>
-<span class="hl-ln"> 5</span><span class="hl-kn">package</span> <span class="hl-nx">main</span>
-<span class="hl-ln"> 6</span>
-<span class="hl-ln"> 7</span><span class="hl-kn">import</span> <span class="hl-p">(</span>
-<span class="hl-ln"> 8</span>    <span class="hl-s">&#34;crypto/hmac&#34;</span>
-<span class="hl-ln"> 9</span>    <span class="hl-s">&#34;crypto/sha256&#34;</span>
-<span class="hl-ln">10</span>    <span class="hl-s">&#34;encoding/base64&#34;</span>
-<span class="hl-ln">11</span>    <span class="hl-s">&#34;encoding/json&#34;</span>
-<span class="hl-ln">12</span>    <span class="hl-s">&#34;errors&#34;</span>
-<span class="hl-ln">13</span>    <span class="hl-s">&#34;fmt&#34;</span>
-<span class="hl-ln">14</span>    <span class="hl-s">&#34;strings&#34;</span>
-<span class="hl-ln">15</span><span class="hl-p">)</span>
-<span class="hl-ln">16</span>
-<span class="hl-ln">17</span><span class="hl-kd">const</span> <span class="hl-nx">secret</span> <span class="hl-p">=</span> <span class="hl-s">&#34;a;/dkfwer&#34;</span>
-<span class="hl-ln">18</span>
-<span class="hl-ln">19</span><span class="hl-kd">type</span> <span class="hl-nx">Header</span> <span class="hl-kd">struct</span> <span class="hl-p">{</span>
-<span class="hl-ln">20</span>    <span class="hl-nx">Type</span>      <span class="hl-kt">string</span> <span class="hl-s">`json:&#34;typ&#34;`</span>
-<span class="hl-ln">21</span>    <span class="hl-nx">Algorithm</span> <span class="hl-kt">string</span> <span class="hl-s">`json:&#34;alg&#34;`</span>
-<span class="hl-ln">22</span><span class="hl-p">}</span>
-<span class="hl-ln">23</span>
-<span class="hl-ln">24</span><span class="hl-kd">func</span> <span class="hl-p">(</span><span class="hl-nx">h</span> <span class="hl-o">*</span><span class="hl-nx">Header</span><span class="hl-p">)</span> <span class="hl-nf">Base64</span><span class="hl-p">()</span> <span class="hl-kt">string</span> <span class="hl-p">{</span>
-<span class="hl-ln">25</span>    <span class="hl-nx">data</span><span class="hl-p">,</span> <span class="hl-nx">err</span> <span class="hl-o">:=</span> <span class="hl-nx">json</span><span class="hl-p">.</span><span class="hl-nf">Marshal</span><span class="hl-p">(</span><span class="hl-nx">h</span><span class="hl-p">)</span>
-<span class="hl-ln">26</span>    <span class="hl-k">if</span> <span class="hl-nx">err</span> <span class="hl-o">!=</span> <span class="hl-kc">nil</span> <span class="hl-p">{</span>
-<span class="hl-ln">27</span>        <span class="hl-nb">panic</span><span class="hl-p">(</span><span class="hl-nx">err</span><span class="hl-p">)</span>
-<span class="hl-ln">28</span>    <span class="hl-p">}</span>
-<span class="hl-ln">29</span>
-<span class="hl-ln">30</span>    <span class="hl-k">return</span> <span class="hl-nx">base64</span><span class="hl-p">.</span><span class="hl-nx">RawURLEncoding</span><span class="hl-p">.</span><span class="hl-nf">EncodeToString</span><span class="hl-p">(</span><span class="hl-nx">data</span><span class="hl-p">)</span>
-<span class="hl-ln">31</span><span class="hl-p">}</span>
-<span class="hl-ln">32</span>
-<span class="hl-ln">33</span><span class="hl-kd">type</span> <span class="hl-nx">Claims</span> <span class="hl-kd">struct</span> <span class="hl-p">{</span>
-<span class="hl-ln">34</span>    <span class="hl-nx">Issuer</span>     <span class="hl-kt">string</span> <span class="hl-s">`json:&#34;iss,omitempty&#34;`</span>
-<span class="hl-ln">35</span>    <span class="hl-nx">Subject</span>    <span class="hl-kt">string</span> <span class="hl-s">`json:&#34;sub,omitempty&#34;`</span>
-<span class="hl-ln">36</span>    <span class="hl-nx">Expiration</span> <span class="hl-kt">int64</span>  <span class="hl-s">`json:&#34;exp,omitempty&#34;`</span>
-<span class="hl-ln">37</span>    <span class="hl-nx">UID</span>        <span class="hl-kt">int64</span>  <span class="hl-s">`json:&#34;uid&#34;`</span>
-<span class="hl-ln">38</span>    <span class="hl-nx">Type</span>       <span class="hl-kt">int64</span>  <span class="hl-s">`json:&#34;type&#34;`</span>
-<span class="hl-ln">39</span><span class="hl-p">}</span>
-<span class="hl-ln">40</span>
-<span class="hl-ln">41</span><span class="hl-kd">func</span> <span class="hl-p">(</span><span class="hl-nx">c</span> <span class="hl-o">*</span><span class="hl-nx">Claims</span><span class="hl-p">)</span> <span class="hl-nf">Base64</span><span class="hl-p">()</span> <span class="hl-kt">string</span> <span class="hl-p">{</span>
-<span class="hl-ln">42</span>    <span class="hl-nx">data</span><span class="hl-p">,</span> <span class="hl-nx">err</span> <span class="hl-o">:=</span> <span class="hl-nx">json</span><span class="hl-p">.</span><span class="hl-nf">Marshal</span><span class="hl-p">(</span><span class="hl-nx">c</span><span class="hl-p">)</span>
-<span class="hl-ln">43</span>    <span class="hl-k">if</span> <span class="hl-nx">err</span> <span class="hl-o">!=</span> <span class="hl-kc">nil</span> <span class="hl-p">{</span>
-<span class="hl-ln">44</span>        <span class="hl-nb">panic</span><span class="hl-p">(</span><span class="hl-nx">err</span><span class="hl-p">)</span>
-<span class="hl-ln">45</span>    <span class="hl-p">}</span>
-<span class="hl-ln">46</span>
-<span class="hl-ln">47</span>    <span class="hl-k">return</span> <span class="hl-nx">base64</span><span class="hl-p">.</span><span class="hl-nx">RawURLEncoding</span><span class="hl-p">.</span><span class="hl-nf">EncodeToString</span><span class="hl-p">(</span><span class="hl-nx">data</span><span class="hl-p">)</span>
-<span class="hl-ln">48</span><span class="hl-p">}</span>
-<span class="hl-ln">49</span>
-<span class="hl-ln">50</span><span class="hl-c1">// 根据算法生成签名
-</span><span class="hl-ln">51</span><span class="hl-c1"></span><span class="hl-kd">func</span> <span class="hl-nf">Signature</span><span class="hl-p">(</span><span class="hl-nx">h</span> <span class="hl-o">*</span><span class="hl-nx">Header</span><span class="hl-p">,</span> <span class="hl-nx">c</span> <span class="hl-o">*</span><span class="hl-nx">Claims</span><span class="hl-p">)</span> <span class="hl-p">(</span><span class="hl-kt">string</span><span class="hl-p">,</span> <span class="hl-kt">error</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln">52</span>    <span class="hl-nx">content</span> <span class="hl-o">:=</span> <span class="hl-nx">h</span><span class="hl-p">.</span><span class="hl-nf">Base64</span><span class="hl-p">()</span> <span class="hl-o">+</span> <span class="hl-s">&#34;.&#34;</span> <span class="hl-o">+</span> <span class="hl-nx">c</span><span class="hl-p">.</span><span class="hl-nf">Base64</span><span class="hl-p">()</span>
-<span class="hl-ln">53</span>
-<span class="hl-ln">54</span>    <span class="hl-k">switch</span> <span class="hl-nx">strings</span><span class="hl-p">.</span><span class="hl-nf">ToLower</span><span class="hl-p">(</span><span class="hl-nx">h</span><span class="hl-p">.</span><span class="hl-nx">Algorithm</span><span class="hl-p">)</span> <span class="hl-p">{</span>
-<span class="hl-ln">55</span>    <span class="hl-k">case</span> <span class="hl-s">&#34;hs256&#34;</span><span class="hl-p">:</span>
-<span class="hl-ln">56</span>        <span class="hl-nx">h</span> <span class="hl-o">:=</span> <span class="hl-nx">hmac</span><span class="hl-p">.</span><span class="hl-nf">New</span><span class="hl-p">(</span><span class="hl-nx">sha256</span><span class="hl-p">.</span><span class="hl-nx">New</span><span class="hl-p">,</span> <span class="hl-p">[]</span><span class="hl-nb">byte</span><span class="hl-p">(</span><span class="hl-nx">secret</span><span class="hl-p">))</span>
-<span class="hl-ln">57</span>        <span class="hl-nx">h</span><span class="hl-p">.</span><span class="hl-nf">Write</span><span class="hl-p">([]</span><span class="hl-nb">byte</span><span class="hl-p">(</span><span class="hl-nx">content</span><span class="hl-p">))</span>
-<span class="hl-ln">58</span>        <span class="hl-k">return</span> <span class="hl-nx">content</span> <span class="hl-o">+</span> <span class="hl-s">&#34;.&#34;</span> <span class="hl-o">+</span> <span class="hl-nx">base64</span><span class="hl-p">.</span><span class="hl-nx">RawURLEncoding</span><span class="hl-p">.</span><span class="hl-nf">EncodeToString</span><span class="hl-p">(</span><span class="hl-nx">h</span><span class="hl-p">.</span><span class="hl-nf">Sum</span><span class="hl-p">(</span><span class="hl-kc">nil</span><span class="hl-p">)),</span> <span class="hl-kc">nil</span>
-<span class="hl-ln">59</span>    <span class="hl-k">default</span><span class="hl-p">:</span>
-<span class="hl-ln">60</span>        <span class="hl-k">return</span> <span class="hl-s">&#34;&#34;</span><span class="hl-p">,</span> <span class="hl-nx">errors</span><span class="hl-p">.</span><span class="hl-nf">New</span><span class="hl-p">(</span><span class="hl-s">&#34;不支持的加密算法&#34;</span><span class="hl-p">)</span>
-<span class="hl-ln">61</span>    <span class="hl-p">}</span>
-<span class="hl-ln">62</span><span class="hl-p">}</span>
-<span class="hl-ln">63</span>
-<span class="hl-ln">64</span><span class="hl-kd">func</span> <span class="hl-nf">main</span><span class="hl-p">()</span> <span class="hl-p">{</span>
-<span class="hl-ln">65</span>    <span class="hl-nx">h</span> <span class="hl-o">:=</span> <span class="hl-o">&amp;</span><span class="hl-nx">Header</span><span class="hl-p">{</span>
-<span class="hl-ln">66</span>        <span class="hl-nx">Type</span><span class="hl-p">:</span>      <span class="hl-s">&#34;JWT&#34;</span><span class="hl-p">,</span>
-<span class="hl-ln">67</span>        <span class="hl-nx">Algorithm</span><span class="hl-p">:</span> <span class="hl-s">&#34;HS256&#34;</span><span class="hl-p">,</span>
-<span class="hl-ln">68</span>    <span class="hl-p">}</span>
-<span class="hl-ln">69</span>
-<span class="hl-ln">70</span>    <span class="hl-nx">c</span> <span class="hl-o">:=</span> <span class="hl-o">&amp;</span><span class="hl-nx">Claims</span><span class="hl-p">{</span>
-<span class="hl-ln">71</span>        <span class="hl-nx">Issuer</span><span class="hl-p">:</span>     <span class="hl-s">&#34;caixw&#34;</span><span class="hl-p">,</span>
-<span class="hl-ln">72</span>        <span class="hl-nx">Subject</span><span class="hl-p">:</span>    <span class="hl-s">&#34;test jwt&#34;</span><span class="hl-p">,</span>
-<span class="hl-ln">73</span>        <span class="hl-nx">Expiration</span><span class="hl-p">:</span> <span class="hl-mi">1462459351</span><span class="hl-p">,</span>
-<span class="hl-ln">74</span>        <span class="hl-nx">UID</span><span class="hl-p">:</span>        <span class="hl-mi">1024</span><span class="hl-p">,</span>
-<span class="hl-ln">75</span>        <span class="hl-nx">Type</span><span class="hl-p">:</span>       <span class="hl-mi">1</span><span class="hl-p">,</span>
-<span class="hl-ln">76</span>    <span class="hl-p">}</span>
-<span class="hl-ln">77</span>
-<span class="hl-ln">78</span>    <span class="hl-nx">token</span><span class="hl-p">,</span> <span class="hl-nx">err</span> <span class="hl-o">:=</span> <span class="hl-nf">Signature</span><span class="hl-p">(</span><span class="hl-nx">h</span><span class="hl-p">,</span> <span class="hl-nx">c</span><span class="hl-p">)</span>
-<span class="hl-ln">79</span>    <span class="hl-k">if</span> <span class="hl-nx">err</span> <span class="hl-o">!=</span> <span class="hl-kc">nil</span> <span class="hl-p">{</span>
-<span class="hl-ln">80</span>        <span class="hl-nb">panic</span><span class="hl-p">(</span><span class="hl-nx">err</span><span class="hl-p">)</span>
-<span class="hl-ln">81</span>    <span class="hl-p">}</span>
-<span class="hl-ln">82</span>    <span class="hl-nx">fmt</span><span class="hl-p">.</span><span class="hl-nf">Println</span><span class="hl-p">(</span><span class="hl-nx">token</span><span class="hl-p">)</span>
-<span class="hl-ln">83</span><span class="hl-p">}</span>
-</pre>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln"> 1</span><span class="hl-cl"><span class="hl-c1">// Copyright 2016 by caixw, All rights reserved.
+</span></span></span><span class="hl-line"><span class="hl-ln"> 2</span><span class="hl-cl"><span class="hl-c1">// Use of this source code is governed by a MIT
+</span></span></span><span class="hl-line"><span class="hl-ln"> 3</span><span class="hl-cl"><span class="hl-c1">// license that can be found in the LICENSE file.
+</span></span></span><span class="hl-line"><span class="hl-ln"> 4</span><span class="hl-cl"><span class="hl-c1"></span>
+</span></span><span class="hl-line"><span class="hl-ln"> 5</span><span class="hl-cl"><span class="hl-kn">package</span> <span class="hl-nx">main</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 6</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln"> 7</span><span class="hl-cl"><span class="hl-kn">import</span> <span class="hl-p">(</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 8</span><span class="hl-cl">    <span class="hl-s">&#34;crypto/hmac&#34;</span>
+</span></span><span class="hl-line"><span class="hl-ln"> 9</span><span class="hl-cl">    <span class="hl-s">&#34;crypto/sha256&#34;</span>
+</span></span><span class="hl-line"><span class="hl-ln">10</span><span class="hl-cl">    <span class="hl-s">&#34;encoding/base64&#34;</span>
+</span></span><span class="hl-line"><span class="hl-ln">11</span><span class="hl-cl">    <span class="hl-s">&#34;encoding/json&#34;</span>
+</span></span><span class="hl-line"><span class="hl-ln">12</span><span class="hl-cl">    <span class="hl-s">&#34;errors&#34;</span>
+</span></span><span class="hl-line"><span class="hl-ln">13</span><span class="hl-cl">    <span class="hl-s">&#34;fmt&#34;</span>
+</span></span><span class="hl-line"><span class="hl-ln">14</span><span class="hl-cl">    <span class="hl-s">&#34;strings&#34;</span>
+</span></span><span class="hl-line"><span class="hl-ln">15</span><span class="hl-cl"><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">16</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">17</span><span class="hl-cl"><span class="hl-kd">const</span> <span class="hl-nx">secret</span> <span class="hl-p">=</span> <span class="hl-s">&#34;a;/dkfwer&#34;</span>
+</span></span><span class="hl-line"><span class="hl-ln">18</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">19</span><span class="hl-cl"><span class="hl-kd">type</span> <span class="hl-nx">Header</span> <span class="hl-kd">struct</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">20</span><span class="hl-cl">    <span class="hl-nx">Type</span>      <span class="hl-kt">string</span> <span class="hl-s">`json:&#34;typ&#34;`</span>
+</span></span><span class="hl-line"><span class="hl-ln">21</span><span class="hl-cl">    <span class="hl-nx">Algorithm</span> <span class="hl-kt">string</span> <span class="hl-s">`json:&#34;alg&#34;`</span>
+</span></span><span class="hl-line"><span class="hl-ln">22</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">23</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">24</span><span class="hl-cl"><span class="hl-kd">func</span> <span class="hl-p">(</span><span class="hl-nx">h</span> <span class="hl-o">*</span><span class="hl-nx">Header</span><span class="hl-p">)</span> <span class="hl-nf">Base64</span><span class="hl-p">()</span> <span class="hl-kt">string</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">25</span><span class="hl-cl">    <span class="hl-nx">data</span><span class="hl-p">,</span> <span class="hl-nx">err</span> <span class="hl-o">:=</span> <span class="hl-nx">json</span><span class="hl-p">.</span><span class="hl-nf">Marshal</span><span class="hl-p">(</span><span class="hl-nx">h</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">26</span><span class="hl-cl">    <span class="hl-k">if</span> <span class="hl-nx">err</span> <span class="hl-o">!=</span> <span class="hl-kc">nil</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">27</span><span class="hl-cl">        <span class="hl-nb">panic</span><span class="hl-p">(</span><span class="hl-nx">err</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">28</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">29</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">30</span><span class="hl-cl">    <span class="hl-k">return</span> <span class="hl-nx">base64</span><span class="hl-p">.</span><span class="hl-nx">RawURLEncoding</span><span class="hl-p">.</span><span class="hl-nf">EncodeToString</span><span class="hl-p">(</span><span class="hl-nx">data</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">31</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">32</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">33</span><span class="hl-cl"><span class="hl-kd">type</span> <span class="hl-nx">Claims</span> <span class="hl-kd">struct</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">34</span><span class="hl-cl">    <span class="hl-nx">Issuer</span>     <span class="hl-kt">string</span> <span class="hl-s">`json:&#34;iss,omitempty&#34;`</span>
+</span></span><span class="hl-line"><span class="hl-ln">35</span><span class="hl-cl">    <span class="hl-nx">Subject</span>    <span class="hl-kt">string</span> <span class="hl-s">`json:&#34;sub,omitempty&#34;`</span>
+</span></span><span class="hl-line"><span class="hl-ln">36</span><span class="hl-cl">    <span class="hl-nx">Expiration</span> <span class="hl-kt">int64</span>  <span class="hl-s">`json:&#34;exp,omitempty&#34;`</span>
+</span></span><span class="hl-line"><span class="hl-ln">37</span><span class="hl-cl">    <span class="hl-nx">UID</span>        <span class="hl-kt">int64</span>  <span class="hl-s">`json:&#34;uid&#34;`</span>
+</span></span><span class="hl-line"><span class="hl-ln">38</span><span class="hl-cl">    <span class="hl-nx">Type</span>       <span class="hl-kt">int64</span>  <span class="hl-s">`json:&#34;type&#34;`</span>
+</span></span><span class="hl-line"><span class="hl-ln">39</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">40</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">41</span><span class="hl-cl"><span class="hl-kd">func</span> <span class="hl-p">(</span><span class="hl-nx">c</span> <span class="hl-o">*</span><span class="hl-nx">Claims</span><span class="hl-p">)</span> <span class="hl-nf">Base64</span><span class="hl-p">()</span> <span class="hl-kt">string</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">42</span><span class="hl-cl">    <span class="hl-nx">data</span><span class="hl-p">,</span> <span class="hl-nx">err</span> <span class="hl-o">:=</span> <span class="hl-nx">json</span><span class="hl-p">.</span><span class="hl-nf">Marshal</span><span class="hl-p">(</span><span class="hl-nx">c</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">43</span><span class="hl-cl">    <span class="hl-k">if</span> <span class="hl-nx">err</span> <span class="hl-o">!=</span> <span class="hl-kc">nil</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">44</span><span class="hl-cl">        <span class="hl-nb">panic</span><span class="hl-p">(</span><span class="hl-nx">err</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">45</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">46</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">47</span><span class="hl-cl">    <span class="hl-k">return</span> <span class="hl-nx">base64</span><span class="hl-p">.</span><span class="hl-nx">RawURLEncoding</span><span class="hl-p">.</span><span class="hl-nf">EncodeToString</span><span class="hl-p">(</span><span class="hl-nx">data</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">48</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">49</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">50</span><span class="hl-cl"><span class="hl-c1">// 根据算法生成签名
+</span></span></span><span class="hl-line"><span class="hl-ln">51</span><span class="hl-cl"><span class="hl-c1"></span><span class="hl-kd">func</span> <span class="hl-nf">Signature</span><span class="hl-p">(</span><span class="hl-nx">h</span> <span class="hl-o">*</span><span class="hl-nx">Header</span><span class="hl-p">,</span> <span class="hl-nx">c</span> <span class="hl-o">*</span><span class="hl-nx">Claims</span><span class="hl-p">)</span> <span class="hl-p">(</span><span class="hl-kt">string</span><span class="hl-p">,</span> <span class="hl-kt">error</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">52</span><span class="hl-cl">    <span class="hl-nx">content</span> <span class="hl-o">:=</span> <span class="hl-nx">h</span><span class="hl-p">.</span><span class="hl-nf">Base64</span><span class="hl-p">()</span> <span class="hl-o">+</span> <span class="hl-s">&#34;.&#34;</span> <span class="hl-o">+</span> <span class="hl-nx">c</span><span class="hl-p">.</span><span class="hl-nf">Base64</span><span class="hl-p">()</span>
+</span></span><span class="hl-line"><span class="hl-ln">53</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">54</span><span class="hl-cl">    <span class="hl-k">switch</span> <span class="hl-nx">strings</span><span class="hl-p">.</span><span class="hl-nf">ToLower</span><span class="hl-p">(</span><span class="hl-nx">h</span><span class="hl-p">.</span><span class="hl-nx">Algorithm</span><span class="hl-p">)</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">55</span><span class="hl-cl">    <span class="hl-k">case</span> <span class="hl-s">&#34;hs256&#34;</span><span class="hl-p">:</span>
+</span></span><span class="hl-line"><span class="hl-ln">56</span><span class="hl-cl">        <span class="hl-nx">h</span> <span class="hl-o">:=</span> <span class="hl-nx">hmac</span><span class="hl-p">.</span><span class="hl-nf">New</span><span class="hl-p">(</span><span class="hl-nx">sha256</span><span class="hl-p">.</span><span class="hl-nx">New</span><span class="hl-p">,</span> <span class="hl-p">[]</span><span class="hl-nb">byte</span><span class="hl-p">(</span><span class="hl-nx">secret</span><span class="hl-p">))</span>
+</span></span><span class="hl-line"><span class="hl-ln">57</span><span class="hl-cl">        <span class="hl-nx">h</span><span class="hl-p">.</span><span class="hl-nf">Write</span><span class="hl-p">([]</span><span class="hl-nb">byte</span><span class="hl-p">(</span><span class="hl-nx">content</span><span class="hl-p">))</span>
+</span></span><span class="hl-line"><span class="hl-ln">58</span><span class="hl-cl">        <span class="hl-k">return</span> <span class="hl-nx">content</span> <span class="hl-o">+</span> <span class="hl-s">&#34;.&#34;</span> <span class="hl-o">+</span> <span class="hl-nb">string</span><span class="hl-p">(</span><span class="hl-nx">h</span><span class="hl-p">.</span><span class="hl-nf">Sum</span><span class="hl-p">(</span><span class="hl-kc">nil</span><span class="hl-p">)),</span> <span class="hl-kc">nil</span>
+</span></span><span class="hl-line"><span class="hl-ln">59</span><span class="hl-cl">    <span class="hl-k">default</span><span class="hl-p">:</span>
+</span></span><span class="hl-line"><span class="hl-ln">60</span><span class="hl-cl">        <span class="hl-k">return</span> <span class="hl-s">&#34;&#34;</span><span class="hl-p">,</span> <span class="hl-nx">errors</span><span class="hl-p">.</span><span class="hl-nf">New</span><span class="hl-p">(</span><span class="hl-s">&#34;不支持的加密算法&#34;</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">61</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">62</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">63</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">64</span><span class="hl-cl"><span class="hl-kd">func</span> <span class="hl-nf">main</span><span class="hl-p">()</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">65</span><span class="hl-cl">    <span class="hl-nx">h</span> <span class="hl-o">:=</span> <span class="hl-o">&amp;</span><span class="hl-nx">Header</span><span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">66</span><span class="hl-cl">        <span class="hl-nx">Type</span><span class="hl-p">:</span>      <span class="hl-s">&#34;JWT&#34;</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">67</span><span class="hl-cl">        <span class="hl-nx">Algorithm</span><span class="hl-p">:</span> <span class="hl-s">&#34;HS256&#34;</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">68</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">69</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">70</span><span class="hl-cl">    <span class="hl-nx">c</span> <span class="hl-o">:=</span> <span class="hl-o">&amp;</span><span class="hl-nx">Claims</span><span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">71</span><span class="hl-cl">        <span class="hl-nx">Issuer</span><span class="hl-p">:</span>     <span class="hl-s">&#34;caixw&#34;</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">72</span><span class="hl-cl">        <span class="hl-nx">Subject</span><span class="hl-p">:</span>    <span class="hl-s">&#34;test jwt&#34;</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">73</span><span class="hl-cl">        <span class="hl-nx">Expiration</span><span class="hl-p">:</span> <span class="hl-mi">1462459351</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">74</span><span class="hl-cl">        <span class="hl-nx">UID</span><span class="hl-p">:</span>        <span class="hl-mi">1024</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">75</span><span class="hl-cl">        <span class="hl-nx">Type</span><span class="hl-p">:</span>       <span class="hl-mi">1</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">76</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">77</span><span class="hl-cl">
+</span></span><span class="hl-line"><span class="hl-ln">78</span><span class="hl-cl">    <span class="hl-nx">token</span><span class="hl-p">,</span> <span class="hl-nx">err</span> <span class="hl-o">:=</span> <span class="hl-nf">Signature</span><span class="hl-p">(</span><span class="hl-nx">h</span><span class="hl-p">,</span> <span class="hl-nx">c</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">79</span><span class="hl-cl">    <span class="hl-k">if</span> <span class="hl-nx">err</span> <span class="hl-o">!=</span> <span class="hl-kc">nil</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">80</span><span class="hl-cl">        <span class="hl-nb">panic</span><span class="hl-p">(</span><span class="hl-nx">err</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">81</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">82</span><span class="hl-cl">    <span class="hl-nx">fmt</span><span class="hl-p">.</span><span class="hl-nf">Println</span><span class="hl-p">(</span><span class="hl-nx">token</span><span class="hl-p">)</span>
+</span></span><span class="hl-line"><span class="hl-ln">83</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre>
 </article>
 </article><nav id="toc-button" class="nav-button">
     <i role="button" aria-label="TOC" class="css-icon icon-menu"></i>
@@ -177,7 +178,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2022-02-11T09:46:06Z">2022-02-11</time>
+                    <time title="2022-02-14T17:16:06Z">2022-02-14</time>
                 </span>
             </div>
         </footer>

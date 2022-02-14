@@ -137,32 +137,32 @@
 </ul>
 <h2 id="error-handling">错误处理</h2>
 <p>HTTP 状态码本身就是一套完善的错误描述机制，状态码相当于错误 ID，返回内容相当于错误内容描述。当然对于一个应用系统来，这些有点简单了，所以一般我们都会做一套符合自己需求的错误描述机制，市面上比较常见的方法就是返回一个固定的数据结构来描述具体的错误内容，比如：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-p">{</span>
-<span class="hl-ln">2</span>    <span class="hl-nt">&#34;id&#34;</span><span class="hl-p">:</span> <span class="hl-mi">40101</span><span class="hl-p">,</span>
-<span class="hl-ln">3</span>    <span class="hl-nt">&#34;message&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;用户不存在&#34;</span>
-<span class="hl-ln">4</span><span class="hl-p">}</span>
-</pre><p>如果有提交数据的，我们还可以指定具体的字段错误信息，这样客户可以很方便地知道具体是哪个字段出错：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-p">{</span>
-<span class="hl-ln">2</span>    <span class="hl-nt">&#34;id&#34;</span><span class="hl-p">:</span> <span class="hl-mi">40001</span><span class="hl-p">,</span>
-<span class="hl-ln">3</span>    <span class="hl-nt">&#34;message&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;提交的数据有误&#34;</span><span class="hl-p">,</span>
-<span class="hl-ln">4</span>    <span class="hl-nt">&#34;detail&#34;</span><span class="hl-p">:</span> <span class="hl-p">{</span>
-<span class="hl-ln">5</span>        <span class="hl-nt">&#34;username&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;与已有账号相同&#34;</span><span class="hl-p">,</span>
-<span class="hl-ln">6</span>        <span class="hl-nt">&#34;password&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;不能为空&#34;</span><span class="hl-p">,</span>
-<span class="hl-ln">7</span>        <span class="hl-nt">&#34;nickname&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;不能为空&#34;</span>
-<span class="hl-ln">8</span>    <span class="hl-p">}</span>
-<span class="hl-ln">9</span><span class="hl-p">}</span>
-</pre><p>关于错误代码，我们可以直接扩展 HTTP 状态码来达到目的。比如我们可以将 401 的状态码进行细化： 401001 表示用户不存在，401002 表示密码错误，401003 表示 token 过期等。</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln">1</span><span class="hl-cl"><span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl">    <span class="hl-nt">&#34;id&#34;</span><span class="hl-p">:</span> <span class="hl-mi">40101</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">3</span><span class="hl-cl">    <span class="hl-nt">&#34;message&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;用户不存在&#34;</span>
+</span></span><span class="hl-line"><span class="hl-ln">4</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><p>如果有提交数据的，我们还可以指定具体的字段错误信息，这样客户可以很方便地知道具体是哪个字段出错：</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln">1</span><span class="hl-cl"><span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl">    <span class="hl-nt">&#34;id&#34;</span><span class="hl-p">:</span> <span class="hl-mi">40001</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">3</span><span class="hl-cl">    <span class="hl-nt">&#34;message&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;提交的数据有误&#34;</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">4</span><span class="hl-cl">    <span class="hl-nt">&#34;detail&#34;</span><span class="hl-p">:</span> <span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">5</span><span class="hl-cl">        <span class="hl-nt">&#34;username&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;与已有账号相同&#34;</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">6</span><span class="hl-cl">        <span class="hl-nt">&#34;password&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;不能为空&#34;</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">7</span><span class="hl-cl">        <span class="hl-nt">&#34;nickname&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;不能为空&#34;</span>
+</span></span><span class="hl-line"><span class="hl-ln">8</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">9</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><p>关于错误代码，我们可以直接扩展 HTTP 状态码来达到目的。比如我们可以将 401 的状态码进行细化： 401001 表示用户不存在，401002 表示密码错误，401003 表示 token 过期等。</p>
 <h2 id="security">安全</h2>
 <h3 id="data-security">数据安全</h3>
 <p>我们一般都会用一个自增的 ID 作为资源的唯一 ID，但是如果把这一 ID 直接呈现给用户的话，就有可能不经意间泄露了你的业务信息。比如查看用户订单列表的接口：<code>/users/100/orders</code>，返回以下数据：</p>
-<pre tabindex="0" class="hl-chroma"><span class="hl-ln">1</span><span class="hl-p">{</span>
-<span class="hl-ln">2</span>    <span class="hl-nt">&#34;count&#34;</span><span class="hl-p">:</span> <span class="hl-mi">2</span><span class="hl-p">,</span>
-<span class="hl-ln">3</span>    <span class="hl-nt">&#34;orders&#34;</span><span class="hl-p">:</span> <span class="hl-p">[</span>
-<span class="hl-ln">4</span>        <span class="hl-p">{</span><span class="hl-nt">&#34;id&#34;</span><span class="hl-p">:</span> <span class="hl-mi">100</span><span class="hl-p">,</span> <span class="hl-nt">&#34;name&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;商品1&#34;</span><span class="hl-p">,</span> <span class="hl-nt">&#34;created&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;2017-07-01&#34;</span><span class="hl-p">},</span>
-<span class="hl-ln">5</span>        <span class="hl-p">{</span><span class="hl-nt">&#34;id&#34;</span><span class="hl-p">:</span> <span class="hl-mi">1000</span><span class="hl-p">,</span> <span class="hl-nt">&#34;name&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;商品1&#34;</span><span class="hl-p">,</span> <span class="hl-nt">&#34;created&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;2017-07-30&#34;</span><span class="hl-p">}</span>
-<span class="hl-ln">6</span>    <span class="hl-p">]</span>
-<span class="hl-ln">7</span><span class="hl-p">}</span>
-</pre><p>用语根据当前的订单 ID 就可以获取平台的订单量；用户只要在月初和月末各下一单，还能获取到平台的订单月增长量。对于这类的敏感数据，要使用具有唯一性的随机数据，比如 UUID。</p>
+<pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln">1</span><span class="hl-cl"><span class="hl-p">{</span>
+</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl">    <span class="hl-nt">&#34;count&#34;</span><span class="hl-p">:</span> <span class="hl-mi">2</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">3</span><span class="hl-cl">    <span class="hl-nt">&#34;orders&#34;</span><span class="hl-p">:</span> <span class="hl-p">[</span>
+</span></span><span class="hl-line"><span class="hl-ln">4</span><span class="hl-cl">        <span class="hl-p">{</span><span class="hl-nt">&#34;id&#34;</span><span class="hl-p">:</span> <span class="hl-mi">100</span><span class="hl-p">,</span> <span class="hl-nt">&#34;name&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;商品1&#34;</span><span class="hl-p">,</span> <span class="hl-nt">&#34;created&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;2017-07-01&#34;</span><span class="hl-p">},</span>
+</span></span><span class="hl-line"><span class="hl-ln">5</span><span class="hl-cl">        <span class="hl-p">{</span><span class="hl-nt">&#34;id&#34;</span><span class="hl-p">:</span> <span class="hl-mi">1000</span><span class="hl-p">,</span> <span class="hl-nt">&#34;name&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;商品1&#34;</span><span class="hl-p">,</span> <span class="hl-nt">&#34;created&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;2017-07-30&#34;</span><span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">6</span><span class="hl-cl">    <span class="hl-p">]</span>
+</span></span><span class="hl-line"><span class="hl-ln">7</span><span class="hl-cl"><span class="hl-p">}</span>
+</span></span></code></pre><p>用语根据当前的订单 ID 就可以获取平台的订单量；用户只要在月初和月末各下一单，还能获取到平台的订单月增长量。对于这类的敏感数据，要使用具有唯一性的随机数据，比如 UUID。</p>
 <p>上在的接口定义还有一个问题，即指定多余的用户 ID。100 为当前用户的 ID，有些聪明的人就会把 100 换成其它数据试试，这时候如果你的服务端没有做限定的话，无形就造成了用户数据的泄密。甚至是你做了限定，但是对该 ID 用户是否存在，返回了不同的状态提示，对方也可以根据这些试出用户数量。所以对于限定用户的一些接口，我们可以把其 ID 省去，由服务端根据登录的 token 作判断，接口可以改成：<code>/orders</code>。</p>
 <h3 id="server-security">服务器安全</h3>
 <h4 id="https">HTTPS</h4>
@@ -210,7 +210,7 @@
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2022-02-11T09:46:06Z">2022-02-11</time>
+                    <time title="2022-02-14T17:16:06Z">2022-02-14</time>
                 </span>
             </div>
         </footer>
