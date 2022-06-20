@@ -116,6 +116,13 @@ ul.tags li:last-child {
     margin-right: .5rem;
 }
 
+.end {
+    border-top: var(--accent) 2px solid;
+    border-bottom: var(--accent) 2px solid;
+    line-height: 2;
+    margin: 2rem 0;
+}
+
 .pages-nav {
     display: flex;
     flex-wrap: wrap;
