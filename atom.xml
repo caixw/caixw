@@ -3,13 +3,13 @@
 	<title>Atom</title>
 	<subtitle>subtitle</subtitle>
 	<id>https://caixw.io</id>
-	<updated>2022-06-20T17:32:39+08:00</updated>
+	<updated>2023-02-05T01:28:39+08:00</updated>
 	<link href="https://caixw.io"></link>
 	<link href="https://caixw.io/atom.xml" rel="self"></link>
 	<entry>
 		<title>基于 Go 的泛型快速实现一个功能完备的路由</title>
 		<id>https://caixw.io/posts/2022/build-go-router-with-generics.html</id>
-		<updated>2022-06-20T17:32:39+08:00</updated>
+		<updated>2023-02-05T01:28:39+08:00</updated>
 		<link href="https://caixw.io/posts/2022/build-go-router-with-generics.html" type="application/xml"></link>
 		<summary type="text/html"></summary>
 	</entry>
@@ -51,7 +51,7 @@
 	<entry>
 		<title>RESTful API 设计实践</title>
 		<id>https://caixw.io/posts/2016/restful-api-guide.html</id>
-		<updated>2017-07-29T21:36:45+08:00</updated>
+		<updated>2023-02-05T01:20:25+08:00</updated>
 		<link href="https://caixw.io/posts/2016/restful-api-guide.html" type="application/xml"></link>
 		<summary type="text/html"></summary>
 	</entry>
