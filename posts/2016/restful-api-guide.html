@@ -137,22 +137,28 @@
 <li>500：服务端错误。</li>
 </ul>
 <h2 id="error-handling">错误处理</h2>
-<p>HTTP 状态码本身就是一套完善的错误描述机制，状态码相当于错误 ID，返回内容相当于错误内容描述。当然对于一个应用系统来，这些有点简单了，所以一般我们都会做一套符合自己需求的错误描述机制，市面上比较常见的方法就是返回一个固定的数据结构来描述具体的错误内容，比如：</p>
+<p>HTTP 状态码本身就是一套完善的错误描述机制，状态码相当于错误 ID，返回内容相当于错误内容描述。当然对于一个应用系统来，这些有点简单了，所以一般我们都会做一套符合自己需求的错误描述机制，比如 <a href="https://tools.ietf.org/html/rfc7807">RFC7807</a> 定义了一种错误描述机制：</p>
 <pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln">1</span><span class="hl-cl"><span class="hl-p">{</span>
-</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl">    <span class="hl-nt">&#34;id&#34;</span><span class="hl-p">:</span> <span class="hl-mi">40101</span><span class="hl-p">,</span>
-</span></span><span class="hl-line"><span class="hl-ln">3</span><span class="hl-cl">    <span class="hl-nt">&#34;message&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;用户不存在&#34;</span>
+</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl">    <span class="hl-nt">&#34;type&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;https://example.com/problems/404100&#34;</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">3</span><span class="hl-cl">    <span class="hl-nt">&#34;title&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;用户不存在&#34;</span>
 </span></span><span class="hl-line"><span class="hl-ln">4</span><span class="hl-cl"><span class="hl-p">}</span>
 </span></span></code></pre><p>如果有提交数据的，我们还可以指定具体的字段错误信息，这样客户可以很方便地知道具体是哪个字段出错：</p>
 <pre tabindex="0" class="hl-chroma"><code><span class="hl-line"><span class="hl-ln">1</span><span class="hl-cl"><span class="hl-p">{</span>
-</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl">    <span class="hl-nt">&#34;id&#34;</span><span class="hl-p">:</span> <span class="hl-mi">40001</span><span class="hl-p">,</span>
-</span></span><span class="hl-line"><span class="hl-ln">3</span><span class="hl-cl">    <span class="hl-nt">&#34;message&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;提交的数据有误&#34;</span><span class="hl-p">,</span>
-</span></span><span class="hl-line"><span class="hl-ln">4</span><span class="hl-cl">    <span class="hl-nt">&#34;detail&#34;</span><span class="hl-p">:</span> <span class="hl-p">{</span>
-</span></span><span class="hl-line"><span class="hl-ln">5</span><span class="hl-cl">        <span class="hl-nt">&#34;username&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;与已有账号相同&#34;</span><span class="hl-p">,</span>
-</span></span><span class="hl-line"><span class="hl-ln">6</span><span class="hl-cl">        <span class="hl-nt">&#34;password&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;不能为空&#34;</span><span class="hl-p">,</span>
-</span></span><span class="hl-line"><span class="hl-ln">7</span><span class="hl-cl">        <span class="hl-nt">&#34;nickname&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;不能为空&#34;</span>
-</span></span><span class="hl-line"><span class="hl-ln">8</span><span class="hl-cl">    <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">2</span><span class="hl-cl">    <span class="hl-nt">&#34;type&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;https://example.com/problems/404100&#34;</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">3</span><span class="hl-cl">    <span class="hl-nt">&#34;title&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;提交的数据有误&#34;</span><span class="hl-p">,</span>
+</span></span><span class="hl-line"><span class="hl-ln">4</span><span class="hl-cl">    <span class="hl-nt">&#34;invalid-params&#34;</span><span class="hl-p">:</span> <span class="hl-p">[</span>
+</span></span><span class="hl-line"><span class="hl-ln">5</span><span class="hl-cl">        <span class="hl-p">{</span> <span class="hl-nt">&#34;name&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;username&#34;</span><span class="hl-p">,</span> <span class="hl-nt">&#34;reason&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;与已有账号相同&#34;</span> <span class="hl-p">},</span>
+</span></span><span class="hl-line"><span class="hl-ln">6</span><span class="hl-cl">        <span class="hl-p">{</span> <span class="hl-nt">&#34;name&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;password&#34;</span><span class="hl-p">,</span> <span class="hl-nt">&#34;reason&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;不能为空&#34;</span> <span class="hl-p">},</span>
+</span></span><span class="hl-line"><span class="hl-ln">7</span><span class="hl-cl">        <span class="hl-p">{</span> <span class="hl-nt">&#34;name&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;nickname&#34;</span><span class="hl-p">,</span> <span class="hl-nt">&#34;reason&#34;</span><span class="hl-p">:</span> <span class="hl-s2">&#34;不能为空&#34;</span> <span class="hl-p">}</span>
+</span></span><span class="hl-line"><span class="hl-ln">8</span><span class="hl-cl">    <span class="hl-p">]</span>
 </span></span><span class="hl-line"><span class="hl-ln">9</span><span class="hl-cl"><span class="hl-p">}</span>
-</span></span></code></pre><p>关于错误代码，我们可以直接扩展 HTTP 状态码来达到目的。比如我们可以将 401 的状态码进行细化： 401001 表示用户不存在，401002 表示密码错误，401003 表示 token 过期等。</p>
+</span></span></code></pre><ul>
+<li>type 表示错误代码，同时也可以是一个可访问的 URL，对应的页面给出具体的错误信息，我们可以直接扩展 HTTP 状态码来达到目的。比如我们可以将 401 的状态码进行细化： 401001 表示用户不存在，401002 表示密码错误等；</li>
+<li>title 对错误信息的简要描述；</li>
+<li>detail 对错误信息的具体描述；</li>
+<li>其它的自定义字段；</li>
+</ul>
+<p>content-type 也可以是自定义，比如 json 类型的可以是 <code>application/problem+json</code>。</p>
 <h2 id="security">安全</h2>
 <h3 id="data-security">数据安全</h3>
 <p>我们一般都会用一个自增的 ID 作为资源的唯一 ID，但是如果把这一 ID 直接呈现给用户的话，就有可能不经意间泄露了你的业务信息。比如查看用户订单列表的接口：<code>/users/100/orders</code>，返回以下数据：</p>
@@ -208,13 +214,13 @@
             <div class="line" role="menu"><a role="menuitem" class="item" href="/">首页</a><a role="menuitem" class="item" href="/tags.html">标签</a><a role="menuitem" class="item" href="/archive.html">存档</a><a role="menuitem" class="item" href="/posts/about.html">关于</a><a role="menuitem" class="item" href="/rss.xml">RSS</a><a role="menuitem" class="item" href="/atom.xml">Atom</a><a role="menuitem" class="item" href="/sitemap.xml">Sitemap</a></div>
 
             <div class="line">
-                <span class="item">&#169; 2016-2022 by
+                <span class="item">&#169; 2016-2023 by
                     <a href="https://caixw.io" type="text/html">caixw</a>
                 </span>
                 <span class="item">主题采用 <a href="https://caixw.io">default</a></span>
                 <span class="item">
                     由 <a href="https://github.com/caixw/blogit" type="text/html">blogit</a> 构建于
-                    <time title="2022-06-20T11:13:16Z">2022-06-20</time>
+                    <time title="2023-02-04T17:21:03Z">2023-02-04</time>
                 </span>
             </div>
         </footer>
