@@ -3,9 +3,16 @@
 	<title>Atom</title>
 	<subtitle>subtitle</subtitle>
 	<id>https://caixw.io</id>
-	<updated>2023-02-05T01:28:39+08:00</updated>
+	<updated>2023-03-22T00:21:30+08:00</updated>
 	<link href="https://caixw.io"></link>
 	<link href="https://caixw.io/atom.xml" rel="self"></link>
+	<entry>
+		<title>Go 中如何获取字符串的宽度</title>
+		<id>https://caixw.io/posts/2023/go-get-string-width.html</id>
+		<updated>2023-03-22T00:21:30+08:00</updated>
+		<link href="https://caixw.io/posts/2023/go-get-string-width.html" type="application/xml"></link>
+		<summary type="text/html"></summary>
+	</entry>
 	<entry>
 		<title>基于 Go 的泛型快速实现一个功能完备的路由</title>
 		<id>https://caixw.io/posts/2022/build-go-router-with-generics.html</id>
