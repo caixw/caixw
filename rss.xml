@@ -5,7 +5,13 @@
 		<link>https://caixw.io</link>
 		<description>subtitle</description>
 		<pubDate>06 Mar 16 00:00 +0800</pubDate>
-		<lastBuildDate>22 Mar 23 00:21 +0800</lastBuildDate>
+		<lastBuildDate>11 Jun 24 21:22 +0800</lastBuildDate>
+		<item>
+			<title>BCP47 tag</title>
+			<link>https://caixw.io/posts/2024/bcp47.html</link>
+			<description></description>
+			<pubDate>11 Jun 24 21:22 +0800</pubDate>
+		</item>
 		<item>
 			<title>Go 中如何获取字符串的宽度</title>
 			<link>https://caixw.io/posts/2023/go-get-string-width.html</link>
@@ -17,6 +23,12 @@
 			<link>https://caixw.io/posts/2022/build-go-router-with-generics.html</link>
 			<description></description>
 			<pubDate>11 Feb 22 18:21 +0800</pubDate>
+		</item>
+		<item>
+			<title>sqlite3 的数据类型</title>
+			<link>https://caixw.io/posts/2021/sqlite3-data-types.html</link>
+			<description></description>
+			<pubDate>07 Sep 21 02:11 +0800</pubDate>
 		</item>
 		<item>
 			<title>Go 官方的多版本管理</title>

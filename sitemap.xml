@@ -3,13 +3,25 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
 		<loc>https://caixw.io/tags.html</loc>
-		<lastmod>2023-03-22T00:21:30+08:00</lastmod>
+		<lastmod>2024-06-11T21:22:20+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
 		<loc>https://caixw.io/tags/unicode.html</loc>
 		<lastmod>2023-03-22T00:21:30+08:00</lastmod>
+		<changefreq>monthly</changefreq>
+		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/tags/sqlite3.html</loc>
+		<lastmod>2021-09-07T02:11:42+08:00</lastmod>
+		<changefreq>monthly</changefreq>
+		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/tags/sql.html</loc>
+		<lastmod>2021-09-07T02:11:42+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>
@@ -75,13 +87,13 @@
 	</url>
 	<url>
 		<loc>https://caixw.io/tags/generics.html</loc>
-		<lastmod>2023-02-05T01:28:39+08:00</lastmod>
+		<lastmod>2024-06-11T01:01:29+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
 		<loc>https://caixw.io/tags/framework.html</loc>
-		<lastmod>2023-02-05T01:28:39+08:00</lastmod>
+		<lastmod>2024-06-11T01:01:29+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>
@@ -94,6 +106,24 @@
 	<url>
 		<loc>https://caixw.io/tags/default.html</loc>
 		<lastmod>2021-03-26T02:03:17+08:00</lastmod>
+		<changefreq>monthly</changefreq>
+		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/tags/database.html</loc>
+		<lastmod>2021-09-07T02:11:42+08:00</lastmod>
+		<changefreq>monthly</changefreq>
+		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/tags/cldr.html</loc>
+		<lastmod>2024-06-11T21:22:20+08:00</lastmod>
+		<changefreq>monthly</changefreq>
+		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/tags/bcp47.html</loc>
+		<lastmod>2024-06-11T21:22:20+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>
@@ -135,15 +165,21 @@
 	</url>
 	<url>
 		<loc>https://caixw.io/tags/go.html</loc>
-		<lastmod>2023-03-22T00:21:30+08:00</lastmod>
+		<lastmod>2024-06-11T01:01:29+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>
 	<url>
 		<loc>https://caixw.io</loc>
-		<lastmod>2023-03-22T00:21:30+08:00</lastmod>
+		<lastmod>2024-06-11T21:22:20+08:00</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/posts/2024/bcp47.html</loc>
+		<lastmod>2024-06-11T21:22:20+08:00</lastmod>
+		<changefreq>weekly</changefreq>
+		<priority>0.6</priority>
 	</url>
 	<url>
 		<loc>https://caixw.io/posts/2023/go-get-string-width.html</loc>
@@ -153,7 +189,13 @@
 	</url>
 	<url>
 		<loc>https://caixw.io/posts/2022/build-go-router-with-generics.html</loc>
-		<lastmod>2023-02-05T01:28:39+08:00</lastmod>
+		<lastmod>2024-06-11T01:01:29+08:00</lastmod>
+		<changefreq>weekly</changefreq>
+		<priority>0.6</priority>
+	</url>
+	<url>
+		<loc>https://caixw.io/posts/2021/sqlite3-data-types.html</loc>
+		<lastmod>2021-09-07T02:11:42+08:00</lastmod>
 		<changefreq>weekly</changefreq>
 		<priority>0.6</priority>
 	</url>
